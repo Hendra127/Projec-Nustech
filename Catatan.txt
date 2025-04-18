@@ -1,0 +1,8 @@
+Catatan :
+- Install Composer = composer install
+- setting vile env. samakan dengan database =username dan passwordnya
+- php artisan key:generate
+- Migrasi database = php artisan migrate --seed
+- untuk membuat penyimpanan database = php artisan storage:link
+- Install maatwebexcel untuk import dan export = composer require maatwebsite/excel
+- require = xampp versi v3.3.0
