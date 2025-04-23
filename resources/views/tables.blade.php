@@ -66,6 +66,7 @@
                                 <th>IP AP1</th>
                                 <th>IP AP2</th>
                                 <th>EXPECTED SQF</th>
+                                <th>AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -103,6 +104,11 @@
                                 <td>{{ $item->ip_ap1 }}</td>
                                 <td>{{ $item->ip_ap2 }}</td>
                                 <td>{{ $item->expected_sqf }}</td>
+                                <td>
+                                    <a href="/dataupdate/{{ $item->id }}">
+                                        <button class="btn btn-primary">Update</button>
+                                    </a>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -147,5 +153,4 @@
     </div>
 
 </main>
-
 @endsection

@@ -18,7 +18,6 @@ class SiteController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('query');
-
         if ($query) {
             $site = Datasite::where(function ($q) use ($query) {
                 $q->where('site_id', 'LIKE', "%{$query}%")
@@ -161,16 +160,64 @@ class SiteController extends Controller
 
     public function edit(string $id)
     {
-        //
+        $site = Datasite::findOrFail($id);
+        return view('dataupdate', compact('site'));
     }
 
     public function update(Request $request, string $id)
     {
-        //
+        $site = Datasite::findOrFail($id);
+        $site->update($request->all());
+        return redirect()->route('tables')->with('success', 'Data berhasil diupdate.');
     }
 
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getDataSites(Request $request)
+    {
+        try {
+            $term = $request->input('term');
+
+            $sites = Datasite::select('id', 'sitename')
+                ->when($term, function ($query) use ($term) {
+                    $query->where('sitename', 'LIKE', "%{$term}%");
+                })
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $sites
+            ]);
+        } catch (\Throwable $th) {
+            // Log error biar ketahuan kalau ada masalah
+            \Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data sites.'
+            ], 500);
+        }
+    }
+
+    public function getDataSiteById($id)
+    {
+        try {
+            $site = Datasite::findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $site
+            ]);
+        } catch (\Throwable $th) {
+            \Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data site tidak ditemukan.'
+            ], 404);
+        }
     }
 }

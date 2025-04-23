@@ -74,7 +74,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/dataexport', [SiteController::class, 'dataexport'])->name('dataexport');
 	Route::post('/dataimport', [SiteController::class, 'dataimport'])->name('dataimport');
 	Route::get('/datacreate', [SiteController::class, 'create'])->name('datacreate');
+	Route::get('/dataupdate/{id}', [SiteController::class, 'edit'])->name('edit');
 	Route::post('/store', [SiteController::class, 'store'])->name('store');
+	Route::post('/update/{id}', [SiteController::class, 'update'])->name('update');
 
 	// Menambahkan Route untuk TiketController
 	Route::get('/billing', [TiketController::class, 'index'])->name('billing');
