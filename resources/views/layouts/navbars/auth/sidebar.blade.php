@@ -3,12 +3,12 @@
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
     <a class="align-items-center d-flex m-0 navbar-brand text-wrap" href="{{ route('dashboard') }}">
-        <img src="../assets/img/logo1.jpg" class="navbar-brand-img h-100" alt="...">
+        <img src="../assets/img/logonustech.png" class="navbar-brand-img h-100" alt="...">
         <span class="ms-3 font-weight-bold">NUSTECH</span>
     </a>
   </div>
   <hr class="horizontal dark mt-0">
-  <div class="collapse navbar-collapse  w-auto" id="sidenav-collapse-main" height="280px">
+  <div class="collapse navbar-collapse  w-auto h-auto" id="sidenav-collapse-main" height="280px">
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('dashboard') ? 'active' : '') }}" href="{{ url('dashboard') }}">
@@ -31,7 +31,7 @@
         </a>
       </li>
       <li class="nav-item mt-2">
-        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laravel Examples</h6>
+        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">User Control</h6>
       </li>
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('user-profile') ? 'active' : '') }} " href="{{ url('user-profile') }}">
@@ -63,7 +63,7 @@
         </a>
       </li>
       <li class="nav-item mt-2">
-        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Example pages</h6>
+        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">PAGES</h6>
       </li>
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('tables') ? 'active' : '') }}" href="{{ url('tables') }}">
@@ -82,7 +82,7 @@
               </g>
             </svg>
           </div>
-          <span class="nav-link-text ms-1">Tables</span>
+          <span class="nav-link-text ms-1">Data Site</span>
         </a>
       </li>
       <li class="nav-item">
@@ -102,7 +102,7 @@
               </g>
             </svg>
           </div>
-          <span class="nav-link-text ms-1">Tiket</span>
+          <span class="nav-link-text ms-1">Open Tiket</span>
         </a>
       </li>
       <li class="nav-item">
@@ -123,7 +123,7 @@
               </g>
             </svg>
           </div>
-          <span class="nav-link-text ms-1">Virtual Reality</span>
+          <span class="nav-link-text ms-1">Close Tiket</span>
         </a>
       </li>
       <li class="nav-item">
@@ -213,10 +213,7 @@
           <span class="nav-link-text ms-1">Sign Up</span>
         </a>
       </li>
-      <li class="nav-link mb-0">
-        <a href="https://www.creative-tim.com/product/soft-ui-dashboard-pro-laravel" class="btn btn-primary btn-md active px-5 text-white" target="_blank" role="button" aria-pressed="true">
-            Upgrade to PRO</a>
-      </li>
+
     </ul>
   </div>
 
