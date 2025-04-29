@@ -30,9 +30,9 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('dashboard');
 	})->name('dashboard');
 
-	Route::get('billing', function () {
-		return view('billing');
-	})->name('billing');
+	Route::get('tiket', function () {
+		return view('tiket');
+	})->name('tiket');
 
 	Route::get('profile', function () {
 		return view('profile');
@@ -79,10 +79,11 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/update/{id}', [SiteController::class, 'update'])->name('update');
 
 	// Menambahkan Route untuk TiketController
-	Route::get('/billing', [TiketController::class, 'index'])->name('billing');
+	Route::get('/tiket', [TiketController::class, 'index'])->name('tiket');
 	Route::post('/tiketimport', [TiketController::class, 'tiketimport'])->name('tiketimport');
 	Route::get('/tiketexport', [TiketController::class, 'tiketexport'])->name('tiketexport');
 	Route::post('/tiket', [TiketController::class, 'store'])->name('tiket.store');
+	Route::put('/tiket/{id}', [TiketController::class, 'update'])->name('tiket.update');
 	Route::put('/tiket/{id}/update-status', [TiketController::class, 'updateStatus'])->name('tiket.updateStatus');
 
 

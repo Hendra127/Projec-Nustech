@@ -2,6 +2,7 @@ $(document).ready(function () {
     $(".site-name").select2({
         placeholder: "Select Site Name",
         allowClear: true,
+        tags: true,
         ajax: {
             url: "/api/datasites",
             dataType: "json",
@@ -10,7 +11,7 @@ $(document).ready(function () {
                 return {
                     results: data.data.map(function (data) {
                         return {
-                            id: data.id,
+                            id: data.sitename,
                             text: data.sitename,
                         };
                     }),
@@ -18,6 +19,76 @@ $(document).ready(function () {
             },
             cache: true,
         },
+    });
+
+    $(".site-name-modal").select2({
+        placeholder: "Select Site Name",
+        allowClear: true,
+        tags: true,
+        dropdownParent: $("#modalTambahTiket"),
+        ajax: {
+            url: "/api/tiket/datasites",
+            dataType: "json",
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: data.data.map(function (data) {
+                        return {
+                            id: data.id,
+                            text: data.nama_site,
+                        };
+                    }),
+                };
+            },
+            cache: true,
+        },
+    });
+
+    $(".site-name-modal").on("select2:select", function (e) {
+        const siteId = e.params.data.id;
+        if (Number.isInteger(Number(siteId))) {
+            $.ajax({
+                url: `/api/tiket/datasites/${siteId}`,
+                method: "GET",
+                success: function (response) {
+                    if (response.success) {
+                        $("input[name='nama_site']").val(
+                            response.data.nama_site
+                        );
+                        $("input[name='provinsi']").val(response.data.provinsi);
+                        $("input[name='kabupaten']").val(
+                            response.data.kabupaten
+                        );
+                        $("input[name='durasi']").val(response.data.durasi);
+                        $("input[name='kategori']").val(response.data.kategori);
+                        $("input[name='tanggal_rekap']").val(
+                            response.data.tanggal_rekap
+                        );
+                        $("input[name='bulan_open']").val(
+                            response.data.bulan_open
+                        );
+                        $("input[name='status_tiket']").val(
+                            response.data.status_tiket
+                        );
+                        $("input[name='kendala']").val(response.data.kendala);
+                        $("input[name='tanggal_close']").val(
+                            response.data.tanggal_close
+                        );
+                        $("input[name='bulan_close']").val(
+                            response.data.bulan_close
+                        );
+                        $("textarea[name='detail_problem']").val(
+                            response.data.detail_problem
+                        );
+                    }
+                },
+                // error: function () {
+                //     alert("Gagal ambil data site.");
+                // },
+            });
+        } else {
+            $("input[name='nama_site']").val(siteId);
+        }
     });
 
     $(".site-name").on("select2:select", function (e) {

@@ -15,7 +15,7 @@
                 </div>
 
                 <!-- Form Search -->
-                <form action="{{ route('billing') }}" method="GET">
+                <form action="{{ route('tiket') }}" method="GET">
                     <div class="row">
                         <div class="col-md-6">
                             <input type="text" name="query" class="form-control" placeholder="Search by Site Name or Province" value="{{ request()->query('query') }}">
@@ -46,6 +46,7 @@
                                 <th>TANGGAL CLOSE</th>
                                 <th>BULAN CLOSE</th>
                                 <th>DETAIL PROBLEM</th>
+                                <th>AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,20 +60,22 @@
                                 <td>{{ $item->kategori }}</td>
                                 <td>{{ $item->tanggal_rekap }}</td>
                                 <td>{{ $item->bulan_open }}</td>
-                                <td>
-                                    <form action="{{ route('tiket.updateStatus', $item->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <select name="status_tiket" class="form-control form-control-sm" onchange="this.form.submit()">
-                                            <option value="OPEN" {{ $item->status_tiket === 'OPEN' ? 'selected' : '' }}>OPEN</option>
-                                            <option value="CLOSE" {{ $item->status_tiket === 'CLOSE' ? 'selected' : '' }}>CLOSE</option>
-                                        </select>
-                                    </form>
-                                </td>
+                                <td>{{ $item->status_tiket }}</td>
                                 <td>{{ $item->kendala }}</td>
                                 <td>{{ $item->tanggal_close }}</td>
                                 <td>{{ $item->bulan_close }}</td>
                                 <td>{{ $item->detail_problem }}</td>
+                                <td class="d-flex gap-2">
+                                    @if ($item->status_tiket != 'close')
+                                        <form action="{{ route('tiket.updateStatus', ['id' => $item->id]) }}" method="POST">
+                                            @csrf
+                                            @method("PUT")
+                                            <input type="hidden" name="status_tiket" value="CLOSE">
+                                            <button type="submit" class="btn btn-danger mr-3 mb-3">Close</button>
+                                        </form>
+                                    @endif
+                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Update</a>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -120,7 +123,7 @@
     <div class="modal fade" id="modalTambahTiket" tabindex="-1" role="dialog" aria-labelledby="modalTambahTiketLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form action="{{ route('tiket.store') }}" method="POST">
+                <form id="tiketForm" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTambahTiketLabel">Tambah Data Tiket</h5>
@@ -129,9 +132,12 @@
                         </button>
                     </div>
                     <div class="modal-body row">
-                        <div class="form-group col-md-6">
+                        <div id="formMethod"></div>
+                        <input type="hidden" name="nama_site" class="form-control">
+                        <div class="form-group col-md-6 d-flex flex-column" style="margin-top: 4px;">
                             <label>Nama Site</label>
-                            <input type="text" name="nama_site" class="form-control" required>
+                            <select class="site-name-modal form-control" required>
+                            </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Provinsi</label>
@@ -187,4 +193,62 @@
         </div>
     </div>
 </main>
+@endsection
+
+@section('scripts')
+<script>
+    function openCreateModal() {
+        $('#siteModal').modal('show');
+        $('#modalTitle').text('Create Tiket');
+        $('#tiketForm').attr('action', storeUrl);
+        $('#tiketForm').trigger('reset');
+    }
+
+    function openEditModal(id) {
+        $.ajax({
+            url: `/api/tiket/datasites/${id}`,
+            method: "GET",
+            success: function (response) {
+                if (response.success) {
+                    $('#modalTambahTiket').modal('show');
+                    var selectedSite = {
+                        id: response.data.id,
+                        text: response.data.nama_site
+                    };
+                    var newOption = new Option(selectedSite.text, selectedSite.id, true, true);
+                    $('.site-name-modal').append(newOption).trigger('change');
+
+                    $("input[name='nama_site']").val(response.data.nama_site);
+                    $("input[name='provinsi']").val(response.data.provinsi);
+                    $("input[name='kabupaten']").val(response.data.kabupaten);
+                    $("input[name='durasi']").val(response.data.durasi);
+                    $("input[name='kategori']").val(response.data.kategori);
+                    $("input[name='tanggal_rekap']").val(
+                        response.data.tanggal_rekap
+                    );
+                    $("input[name='bulan_open']").val(response.data.bulan_open);
+                    $("input[name='status_tiket']").val(
+                        response.data.status_tiket
+                    );
+                    $("input[name='kendala']").val(response.data.kendala);
+                    $("input[name='tanggal_close']").val(
+                        response.data.tanggal_close
+                    );
+                    $("input[name='bulan_close']").val(
+                        response.data.bulan_close
+                    );
+                    $("textarea[name='detail_problem']").val(
+                        response.data.detail_problem
+                    );
+                    $('#modalTambahTiketLabel').text('Edit Tiket');
+                    $('#tiketForm').attr('action', `/tiket/${id}`);
+                    $('#formMethod').html('@method("PUT")');
+                }
+            },
+            error: function () {
+                alert("Gagal ambil data site.");
+            },
+        });
+    }
+</script>
 @endsection

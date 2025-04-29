@@ -23,11 +23,11 @@ class TiketController extends Controller
 
         // Jika kamu punya model Site sendiri:
         // $semuaSite = Site::all();
-        
+
         // Jika data site ada di tabel yang sama dengan Tiket:
         $semuaSite = Tiket::all();
 
-        return view('billing', compact('tiket', 'semuaSite'));
+        return view('tiket', compact('tiket', 'semuaSite'));
     }
 
     // Simpan data tiket baru
@@ -56,6 +56,7 @@ class TiketController extends Controller
     // Update data tiket dari modal
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
             'nama_site' => 'required',
             'provinsi' => 'nullable',
@@ -97,15 +98,60 @@ class TiketController extends Controller
 
     // Update status tiket (OPEN/CLOSE)
     public function updateStatus(Request $request, $id)
-{
-    $request->validate([
-        'status_tiket' => 'required|in:OPEN,CLOSE'
-    ]);
+    {
+        $request->validate([
+            'status_tiket' => 'required|in:OPEN,CLOSE'
+        ]);
 
-    $tiket = Tiket::findOrFail($id);
-    $tiket->status_tiket = $request->status_tiket;
-    $tiket->save();
+        $tiket = Tiket::findOrFail($id);
+        $tiket->status_tiket = $request->status_tiket;
+        $tiket->save();
 
-    return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
-}
+        return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
+    }
+
+    public function getDataSites(Request $request)
+    {
+        try {
+            $term = $request->input('term');
+
+            $sites = Tiket::select('id', 'nama_site')
+                ->when($term, function ($query) use ($term) {
+                    $query->where('nama_site', 'LIKE', "%{$term}%");
+                })
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $sites
+            ]);
+        } catch (\Throwable $th) {
+            // Log error biar ketahuan kalau ada masalah
+            \Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data sites.'
+            ], 500);
+        }
+    }
+
+    public function getDataSiteById($id)
+    {
+        try {
+            $site = Tiket::findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $site
+            ]);
+        } catch (\Throwable $th) {
+            \Log::error($th);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data site tidak ditemukan.'
+            ], 404);
+        }
+    }
 }
