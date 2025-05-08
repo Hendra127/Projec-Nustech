@@ -17,9 +17,13 @@ class TiketController extends Controller
         $query = $request->input('search');
 
         $tiket = Tiket::when($query, function ($q) use ($query) {
-            $q->where('nama_site', 'like', '%' . $query . '%')
-              ->orWhere('provinsi', 'like', '%' . $query . '%');
-        })->paginate(10);
+            $q->where(function ($subQuery) use ($query) {
+                $subQuery->where('nama_site', 'like', '%' . $query . '%')
+                         ->orWhere('provinsi', 'like', '%' . $query . '%');
+            });
+        })->where('status_tiket', 'OPEN')
+          ->paginate(10);
+
 
         // Jika kamu punya model Site sendiri:
         // $semuaSite = Site::all();
@@ -28,6 +32,28 @@ class TiketController extends Controller
         $semuaSite = Tiket::all();
 
         return view('tiket', compact('tiket', 'semuaSite'));
+    }
+
+    public function closeTiket(Request $request)
+    {
+        $query = $request->input('search');
+
+        $tiket = Tiket::when($query, function ($q) use ($query) {
+            $q->where(function ($subQuery) use ($query) {
+                $subQuery->where('nama_site', 'like', '%' . $query . '%')
+                         ->orWhere('provinsi', 'like', '%' . $query . '%');
+            });
+        })->where('status_tiket', 'CLOSE')
+          ->paginate(10);
+
+
+        // Jika kamu punya model Site sendiri:
+        // $semuaSite = Site::all();
+
+        // Jika data site ada di tabel yang sama dengan Tiket:
+        $semuaSite = Tiket::all();
+
+        return view('close_tiket', compact('tiket', 'semuaSite'));
     }
 
     // Simpan data tiket baru

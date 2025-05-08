@@ -42,10 +42,6 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('rtl');
 	})->name('rtl');
 
-	Route::get('user-management', function () {
-		return view('laravel-examples/user-management');
-	})->name('user-management');
-
     Route::get('virtual-reality', function () {
 		return view('virtual-reality');
 	})->name('virtual-reality');
@@ -59,6 +55,10 @@ Route::group(['middleware' => 'auth'], function () {
 	})->name('sign-up');
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
+    Route::get('users', [InfoUserController::class, 'index'])->name('users');
+    Route::post('users', [InfoUserController::class, 'save'])->name('users.save');
+    Route::put('user/{id}', [InfoUserController::class, 'saveUpdate'])->name('user.update');
+    Route::get('user/delete/{id}', [InfoUserController::class, 'delete'])->name('user.delete');
 	Route::get('/user-profile', [InfoUserController::class, 'create']);
 	Route::post('/user-profile', [InfoUserController::class, 'store']);
     Route::get('/login', function () {
@@ -85,6 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/tiket', [TiketController::class, 'store'])->name('tiket.store');
 	Route::put('/tiket/{id}', [TiketController::class, 'update'])->name('tiket.update');
 	Route::put('/tiket/{id}/update-status', [TiketController::class, 'updateStatus'])->name('tiket.updateStatus');
+
+    Route::get('/close/tiket', [TiketController::class, 'closeTiket'])->name('close.tiket');
 
 
 
