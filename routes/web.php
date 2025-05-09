@@ -7,6 +7,7 @@ use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -26,9 +27,7 @@ use App\Http\Controllers\TiketController;
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/', [HomeController::class, 'home']);
-	Route::get('dashboard', function () {
-		return view('dashboard');
-	})->name('dashboard');
+	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 	Route::get('tiket', function () {
 		return view('tiket');
