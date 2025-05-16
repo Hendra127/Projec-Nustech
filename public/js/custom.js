@@ -88,12 +88,11 @@ $(document).ready(function () {
             });
         } else {
             $("input#nama_site").val(siteId);
-            console.log($("input#nama_site").val());
         }
     });
 
-    $(".site-name").on("select2:select", function (e) {
-        const siteId = e.params.data.id;
+    $(".site-name").on("select2:close", function (e) {
+        let siteId = $(this).val() || [];
 
         $.ajax({
             url: `/api/datasites/${siteId}`,
