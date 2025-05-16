@@ -12,6 +12,7 @@ class Tiket extends Model
     protected $table = "tiket";
     protected $primaryKey ="id";
     protected $fillable =  [
+        'site_id',
         'nama_site',
         'provinsi',
         'kabupaten',
@@ -21,6 +22,7 @@ class Tiket extends Model
         'bulan_open',
         'status_tiket',
         'kendala',
+        'plan_actions',
         'tanggal_close',
         'bulan_close',
         'detail_problem',

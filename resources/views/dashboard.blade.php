@@ -93,9 +93,12 @@
         </div>
       </div>
     </div>
-  </div>
-  </div>
-  <div class="row mt-4">
+</div>
+<div class="">
+
+</div>
+<div class="row">
+  <div class="container-fluid py-4 row mt-4 d-none">
     <div class="col-lg-5 mb-lg-0 mb-4">
       <div class="card z-index-2">
         <div class="card-body p-3">
@@ -185,76 +188,37 @@
       </div>
     </div>
   </div>
-    <div class="col-lg-4 col-md-6">
-      <div class="card h-100">
+</div>
+<div class="row" style="height: 60vh;">
+    <div class="col-md-12 container-fluid py-4" style="height: 100%;">
+      <div class="card h-100 d-flex flex-column">
         <div class="card-header pb-0">
           <h6>Data Open Tiket</h6>
           <p class="text-sm">
             <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-            <span class="font-weight-bold"><span> Nama Site
+            <span class="font-weight-bold">Nama Site</span>
           </p>
         </div>
-        <div class="card-body p-3">
+        <div class="card-body p-3" style="flex: 1 1 auto; overflow-y: auto;">
           <div class="timeline timeline-one-side">
-            <div class="timeline-block mb-3">
-              <span class="timeline-step">
-                <i class="ni ni-bell-55 text-success text-gradient"></i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">$2400, Design changes</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22 DEC 7:20 PM</p>
-              </div>
-            </div>
-            <div class="timeline-block mb-3">
-              <span class="timeline-step">
-                <i class="ni ni-html5 text-danger text-gradient"></i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">New order #1832412</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 11 PM</p>
-              </div>
-            </div>
-            <div class="timeline-block mb-3">
-              <span class="timeline-step">
-                <i class="ni ni-cart text-info text-gradient"></i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">Server payments for April</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 9:34 PM</p>
-              </div>
-            </div>
+            @foreach ($allTiket as $item)
             <div class="timeline-block mb-3">
               <span class="timeline-step">
                 <i class="ni ni-credit-card text-warning text-gradient"></i>
               </span>
               <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">New card added for order #4395133</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">20 DEC 2:20 AM</p>
+                <h6 class="text-dark text-sm font-weight-bold mb-0"><span class="text-secondary">#{{ $item->site_id }}</span> {{ $item->nama_site }}</h6>
+                <p class="text-secondary text-xs mt-1 mb-1">{{ $item->kendala }}</p>
+                <p class="text-secondary text-xs mt-1 mb-0">{{ $item->plan_actions }}</p>
               </div>
             </div>
-            <div class="timeline-block mb-3">
-              <span class="timeline-step">
-                <i class="ni ni-key-25 text-primary text-gradient"></i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">Unlock packages for development</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">18 DEC 4:54 AM</p>
-              </div>
-            </div>
-            <div class="timeline-block">
-              <span class="timeline-step">
-                <i class="ni ni-money-coins text-dark text-gradient"></i>
-              </span>
-              <div class="timeline-content">
-                <h6 class="text-dark text-sm font-weight-bold mb-0">New order #9583120</h6>
-                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">17 DEC</p>
-              </div>
-            </div>
+            @endforeach
           </div>
         </div>
       </div>
     </div>
   </div>
+
 
 @endsection
 @push('dashboard')

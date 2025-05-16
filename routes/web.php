@@ -53,7 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('static-sign-up');
 	})->name('sign-up');
 
-    Route::get('/logout', [SessionsController::class, 'destroy']);
+    Route::get('/logout', [SessionsController::class, 'destroy'])->name('logout');
     Route::get('users', [InfoUserController::class, 'index'])->name('users');
     Route::post('users', [InfoUserController::class, 'save'])->name('users.save');
     Route::put('user/{id}', [InfoUserController::class, 'saveUpdate'])->name('user.update');
@@ -79,6 +79,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 	// Menambahkan Route untuk TiketController
 	Route::get('/tiket', [TiketController::class, 'index'])->name('tiket');
+	Route::get('/tiket/delete/{id}', [TiketController::class, 'delete'])->name('tiket.delete');
 	Route::post('/tiketimport', [TiketController::class, 'tiketimport'])->name('tiketimport');
 	Route::get('/tiketexport', [TiketController::class, 'tiketexport'])->name('tiketexport');
 	Route::post('/tiket', [TiketController::class, 'store'])->name('tiket.store');

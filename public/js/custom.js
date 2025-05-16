@@ -40,12 +40,12 @@ $(document).ready(function () {
                     }),
                 };
             },
-            cache: true,
+            cache: false,
         },
     });
 
-    $(".site-name-modal").on("select2:select", function (e) {
-        const siteId = e.params.data.id;
+    $(".site-name-modal").on("select2:close", function (e) {
+        let siteId = $(this).val() || [];
         if (Number.isInteger(Number(siteId))) {
             $.ajax({
                 url: `/api/tiket/datasites/${siteId}`,
@@ -87,7 +87,8 @@ $(document).ready(function () {
                 // },
             });
         } else {
-            $("input[name='nama_site']").val(siteId);
+            $("input#nama_site").val(siteId);
+            console.log($("input#nama_site").val());
         }
     });
 

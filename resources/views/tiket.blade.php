@@ -34,10 +34,17 @@
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
+                                <th>SITE ID</th>
                                 <th>NAMA SITE</th>
                                 <th>PROVINSI</th>
                                 <th>KABUPATEN</th>
-                                <th>DURASI</th>
+                                <th>
+                                    @php
+                                        $currentSort = request()->query('sort', 'desc');
+                                        $nextSort = $currentSort === 'asc' ? 'desc' : 'asc';
+                                    @endphp
+                                    <a href="{{ url('tiket') }}?sort={{ $nextSort }}">DURASI</a>
+                                </th>
                                 <th>KATEGORI</th>
                                 <th>TANGGAL REKAP</th>
                                 <th>BULAN OPEN</th>
@@ -46,6 +53,7 @@
                                 <th>TANGGAL CLOSE</th>
                                 <th>BULAN CLOSE</th>
                                 <th>DETAIL PROBLEM</th>
+                                <th>PLAN ACTIONS</th>
                                 <th>AKSI</th>
                             </tr>
                         </thead>
@@ -53,18 +61,20 @@
                             @foreach ($tiket as $index => $item)
                             <tr>
                                 <td>{{ $tiket->firstItem() + $index }}</td>
+                                <td>{{ $item->site_id }}</td>
                                 <td>{{ $item->nama_site }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kabupaten }}</td>
-                                <td>{{ $item->durasi }}</td>
+                                <td class="durasi">{{ $item->durasi_terbaru }}</td>
                                 <td>{{ $item->kategori }}</td>
-                                <td>{{ $item->tanggal_rekap }}</td>
+                                <td class="tanggal-rekap">{{ $item->tanggal_rekap }}</td>
                                 <td>{{ $item->bulan_open }}</td>
                                 <td>{{ $item->status_tiket }}</td>
                                 <td>{{ $item->kendala }}</td>
                                 <td>{{ $item->tanggal_close }}</td>
                                 <td>{{ $item->bulan_close }}</td>
                                 <td>{{ $item->detail_problem }}</td>
+                                <td>{{ $item->plan_actions }}</td>
                                 <td class="d-flex gap-2">
                                     @if ($item->status_tiket != 'close')
                                         <form action="{{ route('tiket.updateStatus', ['id' => $item->id]) }}" method="POST">
@@ -74,6 +84,7 @@
                                             <button type="submit" class="btn btn-danger mr-3 mb-3">Close</button>
                                         </form>
                                     @endif
+                                    <a href="{{ route('tiket.delete', ['id' => $item->id]) }}" class="btn btn-info mr-3 mb-3">Delete</a>
                                     <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Update</a>
                                 </td>
                             </tr>
@@ -100,7 +111,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Data</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -111,7 +122,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Import</button>
                     </div>
                 </form>
@@ -127,13 +138,17 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTambahTiketLabel">Tambah Data Tiket</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body row">
                         <div id="formMethod"></div>
-                        <input type="hidden" name="nama_site" class="form-control">
+                        <input type="hidden" name="nama_site" id="nama_site" class="form-control">
+                        <div class="form-group col-md-6">
+                            <label>Site ID</label>
+                            <input type="text" name="site_id" class="form-control" required>
+                        </div>
                         <div class="form-group col-md-6 d-flex flex-column" style="margin-top: 4px;">
                             <label>Nama Site</label>
                             <select class="site-name-modal form-control" required>
@@ -179,13 +194,17 @@
                             <label>Bulan Close</label>
                             <input type="text" name="bulan_close" class="form-control">
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-6">
                             <label>Detail Problem</label>
                             <textarea name="detail_problem" class="form-control" rows="2"></textarea>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label>Plan Actions</label>
+                            <textarea name="plan_actions" class="form-control" rows="2"></textarea>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Simpan Data</button>
                     </div>
                 </form>
@@ -218,6 +237,7 @@
                     var newOption = new Option(selectedSite.text, selectedSite.id, true, true);
                     $('.site-name-modal').append(newOption).trigger('change');
 
+                    $("input[name='site_id']").val(response.data.site_id);
                     $("input[name='nama_site']").val(response.data.nama_site);
                     $("input[name='provinsi']").val(response.data.provinsi);
                     $("input[name='kabupaten']").val(response.data.kabupaten);

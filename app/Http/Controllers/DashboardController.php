@@ -59,6 +59,9 @@ class DashboardController extends Controller
             // Ambil 2 bulan terakhir
             $lastTwo = $data->take(-2)->values();
 
+            $allTiket = Tiket::orderBy('created_at')->get();
+
+
 
             if ($lastTwo->count() < 2) {
                 $deltaMonth = '-';
@@ -68,7 +71,7 @@ class DashboardController extends Controller
                 $delta = $lastTwo[0]->total_close - $lastTwo[1]->total_close;
             }
 
-            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount'));
+            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket'));
         } catch (\Throwable $th) {
             dd($th);
             return abort(404);

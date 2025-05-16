@@ -43,6 +43,11 @@ class InfoUserController extends Controller
                 $attributes['photo'] = $path;
             }
 
+            if(isset($attributes['password']))
+            {
+                $attributes['password'] = bcrypt($attributes['password']);
+            }
+
             $user = User::create($attributes);
 
             return redirect()->route('users')->with('success','Create user successfully');

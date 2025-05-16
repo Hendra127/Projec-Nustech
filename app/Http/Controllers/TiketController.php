@@ -14,24 +14,33 @@ class TiketController extends Controller
     // Tampilkan semua data tiket dan site
     public function index(Request $request)
     {
-        $query = $request->input('search');
+        try {
+            $query = $request->input('search');
+            $sort = $request->input('sort', 'desc');
 
-        $tiket = Tiket::when($query, function ($q) use ($query) {
-            $q->where(function ($subQuery) use ($query) {
-                $subQuery->where('nama_site', 'like', '%' . $query . '%')
-                         ->orWhere('provinsi', 'like', '%' . $query . '%');
-            });
-        })->where('status_tiket', 'OPEN')
-          ->paginate(10);
+            $tiket = Tiket::select('*')
+                ->selectRaw("durasi + DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($subQuery) use ($query) {
+                        $subQuery->where('nama_site', 'like', '%' . $query . '%')
+                                ->orWhere('provinsi', 'like', '%' . $query . '%');
+                    });
+                })
+                ->where('status_tiket', 'OPEN')
+                ->orderBy('durasi_terbaru', $sort)
+                ->paginate(10);
 
 
-        // Jika kamu punya model Site sendiri:
-        // $semuaSite = Site::all();
+            // Jika kamu punya model Site sendiri:
+            // $semuaSite = Site::all();
 
-        // Jika data site ada di tabel yang sama dengan Tiket:
-        $semuaSite = Tiket::all();
+            // Jika data site ada di tabel yang sama dengan Tiket:
+            $semuaSite = Tiket::all();
 
-        return view('tiket', compact('tiket', 'semuaSite'));
+            return view('tiket', compact('tiket', 'semuaSite'));
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
     public function closeTiket(Request $request)
@@ -59,24 +68,30 @@ class TiketController extends Controller
     // Simpan data tiket baru
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_site' => 'required',
-            'provinsi' => 'required',
-            'kabupaten' => 'required',
-            'durasi' => 'nullable',
-            'kategori' => 'nullable',
-            'tanggal_rekap' => 'nullable|date',
-            'bulan_open' => 'nullable',
-            'status_tiket' => 'nullable',
-            'kendala' => 'nullable',
-            'tanggal_close' => 'nullable|date',
-            'bulan_close' => 'nullable',
-            'detail_problem' => 'nullable',
-        ]);
+        try {
+            // dd($request->all());
+            $request->validate([
+                'nama_site' => 'required',
+                'provinsi' => 'required',
+                'kabupaten' => 'required',
+                'durasi' => 'nullable',
+                'kategori' => 'nullable',
+                'tanggal_rekap' => 'nullable|date',
+                'bulan_open' => 'nullable',
+                'status_tiket' => 'nullable',
+                'kendala' => 'nullable',
+                'tanggal_close' => 'nullable|date',
+                'bulan_close' => 'nullable',
+                'detail_problem' => 'nullable',
+            ]);
 
-        Tiket::create($request->all());
+            Tiket::create($request->all());
 
-        return redirect()->route('tiket')->with('success', 'Data tiket berhasil disimpan.');
+            return redirect()->route('tiket')->with('success', 'Data tiket berhasil disimpan.');
+        } catch (\Throwable $th) {
+            // dd($th);
+            // throw $th;
+        }
     }
 
     // Update data tiket dari modal
@@ -178,6 +193,22 @@ class TiketController extends Controller
                 'success' => false,
                 'message' => 'Data site tidak ditemukan.'
             ], 404);
+        }
+    }
+
+
+    // Hapus data tiket
+    public function delete($id)
+    {
+        try {
+            $tiket = Tiket::findOrFail($id);
+            $tiket->delete();
+
+            return redirect()->back()->with('success', 'Data tiket berhasil dihapus.');
+        } catch (\Throwable $th) {
+            \Log::error($th);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data tiket.');
         }
     }
 }

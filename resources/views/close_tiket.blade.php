@@ -8,7 +8,6 @@
                 <!-- Tombol Tambah, Export, Import -->
                 <div class="d-flex flex-wrap mb-3">
                     <div style="margin-right: 20px">
-                        <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" data-target="#modalTambahTiket">Tambah Data</a>
                         <a href="{{ route('tiketexport') }}" class="btn btn-success mr-3 mb-3">Export</a>
                         <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">Import</a>
                     </div>
@@ -34,6 +33,7 @@
                         <thead class="thead-dark">
                             <tr>
                                 <th>No</th>
+                                <th>SITE ID</th>
                                 <th>NAMA SITE</th>
                                 <th>PROVINSI</th>
                                 <th>KABUPATEN</th>
@@ -46,6 +46,7 @@
                                 <th>TANGGAL CLOSE</th>
                                 <th>BULAN CLOSE</th>
                                 <th>DETAIL PROBLEM</th>
+                                <th>PLAN ACTIONS</th>
                                 <th>AKSI</th>
                             </tr>
                         </thead>
@@ -53,6 +54,7 @@
                             @foreach ($tiket as $index => $item)
                             <tr>
                                 <td>{{ $tiket->firstItem() + $index }}</td>
+                                <td>{{ $item->site_id }}</td>
                                 <td>{{ $item->nama_site }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kabupaten }}</td>
@@ -65,16 +67,10 @@
                                 <td>{{ $item->tanggal_close }}</td>
                                 <td>{{ $item->bulan_close }}</td>
                                 <td>{{ $item->detail_problem }}</td>
+                                <td>{{ $item->plan_actions }}</td>
                                 <td class="d-flex gap-2">
-                                    @if ($item->status_tiket != 'close')
-                                        <form action="{{ route('tiket.updateStatus', ['id' => $item->id]) }}" method="POST">
-                                            @csrf
-                                            @method("PUT")
-                                            <input type="hidden" name="status_tiket" value="CLOSE">
-                                            <button type="submit" class="btn btn-danger mr-3 mb-3">Close</button>
-                                        </form>
-                                    @endif
-                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Update</a>
+                                    <a href="{{ route('tiket.delete', ['id' => $item->id]) }}" class="btn btn-info mr-3 mb-3">Delete</a>
+                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
                                 </td>
                             </tr>
                             @endforeach
@@ -100,7 +96,7 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Import Data</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -111,7 +107,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Import</button>
                     </div>
                 </form>
@@ -127,66 +123,62 @@
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTambahTiketLabel">Tambah Data Tiket</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body row">
                         <div id="formMethod"></div>
-                        <input type="hidden" name="nama_site" class="form-control">
+                        <input type="hidden" name="nama_site" class="form-control" disabled>
                         <div class="form-group col-md-6 d-flex flex-column" style="margin-top: 4px;">
                             <label>Nama Site</label>
-                            <select class="site-name-modal form-control" required>
+                            <select class="site-name-modal form-control" required disabled>
                             </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Provinsi</label>
-                            <input type="text" name="provinsi" class="form-control" required>
+                            <input type="text" name="provinsi" class="form-control" required disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Kabupaten</label>
-                            <input type="text" name="kabupaten" class="form-control" required>
+                            <input type="text" name="kabupaten" class="form-control" required disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Durasi</label>
-                            <input type="text" name="durasi" class="form-control">
+                            <input type="text" name="durasi" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Kategori</label>
-                            <input type="text" name="kategori" class="form-control">
+                            <input type="text" name="kategori" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Tanggal Rekap</label>
-                            <input type="date" name="tanggal_rekap" class="form-control">
+                            <input type="date" name="tanggal_rekap" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Bulan Open</label>
-                            <input type="text" name="bulan_open" class="form-control">
+                            <input type="text" name="bulan_open" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Status Tiket</label>
-                            <input type="text" name="status_tiket" class="form-control">
+                            <input type="text" name="status_tiket" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Kendala</label>
-                            <input type="text" name="kendala" class="form-control">
+                            <input type="text" name="kendala" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Tanggal Close</label>
-                            <input type="date" name="tanggal_close" class="form-control">
+                            <input type="date" name="tanggal_close" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Bulan Close</label>
-                            <input type="text" name="bulan_close" class="form-control">
+                            <input type="text" name="bulan_close" class="form-control" disabled>
                         </div>
                         <div class="form-group col-md-12">
                             <label>Detail Problem</label>
-                            <textarea name="detail_problem" class="form-control" rows="2"></textarea>
+                            <textarea name="detail_problem" class="form-control" rows="2" disabled></textarea>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan Data</button>
                     </div>
                 </form>
             </div>
@@ -240,7 +232,7 @@
                     $("textarea[name='detail_problem']").val(
                         response.data.detail_problem
                     );
-                    $('#modalTambahTiketLabel').text('Edit Tiket');
+                    $('#modalTambahTiketLabel').text('Detail Tiket');
                     $('#tiketForm').attr('action', `/tiket/${id}`);
                     $('#formMethod').html('@method("PUT")');
                 }
