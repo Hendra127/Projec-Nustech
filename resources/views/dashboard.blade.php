@@ -217,7 +217,17 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 container-fluid py-4">
+        <div class="card h-100">
+            <div class="card-body p-3">
+                <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1ojWTbe3Kpii0ioZqlI-bSiX4eVEyE08" width="100%" height="680"></iframe>
+            </div>
+      </div>
+    </div>
+</div>
 
 
 @endsection
