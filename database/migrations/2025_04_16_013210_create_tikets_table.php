@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tiket', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_site');
+            $table->string('nama_site')->nullable();
             $table->string('provinsi');
             $table->string('kabupaten');
             $table->integer('durasi')->nullable(); // Jika durasi dalam angka (hari/jam)
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('status_tiket');
             $table->text('kendala')->nullable();
             $table->date('tanggal_close')->nullable();
-            $table->string('bulan_close');
+             $table->string('bulan_close')->nullable()->change(); 
             $table->text('detail_problem')->nullable();
             $table->timestamps();
         });

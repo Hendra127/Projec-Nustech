@@ -13,22 +13,21 @@
                   <h3 class="font-weight-bolder text-info text-gradient">Welcome back</h3>
                   <p class="mb-0">Create a new acount<br></p>
                   <p class="mb-0">OR Sign in with these credentials:</p>
-                  <p class="mb-0">Email <b>admin@softui.com</b></p>
-                  <p class="mb-0">Password <b>secret</b></p>
                 </div>
                 <div class="card-body">
                   <form role="form" method="POST" action="/session">
                     @csrf
                     <label>Email</label>
                     <div class="mb-3">
-                      <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="admin@softui.com" aria-label="Email" aria-describedby="email-addon">
+                      <input type="email autocomplete="off"" class="form-control" name="email" id="email" placeholder="Silahkan Masukkan Email" value="" aria-label="Email" aria-describedby="email-addon">
                       @error('email')
                         <p class="text-danger text-xs mt-2">{{ $message }}</p>
                       @enderror
                     </div>
                     <label>Password</label>
-                    <div class="mb-3">
-                      <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="secret" aria-label="Password" aria-describedby="password-addon">
+                    <div class="mb-3 position-relative">
+                      <input type="password" autocomplete="off" class="form-control" name="password" id="password" placeholder="Silahkan Masukkan Password">
+                      <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password position-absolute end-0 top-50 translate-middle-y pe-3" style="cursor: pointer; left: 93%"></span>
                       @error('password')
                         <p class="text-danger text-xs mt-2">{{ $message }}</p>
                       @enderror
@@ -65,3 +64,17 @@
   </main>
 
 @endsection
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const togglePassword = document.querySelector(".toggle-password");
+    const passwordInput = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function () {
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
+    });
+  });
+</script>

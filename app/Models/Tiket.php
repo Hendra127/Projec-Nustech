@@ -26,5 +26,11 @@ class Tiket extends Model
         'tanggal_close',
         'bulan_close',
         'detail_problem',
+        'plan_actions',
+        'ce',
     ];
+    public function datasite()
+{
+    return $this->belongsTo(DataSite::class, 'site_id', 'id');
+}
 }

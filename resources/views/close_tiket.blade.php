@@ -47,6 +47,7 @@
                                 <th>BULAN CLOSE</th>
                                 <th>DETAIL PROBLEM</th>
                                 <th>PLAN ACTIONS</th>
+                                <th>CE</th>
                                 <th>AKSI</th>
                             </tr>
                         </thead>
@@ -68,6 +69,7 @@
                                 <td>{{ $item->bulan_close }}</td>
                                 <td>{{ $item->detail_problem }}</td>
                                 <td>{{ $item->plan_actions }}</td>
+                                <td>{{ $item->ce }}</td>
                                 <td class="d-flex gap-2">
                                     <a href="{{ route('tiket.delete', ['id' => $item->id]) }}" class="btn btn-info mr-3 mb-3">Delete</a>
                                     <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
@@ -179,6 +181,14 @@
                             <label>Detail Problem</label>
                             <textarea name="detail_problem" class="form-control" rows="2" disabled></textarea>
                         </div>
+                        <div class="form-group col-md-12">
+                            <label>Plan Actions</label>
+                            <textarea type="text" name="plan_actions" class="form-control" rows="2" disabled></textarea>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Cluster Enginer (CE)</label>
+                            <textarea name="ce" class="form-control" rows="2" disabled></textarea>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -231,6 +241,12 @@
                     );
                     $("textarea[name='detail_problem']").val(
                         response.data.detail_problem
+                    );
+                    $("textarea[name='plan_actions']").val(
+                        response.data.plan_actions
+                    );
+                    $("textarea[name='ce']").val(
+                        response.data.ce
                     );
                     $('#modalTambahTiketLabel').text('Detail Tiket');
                     $('#tiketForm').attr('action', `/tiket/${id}`);

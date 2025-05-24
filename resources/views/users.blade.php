@@ -3,14 +3,7 @@
 @section('content')
 
 <div>
-    <div class="alert alert-secondary mx-4" role="alert">
-        <span class="text-white">
-            <strong>Add, Edit, Delete features are not functional!</strong> This is a
-            <strong>PRO</strong> feature! Click <strong>
-            <a href="https://www.creative-tim.com/live/soft-ui-dashboard-pro-laravel" target="_blank" class="text-white">here</a></strong>
-            to see the PRO product!
-        </span>
-    </div>
+    
 
     <div class="row">
         <div class="col-12">
@@ -102,7 +95,7 @@
             <form id="userForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahUserLabel">Tambah Data Tiket</h5>
+                    <h5 class="modal-title" id="modalTambahUserLabel">Tambah User Baru</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

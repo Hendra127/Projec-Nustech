@@ -115,19 +115,34 @@ class SiteController extends Controller
      * Mengimpor data site dari file Excel/CSV.
      */
     public function dataimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv',
-        ]);
+{
+    $request->validate([
+        'file' => 'required|file|mimes:xlsx,xls,csv',
+    ]);
 
-        $file = $request->file('file');
-        $namaFile = $file->getClientOriginalName();
-        $file->move('datasite', $namaFile);
+    $file = $request->file('file');
+    $namaFile = $file->getClientOriginalName();
 
-        Excel::import(new DataImport, public_path('/datasite/' . $namaFile));
-
-        return redirect()->route('tables')->with('success', 'Data berhasil diimpor.');
+    // Buat folder public/datasite jika belum ada
+    $tujuanPath = public_path('datasite');
+    if (!file_exists($tujuanPath)) {
+        mkdir($tujuanPath, 0775, true);
     }
+
+    // Pindahkan file ke folder public/datasite
+    $file->move($tujuanPath, $namaFile);
+
+    // Import dari path absolut
+    $filePath = $tujuanPath . '/' . $namaFile;
+
+    if (!file_exists($filePath)) {
+        return back()->with('error', 'File tidak ditemukan di server: ' . $filePath);
+    }
+
+    Excel::import(new DataImport, $filePath);
+
+    return redirect()->route('tables')->with('success', 'Data berhasil diimpor.');
+}
 
     /**
      * Menampilkan form untuk menambah data site.
@@ -219,5 +234,15 @@ class SiteController extends Controller
                 'message' => 'Data site tidak ditemukan.'
             ], 404);
         }
+    }
+    public function getDataSite($id)
+    {
+        $site = Site::find($id);
+
+        if (!$site) {
+            return response()->json(['message' => 'Data site tidak ditemukan'], 404);
+        }
+
+        return response()->json($site);
     }
 }

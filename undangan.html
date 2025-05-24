@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Undangan Pernikahan Faizul & Nuri</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Undangan pernikahan Faizul & Nuri - 25 Mei 2025, Dusun Montong Singgan, Lombok Utara.">
+  <meta property="og:title" content="Undangan Pernikahan Faizul & Nuri">
+  <meta property="og:description" content="25 Mei 2025 di Dusun Montong Singgan, Desa Salut, Lombok Utara.">
+  <meta property="og:image" content="https://via.placeholder.com/200x200">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="https://via.placeholder.com/32" type="image/x-icon">
+
+  <!-- Fonts -->
+   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  </audio>
+  <style>
+  @font-face {
+    font-family: 'Aphrodite';
+    src: url('fonts/Aphrodite.woff') format('woff');
+  }
+
+  #slide3 h2,
+  #slide4 h2
+   {
+    font-family: 'Aphrodite', cursive;
+  }
+</style>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      scroll-behavior: smooth;
+      font-family: 'Quicksand', sans-serif;
+      background: #fdfaf6;
+      color: #333;
+    }
+
+    nav {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 245, 239, 0.9);
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    nav a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      color: #b07c66;
+      font-weight: 600;
+    }
+
+    /* Tombol musik */
+    #musicControl {
+      cursor: pointer;
+      background: #b07c66;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #musicControl:hover {
+      background: #8f9596;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: linear-gradient(to bottom right, #fff5ef, #fdfaf6);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      color: #333;
+    }
+
+    #slide1 {
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      color: #fff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    #slide1::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 0;
+    }
+
+    #slide1 .slide-content {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation-duration: 1.5s;
+      animation-fill-mode: both;
+      max-width: 700px;
+      padding: 1rem;
+      animation-name: fadeInTop;
+      animation-play-state: running;
+      white-space: pre-line;
+    }
+
+    section.fade-top .slide-content,
+    section.fade-left .slide-content,
+    section.fade-right .slide-content,
+    section.fade-bottom .slide-content {
+      opacity: 0;
+      animation-duration: 1.5s;
+      animation-fill-mode: forwards;
+      animation-play-state: paused;
+    }
+
+    section.fade-top .slide-content.animate { animation-name: fadeInTop; animation-play-state: running; }
+    section.fade-left .slide-content.animate { animation-name: fadeInLeft; animation-play-state: running; }
+    section.fade-right .slide-content.animate { animation-name: fadeInRight; animation-play-state: running; }
+    section.fade-bottom .slide-content.animate { animation-name: fadeInBottom; animation-play-state: running; }
+
+    @keyframes fadeInTop {
+      0% { opacity: 0; transform: translateY(-50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      0% { opacity: 0; transform: translateX(-50px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      0% { opacity: 0; transform: translateX(50px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInBottom {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 4rem;
+      color: inherit;
+      margin-bottom: 1rem;
+    }
+
+    h2 { font-size: 2rem; margin-top: 1rem; color: inherit; }
+    p { font-size: 1.2rem; margin: 0.5rem 0; color: inherit; }
+
+    iframe {
+      width: 100%;
+      border: 0;
+      border-radius: 1rem;
+    }
+
+    a.button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: #b07c66;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    img {
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 3rem; }
+      h2 { font-size: 1.5rem; }
+      p { font-size: 1rem; }
+    }
+
+    #popupFormOverlay {
+      position: fixed; 
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      z-index: 9999;
+    }
+    #popupForm {
+      background: #fff; 
+      padding: 2rem; 
+      border-radius: 10px;
+      max-width: 320px; 
+      width: 90%; 
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    #popupForm h2 {
+      margin-bottom: 1rem; 
+      font-family: 'Dancing Script', cursive;
+    }
+    #popupForm input[type="text"] {
+      width: 100%; 
+      padding: 0.5rem 0.7rem; 
+      font-size: 1.1rem; 
+      margin-bottom: 1rem; 
+      border: 1px solid #ccc; 
+      border-radius: 6px;
+    }
+    #popupForm button {
+      background: #b07c66; 
+      color: white; 
+      border: none; 
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px; 
+      font-size: 1.1rem; 
+      cursor: pointer;
+    }
+
+    #popupForm button:hover { background: #8f9596; }
+
+    /* Countdown */
+    .countdown {
+      margin-top: 1rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.5);
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="popupFormOverlay">
+    <form id="popupForm">
+      <h2>Tolong Maasukkan Nama Anda</h2>
+      <input type="text" name="guestName" placeholder="Masukkan Nama Anda" required autocomplete="off"/>
+      <button type="submit">Kirim</button>
+    </form>
+  </div>
+
+  <nav>
+    <a href="#slide1">Home</a>
+    <a href="#slide2">Profil</a>
+    <a href="#slide3">Lokasi</a>
+    <a href="#slide4">Doa & Ucapan</a>
+    <!-- tombol musik -->
+    <button id="musicControl" aria-label="Toggle Musik">▶️</button>
+  </nav>
+
+  <section id="slide1" class="fade-top" style="position: relative; overflow: hidden; color: white;">
+    <iframe 
+      src="https://drive.google.com/uc?export=view&id=1ylamvidwCIHQDJQT4WiUeT77fwbmTUqO" 
+      frameborder="0" 
+      allowfullscreen 
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; filter: brightness(0.6);">
+    </iframe>
+    <div class="slide-content" style="position: relative; z-index: 1;">
+      <h1>The Wedding Of</h1>
+      <h2 style="font-family: 'Great Vibes', cursive; font-size: 3rem;">FaizuL</h2>
+       <h2 style="font-family: 'Great Vibes', cursive; font-size: 3rem;"> & </h2>
+       <h2 style="font-family: 'Great Vibes', cursive; font-size: 3rem;">Nuri</h2>
+      <p>25 Mei 2025, pukul 08:00 WITA</p>
+      <div id="countdown" class="countdown">Loading countdown...</div>
+      <p id="guestGreeting" style="margin-top: 2rem; font-size: 1.5rem; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.7); white-space: pre-line;"></p>
+    </div>
+  </section>
+
+  <section id="slide2" class="fade-left">
+    <div class="slide-content">
+      <p><strong>Assalamu'alaikum Warahmatullahi Wabarakatuh</strong></p>
+      <p>Dengan memohon ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam pernikahan kami:</p>
+      <h2 style="font-family: 'Great Vibes', cursive; font-size: 3rem;">Faizul Islami</h2>
+      <p>Putra dari Bapak Alm. Marzuki dan Ibu Rukayah</p>
+      <h2 style="font-family: 'Great Vibes', cursive; font-size: 2.5rem;">Dengan</h2>
+      <h2 style="font-family: 'Great Vibes', cursive; font-size: 3rem;">Nuri Auliya Ulul Arshy</h2>
+      <p>Putri  dari Bapak Husnul dan Ibu Zaenap</p>
+      <p>    </p>
+      <p>    </p>
+      <p>Yang Insya Allah akan dilaksanakan pada:</p>
+      <p><strong>Minggu, 25 Mei 2025 | Pukul 08:00 WITA</strong></p>
+      <p><strong>Wasalamu'alaikum Warahmatullahi Wabarakatuh</strong></p>
+    </div>
+  </section>
+
+  <section id="slide3" class="fade-right">
+    <div class="slide-content">
+      <h2>📌Lokasi Acara</h2>
+      <p>Rumah Alm. Bapak Marzuki</p>
+      <p>Dusun Montong Singgan, Desa Salut, Kecamatan Kayangan, Kabupaten Lombok Utara</p>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18..." height="300" allowfullscreen="" loading="lazy"></iframe>
+      <a class="button" href="https://maps.app.goo.gl/jZBLxLdvCH4BRBtX9" target="_blank">📌Klik Disini Untuk Melihat lokasi Akurat</a>
+    </div>
+  </section>
+
+  <section id="slide4" class="fade-bottom">
+    <div class="slide-content">
+        <h2 style="margin-top: 6px;">Ucapan dan Doa</h2>
+      <h3>semoga kedua mempelai selalu diberi ketenangan dan kebahagiaan</h3>
+      <h3>Serta menjadi keluarga yang sakinah, mawadah, dan warahmah</h3>
+      <h3>Atas kehadiran dan doa restunya</h3>
+      <h3>Kami ucapkan terima kasih yang sebesar-besarnya.</h3>
+
+
+
+      <h2 style="margin-top: 20px;"><i>"Kami percaya bahwa cinta bukan hanya tentang hari ini, tapi tentang besok, dan setiap hari setelahnya. Tentang berjalan berdampingan dalam terang dan gelap, dalam suka dan duka. Inilah awal dari perjalanan yang kami pilih untuk tempuh bersama, dan kami bahagia karena Anda menjadi bagian dari kisah ini."</i></h2>
+    </div>
+  </section>
+
+  <script>
+    const sections = document.querySelectorAll("section");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const slideContent = entry.target.querySelector('.slide-content');
+        if (entry.isIntersecting) {
+          slideContent.classList.add('animate');
+        } else {
+          slideContent.classList.remove('animate');
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(section => observer.observe(section));
+  </script>
+
+  <script>
+    const popupOverlay = document.getElementById('popupFormOverlay');
+    const popupForm = document.getElementById('popupForm');
+    const guestGreeting = document.getElementById('guestGreeting');
+    popupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = this.guestName.value.trim();
+      if(name.length > 0) {
+        guestGreeting.textContent = `Kepada Yth, ${name}`;
+        popupOverlay.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script>
+    function updateCountdown() {
+  const countdownEl = document.getElementById('countdown');
+  
+  const eventDateUTC = new Date(Date.UTC(2025, 4, 25, 0, 0, 0)); // Mei = 4 (0-based)
+  const eventTime = eventDateUTC.getTime() + (8 * 60 * 60 * 1000); // tambah 8 jam
+
+  const now = new Date().getTime();
+  const diff = eventTime - now;
+
+  if (diff <= 0) {
+    countdownEl.textContent = "Acara telah dimulai";
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  countdownEl.textContent = `${days} Hari ${hours} Jam ${minutes} Menit ${seconds} Detik`;
+}
+
+// Panggil dan jalankan update tiap detik
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+  </script>
+
+  <script>
+    // Musik play/pause control
+    const music = document.getElementById('bgMusic');
+    const btnMusic = document.getElementById('musicControl');
+
+    // Mulai putar otomatis jika bisa (may be blocked on some mobile browsers)
+    music.play().catch(() => {
+      // autoplay blocked
+      btnMusic.textContent = '▶️';
+    });
+
+    btnMusic.addEventListener('click', () => {
+      if(music.paused) {
+        music.play();
+        btnMusic.textContent = '⏸️';
+      } else {
+        music.pause();
+        btnMusic.textContent = '▶️';
+      }
+    });
+
+    // Set initial icon based on audio state
+    music.onplaying = () => btnMusic.textContent = '⏸️';
+    music.onpause = () => btnMusic.textContent = '▶️';
+  </script>
+
+</body>
+</html>

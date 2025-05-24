@@ -59,7 +59,9 @@ class DashboardController extends Controller
             // Ambil 2 bulan terakhir
             $lastTwo = $data->take(-2)->values();
 
-            $allTiket = Tiket::orderBy('created_at')->get();
+             $allTiket = Tiket::where('status_tiket', 'OPEN')
+                ->orderBy('created_at')
+                ->get();
 
 
 

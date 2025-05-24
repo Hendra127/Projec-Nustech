@@ -24,9 +24,14 @@ use App\Http\Controllers\TiketController;
 |
 */
 
+// ✅ Tambahkan route landing page
+Route::get('/', function () {
+    return view('landingpage'); // Buat file resources/views/landing.blade.php
+})->name('landingpage');
+
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('/', [HomeController::class, 'home']);
+    Route::get('/home', [HomeController::class, 'home']); // Ganti dari '/' ke '/home'
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 	Route::get('tiket', function () {
@@ -88,7 +93,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/close/tiket', [TiketController::class, 'closeTiket'])->name('close.tiket');
 
-
+	Route::get('/get-datasite/{id}', [App\Http\Controllers\TiketController::class, 'getDataSite']);
 
 });
 
