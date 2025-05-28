@@ -68,7 +68,7 @@
                                         <span class="text-secondary text-xs font-weight-bold">{{ $user->created_at->format('d/m/Y') }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <a href="#" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit user" data-toggle="modal" onclick="openEditModal({{ $user->id }})">
+                                        <a href="#" class="mx-3" data-bs-toggle="modal" data-bs-original-title="Edit user" onclick="openEditModal({{ $user->id }})">
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
                                         <span>
