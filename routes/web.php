@@ -95,6 +95,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/get-datasite/{id}', [App\Http\Controllers\TiketController::class, 'getDataSite']);
 
+	Route::get('/tiket/close/{id}', [TiketController::class, 'close'])->name('tiket.close');
+
 });
 
 Route::group(['middleware' => 'guest'], function () {

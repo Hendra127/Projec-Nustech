@@ -32,7 +32,7 @@ class TiketController extends Controller
             ->paginate(10) // <- pastikan paginate
             ->withQueryString(); // agar search tetap saat pindah halaman
 
-        $semuaSite = Site::all(); // gunakan model Site bila tersedia
+        $semuaSite = Datasite::all(); // gunakan model Site bila tersedia
         $sites = Datasite::select('id', 'sitename')->orderBy('sitename')->get();
 
         return view('tiket', compact('tiket', 'semuaSite', 'sites'));
@@ -85,13 +85,26 @@ class TiketController extends Controller
                 'ce' => 'nullable|string',
             ]);
 
+            // Cek apakah data dengan kombinasi nama_site, provinsi, kabupaten dan status OPEN sudah ada
+            $existing = Tiket::where('nama_site', $request->nama_site)
+                        ->where('provinsi', $request->provinsi)
+                        ->where('kabupaten', $request->kabupaten)
+                        ->where('status_tiket', 'OPEN')
+                        ->first();
+            
+            if ($existing) {
+                return redirect()->route('tiket')->with('error', 'Data tiket dengan kombinasi Nama Site, Site ID, Provinsi, Kabupeten dan status OPEN yang anda masukkan sudah ada.');
+            }
+
             Tiket::create($request->all());
 
             return redirect()->route('tiket')->with('success', 'Data tiket berhasil disimpan.');
         } catch (\Throwable $th) {
             // dd($th);
             // throw $th;
-        }
+            return redirect()->route('tiket')->with('error', 'Terjadi kesalahan saat menyimpan data.');
+    }
+        
     }
 
     // Update data tiket dari modal
@@ -143,17 +156,19 @@ class TiketController extends Controller
     // Update status tiket (OPEN/CLOSE)
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
-            'status_tiket' => 'required|in:OPEN,CLOSE'
-        ]);
-
         $tiket = Tiket::findOrFail($id);
-        $tiket->status_tiket = $request->status_tiket;
+
+        $tiket->status_tiket = strtoupper($request->status_tiket);
+
+        if (strtoupper($request->status_tiket) === 'CLOSE') {
+            $tiket->tanggal_close = now(); // otomatis isi tanggal hari ini
+            $tiket->bulan_close = now()->format('F'); // otomatis isi nama bulan
+        }
+
         $tiket->save();
 
         return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
     }
-
     public function getDataSites(Request $request)
     {
         try {
@@ -254,15 +269,14 @@ class TiketController extends Controller
 
         return redirect()->route('tiket.index')->with('success', 'Tiket berhasil di-close.');
     }
-    public function getDataSite($id)
+    public function getDatasite($id)
 {
-    $site = Site::findOrFail($id);
+    $site = Datasite::find($id);
 
-    return response()->json([
-        'site_id' => $site->site_id,
-        'provinsi' => $site->provinsi,
-        'kabupaten' => $site->kab,  // <- sesuaikan nama kolom di DB
-        'sitename' => $site->sitename,
-    ]);
+    if (!$site) {
+        return response()->json(['message' => 'Data tidak ditemukan'], 404);
+    }
+
+    return response()->json($site);
 }
 }

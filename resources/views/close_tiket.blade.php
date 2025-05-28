@@ -71,7 +71,9 @@
                                 <td>{{ $item->plan_actions }}</td>
                                 <td>{{ $item->ce }}</td>
                                 <td class="d-flex gap-2">
-                                    <a href="{{ route('tiket.delete', ['id' => $item->id]) }}" class="btn btn-info mr-3 mb-3">Delete</a>
+                                    <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">
+                                        Delete
+                                    </a>
                                     <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
                                 </td>
                             </tr>
@@ -198,7 +200,53 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    $('.btn-delete').click(function (e) {
+        e.preventDefault();
+        const url = $(this).data('url');
+
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    });
+});
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: true
+        }).then(() => {
+            // Buka modal kembali setelah notifikasi
+            $('#modalTambahTiket').modal('show');
+        });
+    @endif
     function openCreateModal() {
         $('#siteModal').modal('show');
         $('#modalTitle').text('Create Tiket');

@@ -36,6 +36,8 @@ class TiketImport implements ToCollection, WithHeadingRow
             Tiket::updateOrCreate(
                 ['nama_site' => $namaSite],
                 [
+                    'site_id'         => $data['site_id'] ?? null,
+                    'nama_site'       => $data['nama_site'] ?? null,
                     'provinsi'        => $data['provinsi'] ?? null,
                     'kabupaten'       => $data['kabupaten'] ?? null,
                     'durasi'          => $durasi,

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tiket', function (Blueprint $table) {
             $table->id();
+            $table->string('site_id')->nullable(); // Tambahkan ini
             $table->string('nama_site')->nullable();
             $table->string('provinsi');
             $table->string('kabupaten');
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->string('status_tiket');
             $table->text('kendala')->nullable();
             $table->date('tanggal_close')->nullable();
-             $table->string('bulan_close')->nullable()->change(); 
+             $table->string('bulan_close')->nullable(); 
             $table->text('detail_problem')->nullable();
             $table->timestamps();
         });
