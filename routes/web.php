@@ -8,6 +8,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DatapassController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -41,10 +42,6 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('profile', function () {
 		return view('profile');
 	})->name('profile');
-
-	Route::get('rtl', function () {
-		return view('rtl');
-	})->name('rtl');
 
     Route::get('virtual-reality', function () {
 		return view('virtual-reality');
@@ -92,10 +89,20 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('/tiket/{id}/update-status', [TiketController::class, 'updateStatus'])->name('tiket.updateStatus');
 
     Route::get('/close/tiket', [TiketController::class, 'closeTiket'])->name('close.tiket');
+    
+    Route::get('/get-datasite/{id}', [TiketController::class, 'getDataSite']);
+    
+    Route::get('/tiket/close/{id}', [TiketController::class, 'close'])->name('tiket.close');
 
-	Route::get('/get-datasite/{id}', [App\Http\Controllers\TiketController::class, 'getDataSite']);
+	// Route untuk datapass
+	Route::get('/datapass', [DatapassController::class, 'index'])->name('datapass.index');
+	Route::post('/datapass', [DatapassController::class, 'store'])->name('datapass.store');
+	Route::put('/datapass/{id}', [DatapassController::class, 'update'])->name('datapass.update');
+	Route::delete('/datapass/{id}', [DatapassController::class, 'destroy'])->name('datapass.destroy'); 
+	Route::post('/datapass/import', [DatapassController::class, 'import'])->name('datapass.import');
+	Route::get('/datapass/export', [DatapassController::class, 'export'])->name('datapass.export');
+	Route::get('/datapass/search', [DatapassController::class, 'search'])->name('datapass.search');
 
-	Route::get('/tiket/close/{id}', [TiketController::class, 'close'])->name('tiket.close');
 
 });
 

@@ -142,7 +142,8 @@
 @endsection
 
 @section('scripts')
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function openEditModal(id) {
         $.ajax({
@@ -167,6 +168,15 @@
             },
         });
     }
-</script>
 
+    @if (session('success'))
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        timer: 2500,
+        showConfirmButton: false
+    });
+    @endif
+</script>
 @endsection

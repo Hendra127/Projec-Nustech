@@ -5,32 +5,22 @@
     <div class="content">
         <div class="card card-info card-outline">
             <div class="card-header">
-                <!-- Tombol Tambah, Export, Import -->
-                <div class="d-flex flex-wrap mb-3">
-                    <div style="margin-right: 20px">
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                    <div>
                         <a href="{{ route('tiketexport') }}" class="btn btn-success mr-3 mb-3">Export</a>
                         <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">Import</a>
                     </div>
+                    <form action="{{ route('tiket') }}" method="GET" class="d-flex align-items-center mb-3">
+                        <input type="text" name="query" class="form-control form-control-sm me-2" placeholder="Enter To Search" value="{{ request()->query('query') }}">
+                        <button type="submit" class="btn btn-magenta btn-sm mb-0">Search</button>
+                    </form>
                 </div>
-
-                <!-- Form Search -->
-                <form action="{{ route('tiket') }}" method="GET">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" name="query" class="form-control" placeholder="Search by Site Name or Province" value="{{ request()->query('query') }}">
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </div>
-                    </div>
-                </form>
             </div>
-
             <div class="card-body">
                 <!-- Tabel dengan scroll horizontal -->
-                <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                    <table class="table table-bordered table-striped" style="min-width: 1000px;">
-                        <thead class="thead-dark">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
+                        <thead class="table-dark">
                             <tr>
                                 <th>No</th>
                                 <th>SITE ID</th>
@@ -197,6 +187,12 @@
         </div>
     </div>
 </main>
+<style>
+    .btn-magenta {
+        background-color: #d200aa;
+        color: white;
+    }
+</style>
 @endsection
 
 @section('scripts')

@@ -11,33 +11,30 @@
     <div class="content">
         <div class="card card-info card-outline">
             <div class="card-header">
+            <h4 class="mb-4" style="text-align: center;"> Data Open Tiket</h4>
                 <!-- Tombol Tambah, Export, Import -->
-                <div class="d-flex flex-wrap mb-3">
-                    <div style="margin-right: 20px">
-                        <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" data-target="#modalTambahTiket">Tambah Data</a>
-                        <a href="{{ route('tiketexport') }}" class="btn btn-success mr-3 mb-3">Export</a>
-                        <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">Import</a>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                    {{-- Tombol Aksi di Kiri --}}
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalTambahTiket">Tambah Data</a>
+                        <a href="{{ route('tiketexport') }}" class="btn btn-success">Export</a>
+                        <a href="#" class="btn btn-info" data-toggle="modal" data-target="#exampleModalLong">Import</a>
                     </div>
-                </div>
 
-                <!-- Form Search -->
-                <form action="{{ route('tiket') }}" method="GET">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" name="query" class="form-control" placeholder="Search by Site Name or Province" value="{{ request()->query('query') }}">
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </div>
-                    </div>
-                </form>
+                    {{-- Form Search di Kanan --}}
+                    <form action="{{ route('tiket') }}" method="GET" class="d-flex align-items-center gap-2">
+                        <input type="text" name="query" class="form-control form-control-sm" placeholder="Enter To Search" value="{{ request()->query('query') }}">
+                        <button type="submit" class="btn btn-magenta btn-sm mb-0">Search</button>
+                    </form>
+                </div>
             </div>
+            <div class="card-body">
 
             <div class="card-body">
                 <!-- Tabel dengan scroll horizontal -->
-                <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                    <table class="table table-bordered table-striped" style="min-width: 1000px;">
-                        <thead class="thead-dark">
+                <div class="table-responsive" style="margin-top: -60px;">
+                    <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
+                        <thead class="table-dark">
                             <tr>
                                 @php
                                     $bulan = [
@@ -55,8 +52,8 @@
                                         '12' => 'Desember',
                                     ];
                                 @endphp
-                                <th>No</th>
-                                <th>SITE ID</th>
+                                <th class="text-center">No</th>
+                                <th class="text-center">SITE ID</th>
                                 <th>NAMA SITE</th>
                                 <th>PROVINSI</th>
                                 <th>KABUPATEN</th>
@@ -67,32 +64,32 @@
                                     @endphp
                                     <a href="{{ url('tiket') }}?sort={{ $nextSort }}">DURASI</a>
                                 </th>
-                                <th>KATEGORI</th>
-                                <th>TANGGAL REKAP</th>
-                                <th>BULAN OPEN</th>
-                                <th>STATUS TIKET</th>
+                                <th class="text-center">KATEGORI</th>
+                                <th class="text-center">TANGGAL REKAP</th>
+                                <th class="text-center">BULAN OPEN</th>
+                                <th class="text-center">STATUS TIKET</th>
                                 <th>KENDALA</th>
-                                <th>TANGGAL CLOSE</th>
-                                <th>BULAN CLOSE</th>
+                                <th class="text-center">TANGGAL CLOSE</th>
+                                <th class="text-center">BULAN CLOSE</th>
                                 <th>DETAIL PROBLEM</th>
                                 <th>PLAN ACTIONS</th>
                                 <th>CE</th>
-                                <th>ACTIONS</th>
+                                <th class="text-center">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tiket as $index => $item)
                             <tr>
-                                <td>{{ $tiket->firstItem() + $index }}</td>
-                                <td>{{ $item->site_id }}</td>
+                                <td class="text-center">{{ $tiket->firstItem() + $index }}</td>
+                                <td class="text-center">{{ $item->site_id }}</td>
                                 <td>{{ $item->nama_site }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kabupaten }}</td>
-                                <td class="durasi">{{ $item->durasi_terbaru }}</td>
-                                <td>{{ $item->kategori }}</td>
-                                <td class="tanggal-rekap">{{ $item->tanggal_rekap }}</td>
-                                <td>{{ $item->bulan_open }}</td>
-                                <td>{{ $item->status_tiket }}</td>
+                                <td class="durasi text-center">{{ $item->durasi_terbaru }}</td>
+                                <td class="text-center">{{ $item->kategori }}</td>
+                                <td class="tanggal-rekap text-center">{{ $item->tanggal_rekap }}</td>
+                                <td class="text-center">{{ $item->bulan_open }}</td>
+                                <td class="text-center">{{ $item->status_tiket }}</td>
                                 <td>{{ $item->kendala }}</td>
                                 <td>
                                     {{ $item->tanggal_close 
@@ -118,9 +115,7 @@
                                             </button>
                                         </form>
                                     @endif
-                                    <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">
-                                        Delete
-                                    </a>
+                                    <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">  Delete </a>
                                     <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Update</a>
                                 </td>
                             </tr>
@@ -224,18 +219,18 @@
                             <label>Bulan Open Tiket</label>
                             <select name="bulan_open" class="form-control" required>
                                 <option value="">-- Pilih Bulan Open --</option>
-                                <option value="JANUARI">JANUARI</option>
-                                <option value="FEBRUARI">FEBRUARI</option>
-                                <option value="MARET">MARET</option>
-                                <option value="APRIL">APRIL</option>
-                                <option value="MEI">MEI</option>
-                                <option value="JUNI">JUNI</option>
-                                <option value="JULI">JULI</option>
-                                <option value="AGUSTUS">AGUSTUS</option>
-                                <option value="SEPTEMBER">SEPTEMBER</option>
-                                <option value="OKTOBER">OKTOBER</option>
-                                <option value="NOVEMBER">NOVEMBER</option>
-                                <option value="DESEMBER">DESEMBER</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
                             </select>
                         </div>
                         <div class="form-group col-md-6">
@@ -280,8 +275,15 @@
         </div>
     </div>
 </main>
+<style>
+    .btn-magenta {
+        background-color: #d200aa;
+        color: white;
+    }
+</style>
 @endsection
 
+@section('scripts')
 @section('scripts')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
@@ -290,32 +292,32 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    $('.btn-delete').click(function (e) {
-        e.preventDefault();
-        const url = $(this).data('url');
-
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak bisa dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = url;
-            }
+        $('.btn-delete').click(function (e) {
+            e.preventDefault();
+            const url = $(this).data('url');
+    
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
         });
     });
-});
     $(document).ready(function() {
-    $('#select_site_id').select2({
-        dropdownParent: $('#modalTambahTiket'), // ini penting untuk modal
-        placeholder: "Pilih atau cari Nama Site"
+        $('#select_site_id').select2({
+            dropdownParent: $('#modalTambahTiket'), // ini penting untuk modal
+            placeholder: "Pilih atau cari Nama Site"
+        });
     });
-});
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.btn-submit-close').forEach(button => {
             button.addEventListener('click', function (e) {

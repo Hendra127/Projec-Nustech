@@ -1,109 +1,109 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
+<style>
+  body {
+    background: linear-gradient(to bottom right,rgb(209, 215, 231),rgb(134, 173, 229));
+    min-height: 100vh;
+  }
+</style>
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
     <div class="content">
         <div class="card card-info card-outline">
             <div class="card-header">
                 <!-- Tombol Tambah, Export, Import -->
-                <div class="d-flex flex-wrap mb-3">
-                    <div style="margin-right: 20px">
-                        <a href="{{ route('datacreate') }}" class="btn btn-primary mr-5 mb-3">Tambah</a>
-                        <a href="{{ route('dataexport') }}" class="btn btn-success mr-5 mb-3">Export</a>
-                        <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">Import</a>
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                    <!-- Tombol Tambah, Export, Import -->
+                    <div class="mb-2">
+                        <a href="{{ route('datacreate') }}" class="btn btn-primary mr-2 mb-2">Tambah</a>
+                        <a href="{{ route('dataexport') }}" class="btn btn-success mr-2 mb-2">Export</a>
+                        <a href="#" class="btn btn-info mb-2" data-toggle="modal" data-target="#exampleModalLong">Import</a>
                     </div>
-                </div>
 
-                <!-- Form Search -->
-                <form action="{{ route('tables') }}" method="GET">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" name="query" class="form-control" placeholder="Search by Site Name or Province" value="{{ request()->query('query') }}">
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </div>
-                    </div>
-                </form>
+                    <!-- Form Search (di kanan) -->
+                    <form action="{{ route('tables') }}" method="GET" class="d-flex align-items-center">
+                        <input type="text" name="query" class="form-control form-control-sm me-2" placeholder="Enter To Search" value="{{ request()->query('query') }}">
+                        <button type="submit" class="btn btn-primary btn-sm mb-0">Search</button>
+                    </form>
+                </div>
             </div>
 
             <div class="card-body">
                 <!-- Tabel dengan scroll horizontal yang selalu aktif -->
-                <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                    <table class="table table-bordered table-striped" style="min-width: 1000px;"> <!-- Minimum width untuk memaksa scroll muncul -->
-                        <thead class="thead-dark">
+                <div class="table-responsive" style="margin-top: -40px;">
+                    <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
+                        <thead class="table-dark">
                             <tr>
-                                <th>NO</th>
-                                <th>ID SITE</th>
-                                <th>SITE NAME</th>
-                                <th>TIPE</th>
-                                <th>BATCH</th>
-                                <th>LATITUDE</th>
-                                <th>LONGITUDE</th>
-                                <th>PROVINSI</th>
-                                <th>KABUPATEN</th>
-                                <th>KECAMATAN</th>
-                                <th>KELURAHAN</th>
-                                <th>ALAMAT</th>
-                                <th>NAMA PIC</th>
-                                <th>NOMOR PIC</th>
-                                <th>SUMBER LISTRIK</th>
-                                <th>GATEWAY AREA</th>
-                                <th>BEAM</th>
-                                <th>HUB</th>
-                                <th>KODEFIKASI</th>
-                                <th>SN ANTENA</th>
-                                <th>SN MODEM</th>
-                                <th>SN ROUTER</th>
-                                <th>SN AP1</th>
-                                <th>SN AP2</th>
-                                <th>SN TRANCIEVER</th>
-                                <th>SN STABILIZER</th>
-                                <th>SN RAK</th>
-                                <th>IP MODEM</th>
-                                <th>IP ROUTER</th>
-                                <th>IP AP1</th>
-                                <th>IP AP2</th>
-                                <th>EXPECTED SQF</th>
-                                <th>AKSI</th>
+                                <th class="text-center">NO</th>
+                                <th class="text-center">ID SITE</th>
+                                <th class="text-center">SITE NAME</th>
+                                <th class="text-center">TIPE</th>
+                                <th class="text-center">BATCH</th>
+                                <th class="text-center">LATITUDE</th>
+                                <th class="text-center">LONGITUDE</th>
+                                <th class="text-center">PROVINSI</th>
+                                <th class="text-center">KABUPATEN</th>
+                                <th class="text-center">KECAMATAN</th>
+                                <th class="text-center">KELURAHAN</th>
+                                <th class="text-center">ALAMAT</th>
+                                <th class="text-center">NAMA PIC</th>
+                                <th class="text-center">NOMOR PIC</th>
+                                <th class="text-center">SUMBER LISTRIK</th>
+                                <th class="text-center">GATEWAY AREA</th>
+                                <th class="text-center">BEAM</th>
+                                <th class="text-center">HUB</th>
+                                <th class="text-center">KODEFIKASI</th>
+                                <th class="text-center">SN ANTENA</th>
+                                <th class="text-center">SN MODEM</th>
+                                <th class="text-center">SN ROUTER</th>
+                                <th class="text-center">SN AP1</th>
+                                <th class="text-center">SN AP2</th>
+                                <th class="text-center">SN TRANCIEVER</th>
+                                <th class="text-center">SN STABILIZER</th>
+                                <th class="text-center">SN RAK</th>
+                                <th class="text-center">IP MODEM</th>
+                                <th class="text-center">IP ROUTER</th>
+                                <th class="text-center">IP AP1</th>
+                                <th class="text-center">IP AP2</th>
+                                <th class="text-center">EXPECTED SQF</th>
+                                <th class="text-center">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($site as $index => $item)
                             <tr>
-                                <td>{{ $site->firstItem() + $index }}</td>
+                                <td class="text-center">{{ $site->firstItem() + $index }}</td>
                                 <td>{{ $item->site_id }}</td>
                                 <td>{{ $item->sitename }}</td>
-                                <td>{{ $item->tipe }}</td>
-                                <td>{{ $item->batch }}</td>
-                                <td>{{ $item->latitude }}</td>
-                                <td>{{ $item->longitude }}</td>
+                                <td class="text-center">{{ $item->tipe }}</td>
+                                <td class="text-center">{{ $item->batch }}</td>
+                                <td class="text-center">{{ $item->latitude }}</td>
+                                <td class="text-center">{{ $item->longitude }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kab }}</td>
                                 <td>{{ $item->kecamatan }}</td>
                                 <td>{{ $item->kelurahan }}</td>
                                 <td>{{ $item->alamat_lokasi }}</td>
                                 <td>{{ $item->nama_pic }}</td>
-                                <td>{{ $item->nomor_pic }}</td>
+                                <td class="text-center">{{ $item->nomor_pic }}</td>
                                 <td>{{ $item->sumber_listrik }}</td>
-                                <td>{{ $item->gateway_area }}</td>
-                                <td>{{ $item->beam }}</td>
-                                <td>{{ $item->hub }}</td>
+                                <td class="text-center">{{ $item->gateway_area }}</td>
+                                <td class="text-center">{{ $item->beam }}</td>
+                                <td class="text-center">{{ $item->hub }}</td>
                                 <td>{{ $item->kodefikasi }}</td>
-                                <td>{{ $item->sn_antena }}</td>
-                                <td>{{ $item->sn_modem }}</td>
-                                <td>{{ $item->sn_router }}</td>
-                                <td>{{ $item->sn_ap1 }}</td>
-                                <td>{{ $item->sn_ap2 }}</td>
-                                <td>{{ $item->sn_tranciever }}</td>
-                                <td>{{ $item->sn_stabilizer }}</td>
-                                <td>{{ $item->sn_rak }}</td>
-                                <td>{{ $item->ip_modem }}</td>
-                                <td>{{ $item->ip_router }}</td>
-                                <td>{{ $item->ip_ap1 }}</td>
-                                <td>{{ $item->ip_ap2 }}</td>
-                                <td>{{ $item->expected_sqf }}</td>
+                                <td class="text-center">{{ $item->sn_antena }}</td>
+                                <td class="text-center">{{ $item->sn_modem }}</td>
+                                <td class="text-center">{{ $item->sn_router }}</td>
+                                <td class="text-center">{{ $item->sn_ap1 }}</td>
+                                <td class="text-center">{{ $item->sn_ap2 }}</td>
+                                <td class="text-center">{{ $item->sn_tranciever }}</td>
+                                <td class="text-center">{{ $item->sn_stabilizer }}</td>
+                                <td class="text-center">{{ $item->sn_rak }}</td>
+                                <td class="text-center">{{ $item->ip_modem }}</td>
+                                <td class="text-center">{{ $item->ip_router }}</td>
+                                <td class="text-center">{{ $item->ip_ap1 }}</td>
+                                <td class="text-center">{{ $item->ip_ap2 }}</td>
+                                <td class="text-center">{{ $item->expected_sqf }}</td>
                                 <td>
                                     <a href="#" class="btn btn-info mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
                                     <a href="/dataupdate/{{ $item->id }}">

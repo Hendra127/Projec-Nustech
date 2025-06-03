@@ -104,6 +104,8 @@
             </div>
             <div class="card-body pt-4 p-3">
                 <p>{{auth()->user()->about_me}}</p>
+                <P>{{auth()->user()->phone}}</P>
+                <p>{{auth()->user()->location}}</p>
             </div>
         </div>
     </div>

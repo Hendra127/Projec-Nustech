@@ -19,6 +19,11 @@ class DashboardController extends Controller
             $tiketOpenCount = Tiket::where('status_tiket', 'OPEN')->count();
             $tiketCloseCount = Tiket::where('status_tiket', 'CLOSE')->count();
             $userCount = User::count();
+            
+            // Ini Fungsi untuk mengambil jumlah site berdasarkan kabupaten
+            $siteByKabupaten = DataSite::select('kab', DB::raw('count(*) as total'))
+                ->groupBy('kab')
+                ->get(); 
 
             $data = DB::table('tiket')
                 ->select('bulan_open as bulan', DB::raw('count(*) as total_open'), DB::raw('0 as total_close'))
@@ -73,7 +78,7 @@ class DashboardController extends Controller
                 $delta = $lastTwo[0]->total_close - $lastTwo[1]->total_close;
             }
 
-            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket'));
+            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket', 'siteByKabupaten'));
         } catch (\Throwable $th) {
             dd($th);
             return abort(404);
