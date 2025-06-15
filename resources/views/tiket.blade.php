@@ -6,7 +6,8 @@
     background: linear-gradient(to bottom right, rgb(209, 215, 231), rgb(134, 173, 229));
     min-height: 100vh;
   }
- </style>
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
     <div class="content">
         <div class="card card-info card-outline">
@@ -16,9 +17,15 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                     {{-- Tombol Aksi di Kiri --}}
                     <div class="d-flex flex-wrap gap-2 mb-2">
-                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalTambahTiket">Tambah Data</a>
-                        <a href="{{ route('tiketexport') }}" class="btn btn-success">Export</a>
-                        <a href="#" class="btn btn-info" data-toggle="modal" data-target="#exampleModalLong">Import</a>
+                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalTambahTiket">
+                            <i class="fa fa-plus"></i> Tambah Data
+                        </a>
+                        <a href="{{ route('tiketexport') }}" class="btn btn-success">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                        <a href="#" class="btn btn-info" data-toggle="modal" data-target="#exampleModalLong">
+                            <i class="fa fa-upload"></i> Import
+                        </a>
                     </div>
 
                     {{-- Form Search di Kanan --}}
@@ -35,7 +42,7 @@
                 <div class="table-responsive" style="margin-top: -60px;">
                     <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
                         <thead class="table-dark">
-                            <tr>
+                            <tr class="text-center align-middle">
                                 @php
                                     $bulan = [
                                         '01' => 'Januari',
@@ -54,26 +61,37 @@
                                 @endphp
                                 <th class="text-center">No</th>
                                 <th class="text-center">SITE ID</th>
-                                <th>NAMA SITE</th>
-                                <th>PROVINSI</th>
-                                <th>KABUPATEN</th>
+                                <th class="text-center">NAMA SITE</th>
+                                <th class="text-center">PROVINSI</th>
+                                <th class="text-center">KABUPATEN</th>
                                 <th>
                                     @php
                                         $currentSort = request()->query('sort', 'desc');
                                         $nextSort = $currentSort === 'asc' ? 'desc' : 'asc';
                                     @endphp
-                                    <a href="{{ url('tiket') }}?sort={{ $nextSort }}">DURASI</a>
+                                    <a href="{{ url('tiket') }}?sort={{ $nextSort }}" class="fw-bold text-white">DURASI</a>
                                 </th>
-                                <th class="text-center">KATEGORI</th>
-                                <th class="text-center">TANGGAL REKAP</th>
+                                <th class="text-center align-middle">
+                                    <form method="GET" action="{{ route('tiket') }}" class="d-flex align-items-center justify-content-center gap-2">
+                                        <span class="fw-bold text-white" style="white-space: nowrap;">KATEGORI</span>
+                                        <select name="kategori" class="form-select form-select-sm" style="width: 65px; padding-right: 10px;" onchange="this.form.submit()">
+                                            <option value="">Semua</option>
+                                            <option value="BMN" {{ request('kategori') == 'BMN' ? 'selected' : '' }}>BMN</option>
+                                            <option value="SL" {{ request('kategori') == 'SL' ? 'selected' : '' }}>SL</option>
+                                        </select>
+                                        <input type="hidden" name="query" value="{{ request('query') }}">
+                                    </form>
+                                </th>
+                                <th class="text-center">TANGGAL OPEN</th>
                                 <th class="text-center">BULAN OPEN</th>
                                 <th class="text-center">STATUS TIKET</th>
-                                <th>KENDALA</th>
+                                <th class="text-center">KENDALA</th>
                                 <th class="text-center">TANGGAL CLOSE</th>
                                 <th class="text-center">BULAN CLOSE</th>
-                                <th>DETAIL PROBLEM</th>
-                                <th>PLAN ACTIONS</th>
-                                <th>CE</th>
+                                <th class="text-center">EVIDENCE</th>
+                                <th class="text-center">DETAIL PROBLEM</th>
+                                <th class="text-center">PLAN ACTIONS</th>
+                                <th class="text-center">CE</th>
                                 <th class="text-center">ACTIONS</th>
                             </tr>
                         </thead>
@@ -85,21 +103,50 @@
                                 <td>{{ $item->nama_site }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kabupaten }}</td>
-                                <td class="durasi text-center">{{ $item->durasi_terbaru }}</td>
+                                <td class="durasi text-center">{{ $item->durasi_terbaru }} Hari</td>
                                 <td class="text-center">{{ $item->kategori }}</td>
                                 <td class="tanggal-rekap text-center">{{ $item->tanggal_rekap }}</td>
                                 <td class="text-center">{{ $item->bulan_open }}</td>
                                 <td class="text-center">{{ $item->status_tiket }}</td>
                                 <td>{{ $item->kendala }}</td>
-                                <td>
+                                <td class="text-center">
                                     {{ $item->tanggal_close 
                                         ? $bulan[\Carbon\Carbon::parse($item->tanggal_close)->format('m')] 
                                         : 'BELUM CLOSE' }}
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {{ $item->bulan_close && isset($bulan[$item->bulan_close]) ? $bulan[$item->bulan_close] : ($item->bulan_close ?? 'BELUM CLOSE') }}
                                 </td>
-                                <td>{{ $item->detail_problem }}</td>
+                                <td class="text-center">
+                                    @if ($item->evidence)
+                                        <a href="#" onclick="showEvidence('{{ asset('storage/'.$item->evidence) }}')" style="text-decoration: underline;">
+                                            ADA
+                                        </a>
+                                    @else
+                                        TIDAK ADA
+                                    @endif
+                                </td >
+                                <td>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->id }}">
+                                        {{ \Illuminate\Support\Str::limit($item->detail_problem, 30) }}
+                                    </a>
+
+                                    <!-- Modal untuk detail problem -->
+                                    <div class="modal fade" id="detailModal{{ $item->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ $item->id }}">Detail Problem</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body"
+                                                style="white-space: normal; word-break: break-word; max-height: 400px; overflow-y: auto; line-height: 1.5;" >
+                                            {{ $item->detail_problem }}
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>{{ $item->plan_actions }}</td>
                                 <td>{{ $item->ce }}</td>
                                 <td class="d-flex gap-2">
@@ -111,19 +158,32 @@
                                             <input type="hidden" name="tanggal_close" id="tanggal_close{{ $item->id }}">
                                             <input type="hidden" name="bulan_close" id="bulan_close{{ $item->id }}">
                                             <button type="submit" class="btn btn-danger mr-3 mb-3 btn-submit-close" data-id="{{ $item->id }}">
-                                                Close
+                                                <i class="fa fa-times"></i> Close
                                             </button>
                                         </form>
                                     @endif
-                                    <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">  Delete </a>
-                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Update</a>
+                                    <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </a>
+                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
+                                        <i class="fa fa-edit"></i> Update
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <!-- Modal untuk menampilkan gambar -->
+                    <div class="modal fade" id="evidenceModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                            <div class="modal-body text-center" id="evidenceContent">
+                                <!-- Isi evidence akan dimuat via JS -->
+                            </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
                 <!-- Sticky Pagination -->
                 <div class="position-sticky bottom-0 end-0 bg-white py-3" style="z-index: 1000;">
                     <div class="d-flex justify-content-end pe-3">
@@ -162,11 +222,27 @@
     </div>
 
     <!-- Modal Tambah Data Tiket -->
-     
+     @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Buka kembali modal jika ada error validasi
+                var myModal = new bootstrap.Modal(document.getElementById('modalAdd'));
+                myModal.show();
+            });
+        </script>
+
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="modal fade" id="modalTambahTiket" tabindex="-1" role="dialog" aria-labelledby="modalTambahTiketLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form id="tiketForm" method="POST">
+                <form id="tiketForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalTambahTiketLabel">Tambah Data Tiket</h5>
@@ -201,7 +277,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Durasi</label>
-                            <input type="text" value="0" name="durasi" class="form-control" readonly>
+                            <input type="text" value="0" name="durasi" class="form-control">
                         </div>
                         <div class="form-group col-md-6">
                             <label>Kategori Tiket</label>
@@ -247,11 +323,22 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Tanggal Close Tiket</label>
-                            <input type="date" name="tanggal_close" class="form-control">
+                            <input type="date" name="tanggal_close" class="form-control" readonly>
                         </div>
                         <div class="form-group col-md-6">
                             <label>Bulan Close Tiket</label>
                             <input type="text" id="bulan_close"  value="BELUM CLOSE" name="bulan_close" class="form-control" readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="evidence">Evidence (foto/video)</label>
+                            <input type="file" name="evidence" id="evidence" class="form-control" accept="image/*,video/*">
+                            
+                            {{-- Tampilkan evidence lama jika ada --}}
+                            @if(!empty($tiket->evidence))
+                                <small class="form-text text-muted">
+                                    Evidence sebelumnya: <a href="{{ asset('storage/' . $tiket->evidence) }}" target="_blank">Lihat</a>
+                                </small>
+                            @endif
                         </div>
                         <div class="form-group col-md-6">
                             <label>Detail Problem</label>
@@ -263,7 +350,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Cluster Engineer (CE)</label>
-                            <input type="text" name="ce" class="form-control">
+                            <input type="text" name="ce" class="form-control" required>
                         </div>
                         </div>
                     <div class="modal-footer">
@@ -284,13 +371,24 @@
 @endsection
 
 @section('scripts')
-@section('scripts')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectBulan = document.querySelector('select[name="bulan_open"]');
+        const bulanSekarang = new Date().toLocaleString('default', { month: 'long' });
+
+        for (let option of selectBulan.options) {
+            if (option.value.toLowerCase() === bulanSekarang.toLowerCase()) {
+                option.selected = true;
+                break;
+            }
+        }
+    });
     document.addEventListener("DOMContentLoaded", function () {
         $('.btn-delete').click(function (e) {
             e.preventDefault();
@@ -370,6 +468,7 @@
                     $('#provinsi').val(data.provinsi);
                     $('#kabupaten').val(data.kab);
                     $('#nama_site').val(data.sitename);
+                    $('#tanggal_rekap').val(data.tanggal_rekap);
                 },
                 error: function(xhr, status, error) {
                     alert('Gagal mengambil data site');
@@ -381,8 +480,22 @@
             $('#provinsi').val('');
             $('#kabupaten').val('');
             $('#nama_site').val('');
+            $('#tanggal_rekap').val('');
         }
     });
+     @if(session('error') && session('form') === 'tambah')
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: true
+        }).then(() => {
+            var modal = new bootstrap.Modal(document.getElementById('modalTambahTiket'));
+            modal.show();
+        });
+    @endif
     function openCreateModal() {
         $('#siteModal').modal('show');
         $('#modalTitle').text('Create Tiket');
@@ -424,9 +537,19 @@
                     $("input[name='bulan_close']").val(
                         response.data.bulan_close
                     );
+                    $("input[name='evidence']").val(
+                        response.data.evidence
+                    );
                     $("textarea[name='detail_problem']").val(
                         response.data.detail_problem
                     );
+                    $("textarea[name='plan_actions']").val(
+                        response.data.plan_actions
+                    );
+                    $("textarea[name='ce']").val(
+                        response.data.ce
+                    );
+                    
                     $('#modalTambahTiketLabel').text('Edit Tiket');
                     $('#tiketForm').attr('action', `/tiket/${id}`);
                     $('#formMethod').html('@method("PUT")');

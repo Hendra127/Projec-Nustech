@@ -9,6 +9,7 @@ use App\Models\Site; // Jika kamu pakai model Site
 use App\Exports\TiketExport;
 use App\Imports\TiketImport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DataSiteByTiketStatusExport;
 
 class TiketController extends Controller
 {
@@ -16,17 +17,23 @@ class TiketController extends Controller
     public function index(Request $request)
 {
     try {
-        $query = $request->input('search');
+        $query = $request->input('query');
+        $kategori = $request->input('kategori');
         $sort = $request->input('sort', 'desc');
 
         $tiket = Tiket::select('*')
             ->selectRaw("durasi + DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
             ->when($query, function ($q) use ($query) {
-                $q->where(function ($subQuery) use ($query) {
-                    $subQuery->where('nama_site', 'like', '%' . $query . '%')
-                            ->orWhere('provinsi', 'like', '%' . $query . '%');
-                });
-            })
+                    $q->where(function ($subQuery) use ($query) {
+                        $subQuery->where('site_id', 'like', '%' . $query . '%')
+                                ->orWhere('nama_site', 'like', '%' . $query . '%')
+                                ->orWhere('kabupaten', 'like', '%' . $query . '%')
+                                ->orWhere('provinsi', 'like', '%' . $query . '%');
+                    });
+                })
+            ->when($kategori, function ($q) use ($kategori) {
+                $q->where('kategori', $kategori);
+            })  
             ->where('status_tiket', 'OPEN')
             ->orderBy('durasi_terbaru', $sort)
             ->paginate(10) // <- pastikan paginate
@@ -80,6 +87,7 @@ class TiketController extends Controller
                 'kendala' => 'nullable',
                 'tanggal_close' => 'nullable|date',
                 'bulan_close' => 'nullable',
+                'evidence' => 'nullable',
                 'detail_problem' => 'nullable',
                 'plan_actions' => 'nullable',
                 'ce' => 'nullable|string',
@@ -89,11 +97,18 @@ class TiketController extends Controller
             $existing = Tiket::where('nama_site', $request->nama_site)
                         ->where('provinsi', $request->provinsi)
                         ->where('kabupaten', $request->kabupaten)
+                        ->where('tanggal_rekap', $request->tanggal_rekap)
                         ->where('status_tiket', 'OPEN')
                         ->first();
             
             if ($existing) {
-                return redirect()->route('tiket')->with('error', 'Data tiket dengan kombinasi Nama Site, Site ID, Provinsi, Kabupeten dan status OPEN yang anda masukkan sudah ada.');
+                return redirect()->route('tiket')->with('error', 'Data tiket dengan kombinasi Nama Site, Site ID, Provinsi, Kabupeten, Tanggal Rekap dan status OPEN yang anda masukkan sudah ada.');
+            }
+            if ($request->hasFile('evidence')) {
+                $file = $request->file('evidence');
+                $nama_file = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('evidence', $nama_file, 'public');
+                $data['evidence'] = $path;
             }
 
             Tiket::create($request->all());
@@ -123,6 +138,7 @@ class TiketController extends Controller
             'kendala' => 'nullable',
             'tanggal_close' => 'nullable|date',
             'bulan_close' => 'nullable',
+            'evidence' => 'nullable|file|mimes:jpeg,png,jpg,mp4,avi,mkv|max:10240', // max 10MB
             'detail_problem' => 'nullable',
             'plan_actions' => 'nullable',
             'ce' => 'nullable|string',
@@ -130,6 +146,11 @@ class TiketController extends Controller
         ]);
 
         $tiket = Tiket::findOrFail($id);
+            // Handle evidence jika diupload
+            if ($request->hasFile('evidence')) {
+            $path = $request->file('evidence')->store('evidences', 'public');
+            $tiket->evidence = $path;
+        }
         $tiket->update($request->all());
 
         return redirect()->route('tiket')->with('success', 'Data tiket berhasil diperbarui.');
@@ -160,15 +181,23 @@ class TiketController extends Controller
 
         $tiket->status_tiket = strtoupper($request->status_tiket);
 
-        if (strtoupper($request->status_tiket) === 'CLOSE') {
+        if ($tiket->status_tiket === 'CLOSE') {
             $tiket->tanggal_close = now(); // otomatis isi tanggal hari ini
             $tiket->bulan_close = now()->format('F'); // otomatis isi nama bulan
+
+            // Perhitungan durasi_akhir tanpa tambahan hari akibat jam
+            if ($tiket->tanggal_rekap) {
+                $tanggal_rekap = \Carbon\Carbon::parse($tiket->tanggal_rekap)->startOfDay();
+                $tanggal_close = \Carbon\Carbon::today();
+                $tiket->durasi_akhir = $tanggal_rekap->diffInDays($tanggal_close);
+            }
         }
 
         $tiket->save();
 
         return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
     }
+
     public function getDataSites(Request $request)
     {
         try {
@@ -278,5 +307,14 @@ class TiketController extends Controller
     }
 
     return response()->json($site);
+}
+public function downloadDataSiteByTiketStatus($status_tiket)
+{
+    $status_tiket = strtolower($status_tiket);
+    if (!in_array($status_tiket, ['open', 'close'])) {
+        abort(404);
+    }
+
+    return Excel::download(new DataSiteByTiketStatusExport($status_tiket), "tiket_{$status_tiket}_" . date('Ymd_His') . ".xlsx");
 }
 }

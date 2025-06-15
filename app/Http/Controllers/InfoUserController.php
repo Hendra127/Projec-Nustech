@@ -160,4 +160,14 @@ class InfoUserController extends Controller
         }
     }
 
+    public function __construct()
+    {
+        //$this->middleware('role:superadmin')->except(['showPublic']);
+    }
+    public function showPublic($id)
+{
+    $user = User::findOrFail($id);
+    return view('user-profile', compact('user'));
+}
+
 }

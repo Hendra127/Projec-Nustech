@@ -29,8 +29,8 @@ class Tiket extends Model
         'plan_actions',
         'ce',
     ];
-    public function datasite()
-{
-    return $this->belongsTo(DataSite::class, 'site_id', 'id');
-}
+ public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id', 'id');
+    }
 }

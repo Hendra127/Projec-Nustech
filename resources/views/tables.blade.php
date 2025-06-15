@@ -6,6 +6,17 @@
     background: linear-gradient(to bottom right,rgb(209, 215, 231),rgb(134, 173, 229));
     min-height: 100vh;
   }
+  table.table td,
+  table.table th {
+    font-size: 9px; /* Atur ukuran font yang lebih kecil */
+  }
+ table.table tbody td {
+  padding: 0px 5px !important;   /* Atas-bawah: 0px, Kiri-kanan: 5px */
+  line-height: 0px !important;     /* Line height pas sama font size */
+  font-size: 9px !important;
+  vertical-align: middle !important;
+}
+
 </style>
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
     <div class="content">
@@ -15,9 +26,15 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                     <!-- Tombol Tambah, Export, Import -->
                     <div class="mb-2">
-                        <a href="{{ route('datacreate') }}" class="btn btn-primary mr-2 mb-2">Tambah</a>
-                        <a href="{{ route('dataexport') }}" class="btn btn-success mr-2 mb-2">Export</a>
-                        <a href="#" class="btn btn-info mb-2" data-toggle="modal" data-target="#exampleModalLong">Import</a>
+                        <a href="{{ route('datacreate') }}" class="btn btn-primary mr-2 mb-2">
+                            <i class="fa fa-plus"></i> Tambah
+                        </a>
+                        <a href="{{ route('dataexport') }}" class="btn btn-success mr-2 mb-2">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                        <a href="#" class="btn btn-info mb-2" data-toggle="modal" data-target="#exampleModalLong">
+                            <i class="fa fa-upload"></i> Import
+                        </a>
                     </div>
 
                     <!-- Form Search (di kanan) -->
@@ -105,9 +122,13 @@
                                 <td class="text-center">{{ $item->ip_ap2 }}</td>
                                 <td class="text-center">{{ $item->expected_sqf }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-info mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
+                                    <a href="#" class="btn btn-info mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
+                                        <i class="fa fa-info-circle"></i> Detail
+                                    </a>
                                     <a href="/dataupdate/{{ $item->id }}">
-                                        <button class="btn btn-primary">Update</button>
+                                        <button class="btn btn-primary">
+                                            <i class="fa fa-pencil"></i> Update
+                                        </button>
                                     </a>
                                 </td>
                             </tr>

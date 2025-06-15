@@ -26,3 +26,8 @@ Route::get("/tiket/datasites", [TiketController::class, 'getDataSites']);
 Route::get('/tiket/datasites/{id}', [TiketController::class, 'getDataSiteById']);
 
 Route::get('/user/{id}', [InfoUserController::class, 'getUser']);
+
+// Cek Status Online dan Ofline User
+Route::get('/user-status', function () {
+    return User::select('id', 'is_online')->get();
+});

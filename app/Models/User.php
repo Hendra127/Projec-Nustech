@@ -25,6 +25,7 @@ class User extends Authenticatable
         'location',
         'about_me',
         'photo',
+        'is_online',
     ];
 
     /**

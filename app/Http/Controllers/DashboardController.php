@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Datasite;
 use App\Models\Tiket;
 use App\Models\User;
+use App\Models\LogPerangkat;
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +21,35 @@ class DashboardController extends Controller
             $tiketOpenCount = Tiket::where('status_tiket', 'OPEN')->count();
             $tiketCloseCount = Tiket::where('status_tiket', 'CLOSE')->count();
             $userCount = User::count();
+            $activeUserCount = User::where('is_online', true)->count();
             
+            $today = Carbon::today(); // Mendapatkan tanggal hari ini
+            $tiketCloseTodayCount = Tiket::where('status_tiket', 'CLOSE')
+                ->whereDate('tanggal_close', $today)
+                ->count();
+
+            $yesterday = Carbon::yesterday();
+            $tiketOpenYesterdayCount = Tiket::where('status_tiket', 'OPEN')
+                ->whereDate('tanggal_rekap', $yesterday)
+                ->count();
+
+            $keteranganCount = DB::table('log_perangkat')
+                ->select('keterangan', DB::raw('count(*) as total'))
+                ->groupBy('keterangan')
+                ->orderBy('total', 'desc') // opsional
+                ->get();
+
+            $keteranganList = LogPerangkat::select('keterangan')
+                        ->distinct()
+                        ->orderBy('keterangan')
+                        ->pluck('keterangan');
+
+            $selectedKeterangan = request('keterangan');
+
+            $logPerangkatTeknisi = LogPerangkat::when($selectedKeterangan, function ($query) use ($selectedKeterangan) {
+                return $query->where('keterangan', $selectedKeterangan);
+            })->latest()->get();
+
             // Ini Fungsi untuk mengambil jumlah site berdasarkan kabupaten
             $siteByKabupaten = DataSite::select('kab', DB::raw('count(*) as total'))
                 ->groupBy('kab')
@@ -78,10 +108,15 @@ class DashboardController extends Controller
                 $delta = $lastTwo[0]->total_close - $lastTwo[1]->total_close;
             }
 
-            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket', 'siteByKabupaten'));
+            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket', 'siteByKabupaten', 'activeUserCount', 'logPerangkatTeknisi', 'keteranganList', 'selectedKeterangan', 'keteranganCount', 'tiketCloseTodayCount', 'tiketOpenYesterdayCount'));
         } catch (\Throwable $th) {
             dd($th);
             return abort(404);
         }
+    }
+    public function getActiveUsers()
+    {
+        $activeUsers = User::where('last_seen', '>=', Carbon::now()->subMinutes(1))->count();
+        return response()->json(['active_users' => $activeUsers]);
     }
 }

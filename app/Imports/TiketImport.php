@@ -14,7 +14,7 @@ class TiketImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            // Normalisasi key
+            // Normalisasi nama kolom agar aman
             $data = collect($row)->mapWithKeys(function ($value, $key) {
                 $normalizedKey = strtolower(trim(str_replace([' ', '/', '\\'], '_', $key)));
                 return [$normalizedKey => $value];
@@ -23,14 +23,15 @@ class TiketImport implements ToCollection, WithHeadingRow
             $namaSite = $data['nama_site'] ?? null;
             if (!$namaSite) continue;
 
-            // Konversi durasi ke integer jika valid
-            $durasi = is_numeric($data['durasi']) ? (int) $data['durasi'] : null;
-
-            // Konversi tanggal rekap dan close
             $tanggal_rekap = $this->convertToDate($data['tanggal_rekap'] ?? null);
             $tanggal_close = $this->convertToDate($data['tanggal_close'] ?? null);
 
-            // Tangani bulan_close agar tidak null
+            // Hitung durasi setelah tanggal rekap dikonversi
+           $durasi = $tanggal_rekap
+            ? Carbon::parse($tanggal_rekap)->diffInDays(Carbon::today())
+            : null;
+
+            // Default bulan_close
             $bulan_close = trim($data['bulan_close'] ?? '') ?: 'BELUM CLOSE';
 
             Tiket::updateOrCreate(
@@ -58,7 +59,7 @@ class TiketImport implements ToCollection, WithHeadingRow
     {
         if (!$value) return null;
 
-        // Jika format Excel number
+        // Jika format Excel numeric date
         if (is_numeric($value)) {
             try {
                 return Date::excelToDateTimeObject($value)->format('Y-m-d');
@@ -67,11 +68,16 @@ class TiketImport implements ToCollection, WithHeadingRow
             }
         }
 
-        // Jika string dan format sudah tanggal valid
+        // Jika format teks, coba format m/d/Y
         try {
-            return Carbon::parse($value)->format('Y-m-d');
+            return Carbon::createFromFormat('m/d/Y', $value)->format('Y-m-d');
         } catch (\Exception $e) {
-            return null;
+            // Jika gagal, coba parse default
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Exception $e) {
+                return null;
+            }
         }
     }
 }

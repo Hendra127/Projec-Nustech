@@ -13,7 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TiketController;
-
+use App\Http\Controllers\LogPerangkatController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\NewProjectController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\FileController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,6 +34,8 @@ Route::get('/', function () {
     return view('landingpage'); // Buat file resources/views/landing.blade.php
 })->name('landingpage');
 
+Route::get('/user-profile/{id}', [InfoUserController::class, 'showPublic']);
+
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/home', [HomeController::class, 'home']); // Ganti dari '/' ke '/home'
@@ -42,6 +48,10 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('profile', function () {
 		return view('profile');
 	})->name('profile');
+
+	Route::get('rtl', function () {
+		return view('rtl');
+	})->name('rtl');
 
     Route::get('virtual-reality', function () {
 		return view('virtual-reality');
@@ -93,8 +103,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-datasite/{id}', [TiketController::class, 'getDataSite']);
     
     Route::get('/tiket/close/{id}', [TiketController::class, 'close'])->name('tiket.close');
-
-	// Route untuk datapass
+    
+    // Route untuk datapass
 	Route::get('/datapass', [DatapassController::class, 'index'])->name('datapass.index');
 	Route::post('/datapass', [DatapassController::class, 'store'])->name('datapass.store');
 	Route::put('/datapass/{id}', [DatapassController::class, 'update'])->name('datapass.update');
@@ -102,7 +112,66 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/datapass/import', [DatapassController::class, 'import'])->name('datapass.import');
 	Route::get('/datapass/export', [DatapassController::class, 'export'])->name('datapass.export');
 	Route::get('/datapass/search', [DatapassController::class, 'search'])->name('datapass.search');
+	
+	// Route untuk Log Pergantian Perangkat
+	Route::get('/log_perangkat', [LogPerangkatController::class, 'index'])->name('log_perangkat.index');
+	Route::post('/log_perangkat/store', [LogPerangkatController::class, 'store'])->name('log_perangkat.store');
+	Route::post('/log_perangkat/update/{id}', [LogPerangkatController::class, 'update'])->name('log_perangkat.update');
+	Route::get('/log_perangkat/delete/{id}', [LogPerangkatController::class, 'destroy'])->name('log_perangkat.destroy');
+	Route::post('/log_perangkat/import', [LogPerangkatController::class, 'import'])->name('log_perangkat.import');
+	Route::get('/log_perangkat/export', [LogPerangkatController::class, 'export'])->name('log_perangkat.export');
+	Route::get('/log_perangkat', [LogPerangkatController::class, 'search'])->name('log_perangkat');
+	Route::get('/log-perangkat/export/pdf', [LogPerangkatController::class, 'exportPdf'])->name('logperangkat.export.pdf');
+	
+	// Route Unutk To-Do List;
+	Route::get('/todolist', [TaskController::class, 'index'])->name('todolist.index');
+	Route::post('/todolist/store', [TaskController::class, 'store'])->name('todolist.store');
+	Route::post('/todolist/{id}/move', [TaskController::class, 'move']);
+	Route::post('/todolist/{id}/update', [TaskController::class, 'update']);
+	Route::delete('/todolist/{id}/delete', [TaskController::class, 'destroy']);
+	
+	//Route Untuk New Project 
+	Route::get('/newproject', [NewProjectController::class, 'index'])->name('newproject.index');
+	
+	// Route untuk Live User
+	Route::get('/active-users', [DashboardController::class, 'getActiveUsers']);
+	Route::get('/api/user-status', function () {
+    return \App\Models\User::select('id', 'is_online')->get();
+    });
+    
+    // Route Untuk Download file
+	Route::get('/download_file', [FileController::class, 'index'])->name('file.index');
+	Route::post('/file-upload', [FileController::class, 'store'])->name('file.upload');
+	Route::get('/file-download/{id}', [FileController::class, 'download'])->name('file.download');
 
+	// Export data dari tabel lain
+	Route::get('/export/tiket', [FileController::class, 'exportTiket'])->name('export.tiket');
+	Route::get('/export/datasite', [FileController::class, 'exportDatasite'])->name('export.datasite');
+	Route::get('/download/log_perangkat', [FileController::class, 'downloadLogPerangkat'])->name('download.log_perangkat');
+	Route::get('/download/datapass', [FileController::class, 'downloadDataPass'])->name('download.datapass');
+	Route::get('/download/tiket/{status_tiket}', [TiketController::class, 'downloadDataSiteByTiketStatus'])->name('download.tiket');
+	Route::get('/download-data-site', [TiketController::class, 'exportByTiketStatus']);
+	Route::delete('/file/{id}', [FileController::class, 'destroy'])->name('file.destroy');
+	
+	// Hanya super_admin yang bisa akses
+	Route::get('/users', [InfoUserController::class, 'index'])->name('users')->middleware('role:superadmin');
+	
+	// Halaman utama user
+	Route::get('/users', [InfoUserController::class, 'index'])->name('users');
+
+	// API edit AJAX
+	Route::get('/api/user/{id}', [InfoUserController::class, 'getUser'])->middleware('role:superadmin');
+
+	// Simpan user baru
+	Route::post('/user', [InfoUserController::class, 'save'])->middleware('role:superadmin');
+
+	// Simpan update user
+	Route::put('/user/{id}', [InfoUserController::class, 'saveUpdate'])->middleware('role:superadmin');
+
+	// Hapus user
+	Route::get('/user/delete/{id}', [InfoUserController::class, 'delete'])->name('user.delete')->middleware('role:superadmin');
+
+	Route::get('/log-perangkat', [App\Http\Controllers\LogPerangkatController::class, 'index'])->name('log_perangkat');
 
 });
 

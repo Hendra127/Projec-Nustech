@@ -30,7 +30,6 @@
     height: 100%;
     border: 0;
   }
-
   /* RESPONSIVE FIX: Data Open Tiket & Grafik Line di tablet/HP */
   @media (max-width: 991.98px) {
     .row.mt-4.g-3 > .col-12 {
@@ -50,46 +49,71 @@
       height: 150px !important;
     }
   }
+   /* CSS Flex Horizontal untuk Card */
+  .scrollable-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 8px;
+  }
+
+  .scrollable-cards .card {
+    flex: 0 0 auto;
+    width: 250px;
+    min-width: 220px;
+    border-radius: 15px;
+  }
+
+  /* Tambahan opsional untuk tampilan smooth */
+  .scrollable-cards::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .scrollable-cards::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 5px;
+  }
 </style>
 
 <div class="container-fluid px-3">
-  <div class="row g-3">
+  <div class="row">
     @php
       $cards = [
-        ['label'=>'Jumlah Site','value'=>$siteCount,'icon'=>'lokasi.png'],
-        ['label'=>'Tiket Open','value'=>$tiketOpenCount,'icon'=>'opentiket.png'],
-        ['label'=>'Tiket Close','value'=>$tiketCloseCount,'icon'=>'closetiket.png'],
-        ['label'=>'Jumlah Pengguna','value'=>$userCount,'icon'=>'enginer.png'],
+          ['label'=>'Jumlah Site','value'=>$siteCount,'icon'=>'lokasi.png'],
+          ['label'=>'Tiket Open','value'=>$tiketOpenCount,'icon'=>'opentiket.png'],
+          ['label' => 'Tiket Open Hari Ini', 'value' => $tiketOpenYesterdayCount, 'icon' => 'opentiket.png'],
+          ['label'=>'Tiket Close ALL','value'=>$tiketCloseCount,'icon'=>'closetiket.png'], 
+          ['label' => 'Tiket Close Hari Ini', 'value' => $tiketCloseTodayCount, 'icon' => 'closetiket.png'],
+          ['label'=>'Online User','value'=>'<div id="activeUserCount">Loading...</div>','icon'=>'enginer.png'],
       ];
     @endphp
-    @foreach($cards as $card)
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card shadow-sm h-100">
+
+ <div class="scrollable-cards">
+      @foreach($cards as $card)
+        <div class="card shadow-sm">
           <div class="card-body p-3 d-flex justify-content-between align-items-center">
             <div>
               <p class="text-sm mb-0 text-capitalize fw-bold">{{ $card['label'] }}</p>
-              <h5 class="fw-bolder mb-0">{{ $card['value'] }}</h5>
+              <h5 class="fw-bolder mb-0">{!! $card['value'] !!}</h5>
             </div>
-            <img src="../assets/img/{{ $card['icon'] }}" alt="{{ $card['label'] }}" style="height:50px;">
+            <img src="{{ asset('assets/img/'.$card['icon']) }}" alt="{{ $card['label'] }}" style="height:30px;">
           </div>
         </div>
-      </div>
-    @endforeach
+      @endforeach
+    </div>
   </div>
-
   <div class="row mt-4 g-3">
     <!-- Data Open Tiket -->
     <div class="col-12 col-lg-6 d-flex flex-column">
       <div class="card h-100 d-flex flex-column">
         <div class="card-header pb-0">
-          <h6 class="text-center">Data Open Tiket</h6>
-          <p class="text-sm">
-            <i class="fa fa-arrow-up text-success"></i>
-            <span class="fw-bold">Nama Site</span>
+          <h5 class="text-center">Detail Open Tiket</h5>
+          <p class="text-sm" style="margin-left: 25px;">
           </p>
         </div>
         <div class="card-body overflow-auto flex-grow-1">
-          <div class="timeline timeline-one-side">
+          <div class="timeline timeline-one-side" style="margin-left: 60px;">
             @foreach($allTiket as $item)
               <div class="timeline-block mb-3">
                 <span class="timeline-step">
@@ -99,7 +123,7 @@
                   <h6 class="text-dark text-sm fw-bold mb-0">
                     <span class="text-secondary">#{{ $item->site_id }}</span> {{ $item->nama_site }}
                   </h6>
-                  <p class="text-secondary text-xs mt-1 mb-1">{{ $item->detail_problem }}</p>
+                  <p class="text-secondary mt-1 mb-1" style="font-size: 11px; line-height: 1.2;">{{ $item->detail_problem }}</p>
                   <p class="text-secondary text-xs mt-1 mb-0">{{ $item->plan_actions }}</p>
                   <p class="text-secondary text-xs mt-1 mb-0">{{ $item->ce }}</p>                  
                 </div>
@@ -112,29 +136,56 @@
     </div>
 
     <!-- Grafik Line -->
-    <div class="col-12 col-lg-6 d-flex flex-column">
-      <div class="card h-100 d-flex flex-column">
-        <div class="card-header pb-0">
-          <h6 class="text-center">Grafik Open dan Close Tiket</h6>
-          <p class="text-sm">
-            @if ($delta > 0)
-              <i class="fa fa-arrow-up text-success"></i>
-            @elseif ($delta < 0)
-              <i class="fa fa-arrow-down text-danger"></i>
-            @else
-              -
-            @endif
-            <span class="fw-bold">{{ $delta }} Site Close</span> Dalam bulan {{ $deltaMonth }}
-          </p>
+   <div class="col-12 col-lg-6 d-flex flex-column">
+  <div class="card h-100 d-flex flex-column">
+    <div class="card-header pb-0 mt-0">
+      <h4 class="text-center">Spare Tracker</h4>
+
+      <!-- Dropdown filter keterangan + Jumlah -->
+      <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center justify-content-between gap-2 mt-2 px-2">
+        <div class="d-flex align-items-center gap-2">
+          <select name="keterangan" id="keterangan" class="form-select form-select-sm" style="width: 200px;" onchange="this.form.submit()">
+            @foreach($keteranganList as $item)
+              <option value="{{ $item }}" {{ $item == $selectedKeterangan ? 'selected' : '' }}>
+                {{ $item }}
+              </option>
+            @endforeach
+          </select>
+          @php
+          $selectedCount = $keteranganCount->firstWhere('keterangan', $selectedKeterangan)?->total ?? 0;
+        @endphp
+        <span class="badge bg-primary text-white px-3 py-2 rounded-pill">
+          {{ $selectedCount }} 
+        </span>
         </div>
-        <div class="card-body p-3 flex-grow-1 d-flex flex-column">
-          <div class="chart flex-grow-1">
-            <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+      </form>
+      <!-- End Dropdown -->
+    </div>
+
+    <div class="card-body overflow-auto flex-grow-1">
+      <div class="timeline timeline-one-side" style="margin-left: 30px;">
+        @forelse($logPerangkatTeknisi as $item)
+          <div class="timeline-block mb-3">
+            <span class="timeline-step">
+              <i class="ni ni-settings text-primary text-gradient"></i>
+            </span>
+            <div class="timeline-content">
+              <h6 class="text-dark text-sm fw-bold mb-0">
+                <span class="text-secondary">#{{ $item->site_id }}</span> {{ $item->nama }}
+              </h6>
+              <p class="text-secondary text-xs mt-1 mb-0">Perangkat: {{ $item->perangkat }}</p>
+              <p class="text-secondary text-xs mt-1 mb-0">SN Lama: {{ $item->sn_lama }}</p>
+              <p class="text-secondary text-xs mt-1 mb-0">SN Baru: {{ $item->sn_baru }}</p>
+            </div>
           </div>
-        </div>
+        @empty
+          <p class="text-center text-secondary">Tidak ada perangkat dengan keterangan terpilih.</p>
+        @endforelse
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Grafik Bar -->
   <div class="row mt-4 g-3">
@@ -180,6 +231,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
+<script>
+    function fetchActiveUsers() {
+        fetch('/active-users')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('activeUserCount').innerText = data.active_users + '';
+            });
+    }
+
+    // Fetch every 10 seconds
+        setInterval(fetchActiveUsers, 1000);
+    fetchActiveUsers(); // initial load
+</script>
 <script>
 const barLabels = {!! json_encode($siteByKabupaten->pluck('kab')) !!};
 const barData = {!! json_encode($siteByKabupaten->pluck('total')) !!};

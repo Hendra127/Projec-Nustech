@@ -12,6 +12,7 @@ class TiketExport implements FromCollection
     */
     public function collection()
     {
-        return Tiket::all();
+        // Hanya ambil tiket dengan status 'open'
+        return Tiket::where('status_tiket', 'OPEN')->get();
     }
 }

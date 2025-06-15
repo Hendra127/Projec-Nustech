@@ -10,27 +10,30 @@
 <div class="container-fluid mt-4">
     <div class="card shadow-sm p-4">
 
-        <h4 class="mb-4" style="text-align: center;">Data Password ALL Site</h4>
+        <h4 class="mb-4" style="text-align: center;">Manajemen Data Password</h4>
         
         {{-- Tombol Aksi dan Pencarian --}}
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
             <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ route('datapass.export') }}" class="btn btn-success btn-sm">EXPORT</a>
+                <a href="{{ route('datapass.export') }}" class="btn btn-success btn-sm" style="height: 30px;">
+                    <i class="fa fa-file-excel-o mt-2"></i> EXPORT
+                </a>
 
                 <!-- Tombol untuk membuka modal import -->
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#importModal">
-                    IMPORT
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#importModal" style="height: 30px;">
+                    <i class="fa fa-upload"></i> IMPORT
                 </button>
 
-                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">Tambah Data</button>
+                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addModal" style="height: 30px;">
+                    <i class="fa fa-plus"></i> Tambah Data
+                </button>
             </div>
 
             <form action="{{ route('datapass.search') }}" method="GET" class="d-flex gap-2 mt-2 mt-sm-0">
-                <input type="text" name="query" class="form-control form-control-sm" placeholder="Search by Site Name or Province">
-                <button type="submit" class="btn btn-magenta btn-sm">SEARCH</button>
+                <input type="text" name="query" class="form-control form-control-sm" placeholder="Search by Site Name or Province" style="height: 20px;">
+                <button type="submit" class="btn btn-magenta btn-sm" style="height: 30px;">SEARCH</button>
             </form>
         </div>
-
         {{-- Tabel --}}
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
@@ -57,11 +60,15 @@
                         <td>{{ $data->pass_ap1 }}</td>
                         <td>{{ $data->pass_ap2 }}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">Edit</button>
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
                             <form action="{{ route('datapass.destroy', $data->id) }}" method="POST" class="d-inline delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-name="{{ $data->site_id }}">Hapus</button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-name="{{ $data->site_id }}">
+                                    <i class="fa fa-trash"></i> Hapus
+                                </button>
                             </form>
                         </td>
                     </tr>

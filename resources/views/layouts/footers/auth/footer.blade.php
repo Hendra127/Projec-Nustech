@@ -5,7 +5,7 @@
                 <div class="copyright text-center text-sm text-muted text-lg-start">
                     © <script>
                         document.write(new Date().getFullYear())
-                    </script>, made with <i class="fa fa-heart"></i> by
+                    </script>, made <i class="fa fa-heart"></i> by
                     <a href="#" class="font-weight-bold" target="_blank">CV. NUSTECH </a></a>
                     for a better web.
                 </div>

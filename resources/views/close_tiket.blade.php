@@ -1,14 +1,26 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+<style>
+  body {
+    background: linear-gradient(to bottom right,rgb(209, 215, 231),rgb(134, 173, 229));
+    min-height: 100vh;
+  }
+</style>
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
     <div class="content">
         <div class="card card-info card-outline">
             <div class="card-header">
+            <h4 class="mb-4" style="text-align: center;"> Data Close Tiket</h4>
+                <!-- Tombol Tambah, Export, Import -->
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                     <div>
-                        <a href="{{ route('tiketexport') }}" class="btn btn-success mr-3 mb-3">Export</a>
-                        <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">Import</a>
+                        <a href="{{ route('tiketexport') }}" class="btn btn-success mr-3 mb-3">
+                            <i class="fa fa-file-excel-o"></i> Export
+                        </a>
+                        <a href="#" class="btn btn-info mb-3" data-toggle="modal" data-target="#exampleModalLong">
+                            <i class="fa fa-upload"></i> Import
+                        </a>
                     </div>
                     <form action="{{ route('tiket') }}" method="GET" class="d-flex align-items-center mb-3">
                         <input type="text" name="query" class="form-control form-control-sm me-2" placeholder="Enter To Search" value="{{ request()->query('query') }}">
@@ -16,55 +28,58 @@
                     </form>
                 </div>
             </div>
+
             <div class="card-body">
                 <!-- Tabel dengan scroll horizontal -->
-                <div class="table-responsive">
+                <div class="table-responsive" style="margin-top: -40px;">
                     <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
                         <thead class="table-dark">
                             <tr>
-                                <th>No</th>
-                                <th>SITE ID</th>
-                                <th>NAMA SITE</th>
-                                <th>PROVINSI</th>
-                                <th>KABUPATEN</th>
-                                <th>DURASI</th>
-                                <th>KATEGORI</th>
-                                <th>TANGGAL REKAP</th>
-                                <th>BULAN OPEN</th>
-                                <th>STATUS TIKET</th>
-                                <th>KENDALA</th>
-                                <th>TANGGAL CLOSE</th>
-                                <th>BULAN CLOSE</th>
-                                <th>DETAIL PROBLEM</th>
-                                <th>PLAN ACTIONS</th>
-                                <th>CE</th>
-                                <th>AKSI</th>
+                                <th class="text-center">No</th>
+                                <th class="text-center">SITE ID</th>
+                                <th class="text-center">NAMA SITE</th>
+                                <th class="text-center">PROVINSI</th>
+                                <th class="text-center">KABUPATEN</th>
+                                <th class="text-center">DURASI</th>
+                                <th class="text-center">KATEGORI</th>
+                                <th class="text-center">TANGGAL REKAP</th>
+                                <th class="text-center">BULAN OPEN</th>
+                                <th class="text-center">STATUS TIKET</th>
+                                <th class="text-center">KENDALA</th>
+                                <th class="text-center">TANGGAL CLOSE</th>
+                                <th class="text-center">BULAN CLOSE</th>
+                                <th class="text-center">DETAIL PROBLEM</th>
+                                <th class="text-center">PLAN ACTIONS</th>
+                                <th class="text-center">CE</th>
+                                <th class="text-center">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tiket as $index => $item)
                             <tr>
-                                <td>{{ $tiket->firstItem() + $index }}</td>
+                                <td class="text-center">{{ $tiket->firstItem() + $index }}</td>
                                 <td>{{ $item->site_id }}</td>
                                 <td>{{ $item->nama_site }}</td>
                                 <td>{{ $item->provinsi }}</td>
                                 <td>{{ $item->kabupaten }}</td>
-                                <td>{{ $item->durasi }}</td>
-                                <td>{{ $item->kategori }}</td>
-                                <td>{{ $item->tanggal_rekap }}</td>
-                                <td>{{ $item->bulan_open }}</td>
-                                <td>{{ $item->status_tiket }}</td>
+                                <td class="text-center">{{ $item->durasi_akhir ?? 0 }} Hari</td>
+                                <td class="text-center">{{ $item->kategori }}</td>
+                                <td class="text-center">{{ $item->tanggal_rekap }}</td>
+                                <td class="text-center">{{ $item->bulan_open }}</td>
+                                <td class="text-center">{{ $item->status_tiket }}</td>
                                 <td>{{ $item->kendala }}</td>
-                                <td>{{ $item->tanggal_close }}</td>
-                                <td>{{ $item->bulan_close }}</td>
+                                <td class="text-center">{{ $item->tanggal_close }}</td>
+                                <td class="text-center">{{ $item->bulan_close }}</td>
                                 <td>{{ $item->detail_problem }}</td>
                                 <td>{{ $item->plan_actions }}</td>
                                 <td>{{ $item->ce }}</td>
                                 <td class="d-flex gap-2">
                                     <a href="#" class="btn btn-info mr-3 mb-3 btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">
-                                        Delete
+                                        <i class="fa fa-trash"></i> Delete
                                     </a>
-                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">Detail</a>
+                                    <a href="#" class="btn btn-primary mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
+                                        <i class="fa fa-info-circle"></i> Detail
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -187,6 +202,7 @@
         </div>
     </div>
 </main>
+
 <style>
     .btn-magenta {
         background-color: #d200aa;
@@ -199,26 +215,26 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    $('.btn-delete').click(function (e) {
-        e.preventDefault();
-        const url = $(this).data('url');
-
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak bisa dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = url;
-            }
+        $('.btn-delete').click(function (e) {
+            e.preventDefault();
+            const url = $(this).data('url');
+    
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
         });
     });
-});
     @if(session('success'))
         Swal.fire({
             icon: 'success',
