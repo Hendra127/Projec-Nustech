@@ -1,7 +1,16 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
+<style>
+    body {
+        background: linear-gradient(to bottom right, rgb(209, 215, 231), rgb(134, 173, 229));
+        min-height: 100vh;
+      }
+    #zoomed-image {
+        transition: transform 0.2s ease;
+        cursor: grab;
+    }
+</style>
 <div>
     <div class="container-fluid">
         <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('../assets/img/curved-images/curved0.jpg'); background-position-y: 50%;">
@@ -10,10 +19,15 @@
         <div class="card card-body blur shadow-blur mx-4 mt-n6">
             <div class="row gx-4">
                 <div class="col-auto">
-                    <div class="avatar avatar-xl position-relative ">
-                        <img src="{{ asset('storage/' . auth()->user()->photo) }}" class="w-100 border-radius-lg shadow-sm">
-                        <a href="javascript:;" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
-                            <i class="fa fa-pen top-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Image"></i>
+                    <div class="avatar avatar-xl position-relative">
+                        <div class="rounded-circle overflow-hidden shadow border border-white" style="width: 130px; height: 75px;">
+                            <img src="{{ asset('storage/' . auth()->user()->photo) . '?v=' . time() }}"
+                                 alt="Profile Photo"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover; object-position: center;">
+                        </div>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#editProfileModal" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
+                            <i class="fa fa-pen mt-1" title="Edit Image"></i>
                         </a>
                     </div>
                 </div>
@@ -110,4 +124,147 @@
         </div>
     </div>
 </div>
+<!-- Modal Edit Profile -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="modal-content">
+      @csrf
+      @method('PUT')
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="mb-3 text-center">
+          <img src="{{ asset('storage/' . auth()->user()->photo) }}" class="rounded-circle" width="100" height="100">
+        </div>
+
+        <div class="mb-3">
+          <label for="photo" class="form-label">Foto Profil</label>
+          <input type="file" name="photo" class="form-control" accept="image/*">
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Nama</label>
+          <input type="text" name="name" class="form-control" value="{{ auth()->user()->name }}">
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" value="{{ auth()->user()->email }}">
+        </div>
+        
+        <div class="mb-3">
+          <label for="password" class="form-label"> Password Lama (Decrypt Tipe) </label>
+          <input name="password" class="form-control" value="{{ auth()->user()->password }}" type="password" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password Baru (Opsional / Abaikan Jika Tidak Ingin Dirubah)</label>
+            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                name="password" id="password" placeholder="Isi jika ingin mengganti password">
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="password_confirmation" class="form-label">Konfirmasi Password Baru (Opsional / Abaikan Jika Tidak Ingin Dirubah)</label>
+            <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
+                name="password_confirmation" id="password_confirmation"
+                placeholder="Ulangi password baru" autocomplete="new-password">
+            @error('password_confirmation')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Telepon</label>
+          <input type="text" name="phone" class="form-control" value="{{ auth()->user()->phone }}">
+        </div>
+
+        <div class="mb-3">
+          <label for="location" class="form-label">Lokasi</label>
+          <input type="text" name="location" class="form-control" value="{{ auth()->user()->location }}">
+        </div>
+
+        <div class="mb-3">
+          <label for="about_me" class="form-label">Tentang Saya</label>
+          <textarea name="about_me" class="form-control">{{ auth()->user()->about_me }}</textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div id="image-zoom-overlay" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+">
+    <img id="zoomed-image" src="" style="max-width: 90%; max-height: 90%; border-radius: 10px;">
+</div>
+@endsection
+@section('scripts')
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const profileImage = document.querySelector('.avatar img');
+    const overlay = document.getElementById('image-zoom-overlay');
+    const zoomedImg = document.getElementById('zoomed-image');
+
+    let scale = 1;
+
+    profileImage.style.cursor = 'zoom-in';
+
+    profileImage.addEventListener('click', function () {
+        zoomedImg.src = this.src;
+        scale = 1;
+        zoomedImg.style.transform = `scale(${scale})`;
+        overlay.style.display = 'flex';
+    });
+
+    overlay.addEventListener('click', function () {
+        overlay.style.display = 'none';
+    });
+
+    overlay.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        scale += e.deltaY * -0.001;
+        scale = Math.min(Math.max(1, scale), 5); // batas zoom: 1x - 5x
+        zoomedImg.style.transform = `scale(${scale})`;
+    });
+});
+</script>
+
+@if (session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        timer: 2000,
+        showConfirmButton: false
+    });
+</script>
+@endif
+@if (session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '{{ session('error') }}',
+    });
+</script>
+@endif
 @endsection

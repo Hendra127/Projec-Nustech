@@ -7,29 +7,30 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionsController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->has('redirect')) {
+            session(['redirect_to' => $request->redirect]);
+        }
+
         return view('session.login-session');
     }
 
     public function store()
     {
-        $attributes = request()->validate([
+        $credentials = request()->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
-        if (Auth::attempt($attributes)) {
+        if (Auth::attempt($credentials)) {
             session()->regenerate();
+            Auth::user()->update(['is_online' => true]);
 
-            // Tandai user sebagai online
-            $user = Auth::user();
-            $user->update(['is_online' => true]);
-
-            return redirect('dashboard')->with(['success' => 'You are logged in.']);
-        } else {
-            return back()->withErrors(['email' => 'Email or password invalid.']);
+           return redirect()->intended(route('dashboard'));
         }
+
+        return back()->withErrors(['email' => 'Email or password invalid.']);
     }
 
     public function destroy()

@@ -10,64 +10,241 @@ use App\Exports\TiketExport;
 use App\Imports\TiketImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DataSiteByTiketStatusExport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TiketController extends Controller
 {
     // Tampilkan semua data tiket dan site
     public function index(Request $request)
-{
-    try {
-        $query = $request->input('query');
-        $kategori = $request->input('kategori');
-        $sort = $request->input('sort', 'desc');
+    {
+        try {
+            $query = $request->input('query');
+            $kategori = $request->input('kategori');
+            $sort = $request->input('sort', 'desc');
+            $tanggalClose = $request->input('tanggal_close');
+            $tanggalRekap = $request->input('tanggal_rekap');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $filter = $request->query('filter');
+            $today = Carbon::today();
+            $yesterday = Carbon::yesterday();
 
-        $tiket = Tiket::select('*')
-            ->selectRaw("durasi + DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
-            ->when($query, function ($q) use ($query) {
-                    $q->where(function ($subQuery) use ($query) {
-                        $subQuery->where('site_id', 'like', '%' . $query . '%')
-                                ->orWhere('nama_site', 'like', '%' . $query . '%')
-                                ->orWhere('kabupaten', 'like', '%' . $query . '%')
-                                ->orWhere('provinsi', 'like', '%' . $query . '%');
+            // Hitung total tiket OPEN
+            $tiketOpenCount = Tiket::where('status_tiket', 'OPEN')->count();
+
+            // Tiket OPEN hari ini
+            $tiketOpenTodayCount = Tiket::where('status_tiket', 'OPEN')
+                ->whereDate('tanggal_rekap', $today)
+                ->count();
+
+            // Tiket CLOSE (semua / filter tanggal_close)
+            $tiketCloseCount = Tiket::where('status_tiket', 'CLOSE')
+                ->when($tanggalClose, function ($q) use ($tanggalClose) {
+                    $q->whereDate('tanggal_close', $tanggalClose);
+                })
+                ->count();
+
+            $tiketCloseTodayCount = Tiket::where('status_tiket', 'CLOSE')
+                ->whereDate('tanggal_close', $today)
+                ->count();
+
+            // Tiket OPEN kemarin
+            $tiketOpenYesterdayCount = Tiket::where('status_tiket', 'OPEN')
+                ->whereDate('tanggal_rekap', $yesterday)
+                ->count();
+
+            // Semua data site
+            $semuaSite = Datasite::all();
+            $sites = Datasite::select('id', 'sitename')->orderBy('sitename')->get();
+
+            // Statistik per kabupaten
+            $kabupatenList = DB::table('datasite')->select('kab')->distinct()->pluck('kab');
+            $openSitesByKabupaten = $kabupatenList->map(function ($kab) {
+                $total = DB::table('tiket')
+                    ->where('kabupaten', $kab)
+                    ->where('status_tiket', 'OPEN')
+                    ->count();
+                return (object)[
+                    'kab' => $kab,
+                    'total' => $total
+                ];
+            });
+
+            // Statistik bulanan OPEN + CLOSE
+            $data = DB::table('tiket')
+                ->select('bulan_open as bulan', DB::raw('count(*) as total_open'), DB::raw('0 as total_close'))
+                ->whereNotNull('bulan_open')
+                ->groupBy('bulan_open')
+                ->unionAll(
+                    DB::table('tiket')
+                        ->select('bulan_close as bulan', DB::raw('0 as total_open'), DB::raw('count(*) as total_close'))
+                        ->whereNotNull('bulan_close')
+                        ->where('bulan_close', '!=', 'BELUM CLOSE')
+                        ->groupBy('bulan_close')
+                )
+                ->get();
+
+            $lastTwo = $data->take(-2)->values();
+
+            // DATA UTAMA: TIKET
+            $tiket = Tiket::select('*')
+                ->selectRaw("durasi + DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
+                ->when($query, function ($q) use ($query) {
+                    $q->where(function ($sub) use ($query) {
+                        $sub->where('site_id', 'like', '%' . $query . '%')
+                            ->orWhere('nama_site', 'like', '%' . $query . '%')
+                            ->orWhere('kabupaten', 'like', '%' . $query . '%')
+                            ->orWhere('provinsi', 'like', '%' . $query . '%');
                     });
                 })
-            ->when($kategori, function ($q) use ($kategori) {
-                $q->where('kategori', $kategori);
-            })  
-            ->where('status_tiket', 'OPEN')
-            ->orderBy('durasi_terbaru', $sort)
-            ->paginate(10) // <- pastikan paginate
-            ->withQueryString(); // agar search tetap saat pindah halaman
+                ->when($kategori, function ($q) use ($kategori) {
+                    $q->where('kategori', $kategori);
+                })
+                ->when($tanggalClose, function ($q) use ($tanggalClose) {
+                    $q->where('status_tiket', 'CLOSE')
+                        ->whereDate('tanggal_close', $tanggalClose);
+                }, function ($q) use ($filter, $yesterday, $today) {
+                    $q->where('status_tiket', 'OPEN');
 
-        $semuaSite = Datasite::all(); // gunakan model Site bila tersedia
-        $sites = Datasite::select('id', 'sitename')->orderBy('sitename')->get();
+                    if ($filter === 'open_yesterday') {
+                        $q->whereDate('tanggal_rekap', $yesterday);
+                    } elseif ($filter === 'open_today') {
+                        $q->whereDate('tanggal_rekap', $today);
+                    }
+                })
+                ->when($tanggalRekap, function ($q) use ($tanggalRekap) {
+                    $q->whereDate('tanggal_rekap', $tanggalRekap);
+                })
+                ->when($startDate && $endDate, function ($q) use ($startDate, $endDate) {
+                    $q->whereBetween('tanggal_rekap', [$startDate, $endDate]);
+                })
+                ->orderBy('durasi_terbaru', $sort)
+                ->paginate(10)
+                ->withQueryString();
 
-        return view('tiket', compact('tiket', 'semuaSite', 'sites'));
-    } catch (\Throwable $th) {
-        dd($th);
+            // Tambahan data tiket OPEN (untuk bagian lain)
+            $tiketOpenQuery = Tiket::where('status_tiket', 'OPEN');
+
+            if ($filter === 'open_yesterday') {
+                $tiketOpenQuery->whereDate('tanggal_rekap', $yesterday);
+            } elseif ($filter === 'open_today') {
+                $tiketOpenQuery->whereDate('tanggal_rekap', $today);
+            }
+
+            $tiketOpen = $tiketOpenQuery->get();
+
+            return view('tiket', compact(
+                'tiket',
+                'semuaSite',
+                'sites',
+                'tiketOpenCount',
+                'tiketCloseCount',
+                'tiketCloseTodayCount',
+                'tiketOpenYesterdayCount',
+                'openSitesByKabupaten',
+                'data',
+                'lastTwo',
+                'kategori',
+                'sort',
+                'query',
+                'tiketOpen',
+                'tanggalClose',
+                'tanggalRekap',
+                'startDate',
+                'endDate',
+                'tiketOpenTodayCount'
+            ));
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
-}
+    public function detailTiket($id)
+    {
+        $kabupatenList = DB::table('datasite')->select('kab')->distinct()->pluck('kab');
+
+        $openSitesByKabupaten = $kabupatenList->map(function ($kab) {
+            $total = DB::table('tiket')
+                ->where('kabupaten', $kab)
+                ->where('status_tiket', 'OPEN')
+                ->count();
+
+            return (object)[
+                'kab' => $kab,
+                'total' => $total
+            ];
+        });
+        $allTiket = Tiket::where('status_tiket', 'OPEN')
+                ->orderBy('created_at')
+                ->get();
+
+        $tiket = Tiket::find($id);
+        $semuaSite = Datasite::all(); // gunakan model Site bila tersedia
+        return view('tiket_close', compact('tiket', 'semuaSite', 'openSitesByKabupaten', 'allTiket'));
+    }
+
 
     public function closeTiket(Request $request)
     {
-        $query = $request->input('search');
+        $search = $request->input('search');
+        $tanggal = $request->input('tanggal_close');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $tiket = Tiket::when($query, function ($q) use ($query) {
-            $q->where(function ($subQuery) use ($query) {
-                $subQuery->where('nama_site', 'like', '%' . $query . '%')
-                         ->orWhere('provinsi', 'like', '%' . $query . '%');
-            });
-        })->where('status_tiket', 'CLOSE')
-          ->paginate(10);
+        $tiket = Tiket::query()
+            ->where('status_tiket', 'CLOSE')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('site_id', 'like', '%' . $search . '%')
+                    ->orWhere('nama_site', 'like', '%' . $search . '%')
+                    ->orWhere('kabupaten', 'like', '%' . $search . '%')
+                    ->orWhere('provinsi', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($tanggal, function ($query) use ($tanggal) {
+                $query->whereDate('tanggal_close', $tanggal);
+            })
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_close', [$startDate, $endDate]);
+            })
+            ->orderBy('tanggal_close', 'desc')
+            ->paginate(10);
 
+        // Hitung jumlah tiket close dalam rentang tanggal (jika ada)
+        $jumlahDalamRentang = null;
+        if ($startDate && $endDate) {
+            $jumlahDalamRentang = Tiket::where('status_tiket', 'CLOSE')
+                ->whereBetween('tanggal_close', [$startDate, $endDate])
+                ->count();
+        }
 
-        // Jika kamu punya model Site sendiri:
-        // $semuaSite = Site::all();
+        $tiketCloseCount = Tiket::where('status_tiket', 'CLOSE')->count();
+        $tiketOpenCount = Tiket::where('status_tiket', 'OPEN')->count();
 
-        // Jika data site ada di tabel yang sama dengan Tiket:
+        $tiketCloseTodayCount = Tiket::where('status_tiket', 'CLOSE')
+            ->whereDate('tanggal_close', Carbon::today())
+            ->count();
+
         $semuaSite = Tiket::all();
 
-        return view('close_tiket', compact('tiket', 'semuaSite'));
+        $errorMessage = null;
+        if ($tanggal && $tiket->total() == 0) {
+            $errorMessage = 'Data tiket dengan tanggal yang dipilih (' . $tanggal . ') tidak ada.';
+        }
+
+        return view('close_tiket', compact(
+            'tiket',
+            'semuaSite',
+            'tiketCloseCount',
+            'tiketOpenCount',
+            'tiketCloseTodayCount',
+            'search',
+            'tanggal',
+            'errorMessage',
+            'jumlahDalamRentang',
+            'startDate', 
+            'endDate'
+        ));
     }
 
     // Simpan data tiket baru
@@ -125,7 +302,11 @@ class TiketController extends Controller
     // Update data tiket dari modal
     public function update(Request $request, $id)
     {
-        // dd($request->all());
+        // Batasi akses hanya untuk user atau admin
+        if (!in_array(auth()->user()->role, ['user', 'admin', 'superadmin'])) {
+            abort(403, 'Unauthorized');
+        }
+
         $request->validate([
             'nama_site' => 'required',
             'provinsi' => 'nullable',
@@ -138,20 +319,21 @@ class TiketController extends Controller
             'kendala' => 'nullable',
             'tanggal_close' => 'nullable|date',
             'bulan_close' => 'nullable',
-            'evidence' => 'nullable|file|mimes:jpeg,png,jpg,mp4,avi,mkv|max:10240', // max 10MB
+            'evidence' => 'nullable|file|mimes:jpeg,png,jpg,mp4,avi,mkv|max:10240',
             'detail_problem' => 'nullable',
             'plan_actions' => 'nullable',
             'ce' => 'nullable|string',
-            
         ]);
 
         $tiket = Tiket::findOrFail($id);
-            // Handle evidence jika diupload
-            if ($request->hasFile('evidence')) {
+
+        // Handle evidence jika diupload
+        if ($request->hasFile('evidence')) {
             $path = $request->file('evidence')->store('evidences', 'public');
             $tiket->evidence = $path;
         }
-        $tiket->update($request->all());
+
+        $tiket->update($request->except('evidence'));
 
         return redirect()->route('tiket')->with('success', 'Data tiket berhasil diperbarui.');
     }
@@ -259,15 +441,16 @@ class TiketController extends Controller
         }
     }
     public function formClose($id)
-{
-    $tiket = Tiket::findOrFail($id);
+    {
+        $tiket = Tiket::findOrFail($id);
 
-    $tanggalClose = date('Y-m-d');
-    $bulanClose = date('m');
+        $tanggalClose = date('Y-m-d');
+        $bulanClose = date('m');
 
-    return view('close_tiket', compact('tiket', 'tanggalClose', 'bulanClose'));
-}
+        return view('close_tiket', compact('tiket', 'tanggalClose', 'bulanClose'));
+    }
 
+    // Close tiket secara manual
     public function close(Request $request)
     {
         $request->validate([
@@ -276,45 +459,138 @@ class TiketController extends Controller
             'bulan_close' => 'required'
         ]);
 
-        $tiket = Tiket::find($request->id);
+        $tiket = Tiket::findOrFail($request->id);
         $tiket->tanggal_close = $request->tanggal_close;
         $tiket->bulan_close = $request->bulan_close;
-        $tiket->status = 'Closed';
+        $tiket->status_tiket = 'CLOSE';
         $tiket->save();
 
-        return redirect()->route('tiket.index')->with('success', 'Tiket berhasil di-close.');
+        return redirect()->route('tiket')->with('success', 'Tiket berhasil di-close.');
     }
+
+    // Close tiket otomatis (pakai tanggal hari ini)
     public function otomatisClose(Request $request)
     {
         $request->validate([
             'id' => 'required|exists:tiket,id'
         ]);
 
-        $tiket = Tiket::find($request->id);
-        $tiket->tanggal_close = date('Y-m-d');
-        $tiket->bulan_close = date('m');
-        $tiket->status = 'Closed';
+        $tiket = Tiket::findOrFail($request->id);
+        $tiket->tanggal_close = now()->format('Y-m-d');
+        $tiket->bulan_close = now()->format('F');
+        $tiket->status_tiket = 'CLOSE';
         $tiket->save();
 
-        return redirect()->route('tiket.index')->with('success', 'Tiket berhasil di-close.');
+        return redirect()->route('tiket')->with('success', 'Tiket berhasil di-close.');
     }
+
+    // Ambil data site berdasarkan site_id
     public function getDatasite($id)
-{
-    $site = Datasite::find($id);
+    {
+        $site = Datasite::where('site_id', $id)->first();
 
-    if (!$site) {
-        return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        if (!$site) {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json($site);
     }
 
-    return response()->json($site);
-}
-public function downloadDataSiteByTiketStatus($status_tiket)
-{
-    $status_tiket = strtolower($status_tiket);
-    if (!in_array($status_tiket, ['open', 'close'])) {
-        abort(404);
+    // Download data site berdasarkan status tiket
+    public function downloadDataSiteByTiketStatus($status_tiket)
+    {
+        $status_tiket = strtolower($status_tiket);
+        if (!in_array($status_tiket, ['open', 'close'])) {
+            abort(404);
+        }
+
+        return Excel::download(new DataSiteByTiketStatusExport($status_tiket), "tiket_{$status_tiket}_" . date('Ymd_His') . ".xlsx");
     }
 
-    return Excel::download(new DataSiteByTiketStatusExport($status_tiket), "tiket_{$status_tiket}_" . date('Ymd_His') . ".xlsx");
+    // List datasite untuk select2/autocomplete
+    public function getDatasiteList(Request $request)
+    {
+        $term = $request->input('term');
+
+        $results = Datasite::select('site_id', 'sitename')
+            ->when($term, function ($query) use ($term) {
+                return $query->where('sitename', 'like', "%{$term}%");
+            })
+            ->limit(20)
+            ->get();
+
+        return response()->json([
+            'results' => $results->map(function ($site) {
+                return [
+                    'id' => $site->site_id,
+                    'text' => $site->sitename
+                ];
+            }),
+        ]);
+    }
+
+    // Filter tiket yang sudah close
+    public function filter(Request $request)
+    {
+        $filter = $request->get('filter');
+        if ($filter == 'today') {
+            $tiket = Tiket::where('status_tiket', 'CLOSE')
+                ->whereDate('tanggal_close', now())
+                ->orderBy('tanggal_close', 'desc')
+                ->paginate(10);
+        } else {
+            $tiket = Tiket::where('status_tiket', 'CLOSE')
+                ->orderBy('tanggal_close', 'desc')
+                ->paginate(10);
+        }
+        // Partial harus ADA!
+        return view('partials.table_tiket', compact('tiket'))->render();
+    }
+    public function updateTanggalClose(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_close' => 'required|date',
+        ]);
+
+        $tiket = Tiket::findOrFail($id);
+        $tiket->update([
+            'tanggal_close' => $request->tanggal_close,
+        ]);
+
+        return redirect()->route('close.tiket')->with('success', 'Tanggal Close berhasil diupdate.');
+    }
+    public function updatePlan(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_close' => 'required|date',
+            'plan_actions' => 'required|string',
+        ]);
+
+        $tiket = Tiket::findOrFail($id);
+        $tiket->tanggal_close = $request->tanggal_close;
+        $tiket->plan_actions = $request->plan_actions;
+        $tiket->save();
+
+        return redirect()->route('close.tiket')->with('success', 'Plan Action & Tanggal Close berhasil diperbarui.');
+    }
+    public function show($id)
+{
+    $tiket = Tiket::findOrFail($id);
+
+    // Hitung durasi terbaru secara dinamis
+    $durasi = $tiket->durasi;
+    if ($tiket->status !== 'closed') {
+        $tanggalRekap = Carbon::parse($tiket->tanggal_rekap);
+        $today = Carbon::today();
+        if ($today->gt($tanggalRekap)) {
+            $durasi += $tanggalRekap->diffInDays($today); // atau +1 saja jika mau fixed 1 hari
+        }
+    }
+
+    // Tambahkan ke response
+    $tiket->durasi_terbaru = $durasi;
+
+    return response()->json($tiket);
 }
+
 }

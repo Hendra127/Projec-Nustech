@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tiket', function (Blueprint $table) {
-            $table->string('site_id')->nullable()->after('id');
+           //$table->string('site_id')->nullable()->after('id');
         });
     }
 

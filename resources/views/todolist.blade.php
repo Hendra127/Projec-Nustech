@@ -1,6 +1,82 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+<style>
+  body {
+    background: linear-gradient(to bottom right, rgb(209, 215, 231), rgb(134, 173, 229));
+    min-height: 100vh;
+  }
+  .task {
+    max-width: 100%;
+    overflow: hidden;
+  }
+</style>
+<!-- Tombol Operasional -->
+<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
+    <h6 class="mb-0"><strong>Operasional</strong></h6>
+  </a>
+</div>
+
+<!-- Modal Operasional -->
+<div class="modal fade" id="operasionalModal" tabindex="-1" aria-labelledby="operasionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none;">
+            <div class="modal-header">
+                <div class="w-100 text-center mt-2 ">
+                    <h5 class="modal-title" id="operasionalModalLabel">Daftar Halaman Operasional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Data Site</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Tiket</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
+                            <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
+                            <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Log Perangkat</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
+                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Download</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Rekap SLA</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
+                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">To Do List</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('todolist') }}" class="text-decoration-none d-block">My Todo list</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-end" style="border-top: none;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <h2 class="mb-4">📋 To-Do List (Drag & Drop)</h2>
 
@@ -18,27 +94,42 @@
     <!-- Board -->
     <div class="row">
         @php
-            $statuses = ['todo' => 'To Do', 'in_progress' => 'In Progress', 'done' => 'Done'];
+            $statuses = [
+                'todo' => 'To Do',
+                'in_progress' => 'In Progress',
+                'done' => 'Done'
+            ];
+
+            // Warna background dan teks untuk header
+            $headerColors = [
+                'todo' => 'bg-danger text-white',
+                'in_progress' => 'bg-warning text-dark',
+                'done' => 'bg-success text-white',
+            ];
         @endphp
 
         @foreach ($statuses as $status => $label)
-        <div class="col-md-4 position-relative">
-            <h5 class="text-center">{{ $label }}</h5>
-            <div class="board-column border p-2 rounded min-vh-50" data-status="{{ $status }}" id="{{ $status }}">
-                @foreach ($tasks->where('status', $status) as $task)
-                    <div class="task card p-2 mb-2 d-flex justify-content-between align-items-center {{ $task->status === 'done' ? 'bg-success text-white' : '' }}" 
-                         data-id="{{ $task->id }}" data-title="{{ $task->title }}" data-done="{{ $task->status === 'done' ? 'true' : 'false' }}" tabindex="0" style="cursor:pointer;">
-                        <span class="task-title">
-                            {!! $task->status === 'done' ? '<span>✔️</span> ' : '' !!}
-                            {{ $task->title }}
-                        </span>
-                    </div>
-                @endforeach
+            <div class="col-md-4 position-relative">
+                <h5 class="text-center p-2 rounded {{ $headerColors[$status] }}">
+                    {{ $label }}
+                </h5>
+
+                <div class="board-column border p-2 rounded min-vh-50" data-status="{{ $status }}" id="{{ $status }}">
+                    @foreach ($tasks->where('status', $status) as $task)
+                        <div class="task card p-2 mb-2 d-flex justify-content-between align-items-start {{ $task->status === 'done' ? 'bg-success text-white' : '' }}" 
+                            data-id="{{ $task->id }}" data-title="{{ $task->title }}" data-done="{{ $task->status === 'done' ? 'true' : 'false' }}" tabindex="0" style="cursor:pointer;">
+                            <span class="task-title">
+                                {!! $task->status === 'done' ? '<span>✔️</span> ' : '' !!}
+                                {{ $task->title }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+
+                @if ($status === 'done')
+                    <canvas class="confetti-canvas position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none;"></canvas>
+                @endif
             </div>
-            @if ($status === 'done')
-            <canvas class="confetti-canvas position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none;"></canvas>
-            @endif
-        </div>
         @endforeach
     </div>
 </div>
@@ -56,7 +147,7 @@
             <input type="hidden" id="editTaskId">
             <div class="mb-3">
                 <label for="editTaskTitle" class="form-label">Task Title</label>
-                <input type="text" id="editTaskTitle" class="form-control" required>
+                <textarea id="editTaskTitle" class="form-control" required></textarea>
             </div>
         </div>
         <div class="modal-footer">

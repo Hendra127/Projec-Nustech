@@ -27,12 +27,12 @@ class DashboardController extends Controller
             $tiketCloseTodayCount = Tiket::where('status_tiket', 'CLOSE')
                 ->whereDate('tanggal_close', $today)
                 ->count();
-
+            
             $yesterday = Carbon::yesterday();
             $tiketOpenYesterdayCount = Tiket::where('status_tiket', 'OPEN')
                 ->whereDate('tanggal_rekap', $yesterday)
                 ->count();
-
+                
             $keteranganCount = DB::table('log_perangkat')
                 ->select('keterangan', DB::raw('count(*) as total'))
                 ->groupBy('keterangan')
@@ -51,9 +51,19 @@ class DashboardController extends Controller
             })->latest()->get();
 
             // Ini Fungsi untuk mengambil jumlah site berdasarkan kabupaten
-            $siteByKabupaten = DataSite::select('kab', DB::raw('count(*) as total'))
-                ->groupBy('kab')
-                ->get(); 
+            $kabupatenList = DB::table('datasite')->select('kab')->distinct()->pluck('kab');
+
+            $openSitesByKabupaten = $kabupatenList->map(function ($kab) {
+                $total = DB::table('tiket')
+                    ->where('kabupaten', $kab)
+                    ->where('status_tiket', 'OPEN')
+                    ->count();
+
+                return (object)[
+                    'kab' => $kab,
+                    'total' => $total
+                ];
+            });
 
             $data = DB::table('tiket')
                 ->select('bulan_open as bulan', DB::raw('count(*) as total_open'), DB::raw('0 as total_close'))
@@ -94,7 +104,7 @@ class DashboardController extends Controller
             // Ambil 2 bulan terakhir
             $lastTwo = $data->take(-2)->values();
 
-             $allTiket = Tiket::where('status_tiket', 'OPEN')
+            $allTiket = Tiket::where('status_tiket', 'OPEN')
                 ->orderBy('created_at')
                 ->get();
 
@@ -108,7 +118,7 @@ class DashboardController extends Controller
                 $delta = $lastTwo[0]->total_close - $lastTwo[1]->total_close;
             }
 
-            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket', 'siteByKabupaten', 'activeUserCount', 'logPerangkatTeknisi', 'keteranganList', 'selectedKeterangan', 'keteranganCount', 'tiketCloseTodayCount', 'tiketOpenYesterdayCount'));
+            return view('dashboard', compact('timeseries', 'delta', 'deltaMonth', 'siteCount', 'tiketOpenCount', 'tiketCloseCount', 'userCount', 'allTiket', 'openSitesByKabupaten', 'activeUserCount', 'logPerangkatTeknisi', 'keteranganList', 'selectedKeterangan', 'keteranganCount', 'tiketCloseTodayCount', 'tiketOpenYesterdayCount'));
         } catch (\Throwable $th) {
             dd($th);
             return abort(404);

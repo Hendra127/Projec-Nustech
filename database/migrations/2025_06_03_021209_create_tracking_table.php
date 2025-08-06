@@ -9,34 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::create('tracking', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama_perangkat');
-        $table->string('jenis');
-        $table->string('tipe');
-        $table->string('sn')->unique();
-        $table->string('kondisi');
-        $table->string('lokasi_awal')->nullable();
-        $table->string('kab_awal')->nullable();
-        $table->string('lokasi_realtime')->nullable();
-        $table->string('kab_realtime')->nullable();
-        $table->string('layanan_ai')->nullable();
-        $table->string('bulan_masuk')->nullable();
-        $table->date('tanggal_masuk')->nullable();
-        $table->string('bulan_keluar')->nullable();
-        $table->date('tanggal_keluar')->nullable();
-        $table->text('keterangan')->nullable();
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('laporan_pm', function (Blueprint $table) {
+            $table->id(); // ID auto increment
+            $table->date('tanggal_submit')->nullable();
+            $table->string('site_id')->nullable();
+            $table->string('lokasi_site')->nullable();
+            $table->string('kabupaten_kota')->nullable();
+            $table->string('provinsi')->nullable();
+            $table->string('pm_bulan')->nullable();
+            $table->date('laporan_ba_pm')->nullable();
+            $table->string('teknisi')->nullable()->change();
+            $table->text('masalah_kendala')->nullable();
+            $table->text('action')->nullable();
+            $table->text('ket_tambahan')->nullable();
+            $table->string('status_laporan')->nullable();
+            $table->timestamps();
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('tracking');
+        Schema::dropIfExists('laporan_pm');
     }
 };

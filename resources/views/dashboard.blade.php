@@ -75,34 +75,139 @@
     border-radius: 5px;
   }
 </style>
+<style>
+  .btn-custom {
+    font-size: 0.75rem;
+    padding: 0.3rem 1rem;           /* <--- ini yang bikin lebih kecil */
+    border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+  }
 
-<div class="container-fluid px-3">
-  <div class="row">
-    @php
-      $cards = [
-          ['label'=>'Jumlah Site','value'=>$siteCount,'icon'=>'lokasi.png'],
-          ['label'=>'Tiket Open','value'=>$tiketOpenCount,'icon'=>'opentiket.png'],
-          ['label' => 'Tiket Open Hari Ini', 'value' => $tiketOpenYesterdayCount, 'icon' => 'opentiket.png'],
-          ['label'=>'Tiket Close ALL','value'=>$tiketCloseCount,'icon'=>'closetiket.png'], 
-          ['label' => 'Tiket Close Hari Ini', 'value' => $tiketCloseTodayCount, 'icon' => 'closetiket.png'],
-          ['label'=>'Online User','value'=>'<div id="activeUserCount">Loading...</div>','icon'=>'enginer.png'],
-      ];
-    @endphp
+  .btn-inactive {
+    background-color: transparent;
+    border: 2px solid #c026d3;
+    color: black;
+  }
 
- <div class="scrollable-cards">
-      @foreach($cards as $card)
-        <div class="card shadow-sm">
-          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-            <div>
-              <p class="text-sm mb-0 text-capitalize fw-bold">{{ $card['label'] }}</p>
-              <h5 class="fw-bolder mb-0">{!! $card['value'] !!}</h5>
+  .btn-active {
+    background-color: #22c55e;
+    color: black;
+    border: 2px solid #22c55e;
+  }
+
+  .btn-inactive:hover {
+    background-color: #f0f0f0;
+  }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<!-- Tombol Operasional -->
+<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
+    <h6 class="mb-0"><strong>Operasional</strong></h6>
+  </a>
+</div>
+
+<!-- Modal Operasional -->
+<div class="modal fade" id="operasionalModal" tabindex="-1" aria-labelledby="operasionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none;">
+            <div class="modal-header">
+                <div class="w-100 text-center mt-2 ">
+                    <h5 class="modal-title" id="operasionalModalLabel">Daftar Halaman Operasional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
             </div>
-            <img src="{{ asset('assets/img/'.$card['icon']) }}" alt="{{ $card['label'] }}" style="height:30px;">
-          </div>
+            <div class="modal-body">
+                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Data Site</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Tiket</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
+                            <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
+                            <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Log Perangkat</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
+                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Download</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Rekap SLA</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
+                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">To Do List</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('my-todolist') }}" class="text-decoration-none d-block">My Todo list</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-end" style="border-top: none;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
         </div>
-      @endforeach
     </div>
-  </div>
+</div>
+<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
+    <div class="content">
+        <div class="container-fluid py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-12 col-md-12 d-flex justify-content gap-3" style="font-family: 'Quicksand', sans-serif;">
+                    <a href="{{ url('tiket') }}"
+                        class="btn-custom {{ Request::is('tiket') ? 'btn-active' : 'btn-inactive' }}">
+                        Open Tiket
+                    </a>
+                    <a href="{{ route('close.tiket') }}"
+                        class="btn-custom {{ request()->routeIs('close.tiket') ? 'btn-active' : 'btn-inactive' }}">
+                        Close Tiket
+                    </a>
+                    <a href="{{ route('dashboard') }}"
+                        class="btn-custom {{ request()->routeIs('dashboard') ? 'btn-active' : 'btn-inactive' }}">
+                        Detail Tiket
+                    </a>
+                </div>
+            </div>
+        </div>
+      <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                <i class="fa fa-user-circle fa-2x text-primary"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" href="{{ url('user-profile') }}">
+                        <i class="fa fa-user me-2"></i> User Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('logout') }}">
+                        <i class="fa fa-sign-out me-2"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<div class="container-fluid py-4" style="margin-top: -50px;">
+  <div class="row">
   <div class="row mt-4 g-3">
     <!-- Data Open Tiket -->
     <div class="col-12 col-lg-6 d-flex flex-column">
@@ -112,7 +217,7 @@
           <p class="text-sm" style="margin-left: 25px;">
           </p>
         </div>
-        <div class="card-body overflow-auto flex-grow-1">
+        <div class="card-body flex-grow-1 d-flex flex-column" style="overflow-y: auto; max-height: 320px;">
           <div class="timeline timeline-one-side" style="margin-left: 60px;">
             @foreach($allTiket as $item)
               <div class="timeline-block mb-3">
@@ -135,55 +240,19 @@
       </div>
     </div>
 
-    <!-- Grafik Line -->
-   <div class="col-12 col-lg-6 d-flex flex-column">
-  <div class="card h-100 d-flex flex-column">
-    <div class="card-header pb-0 mt-0">
-      <h4 class="text-center">Spare Tracker</h4>
-
-      <!-- Dropdown filter keterangan + Jumlah -->
-      <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center justify-content-between gap-2 mt-2 px-2">
-        <div class="d-flex align-items-center gap-2">
-          <select name="keterangan" id="keterangan" class="form-select form-select-sm" style="width: 200px;" onchange="this.form.submit()">
-            @foreach($keteranganList as $item)
-              <option value="{{ $item }}" {{ $item == $selectedKeterangan ? 'selected' : '' }}>
-                {{ $item }}
-              </option>
-            @endforeach
-          </select>
-          @php
-          $selectedCount = $keteranganCount->firstWhere('keterangan', $selectedKeterangan)?->total ?? 0;
-        @endphp
-        <span class="badge bg-primary text-white px-3 py-2 rounded-pill">
-          {{ $selectedCount }} 
-        </span>
+    <!-- Grafik Line: Jumlah Close Tiket per Bulan -->
+    <div class="col-12 col-lg-6 d-flex flex-column">
+      <div class="card h-100 d-flex flex-column">
+        <div class="card-header pb-0 mt-0">
+          <h5 class="text-center">Jumlah Close Tiket per Bulan</h5>
         </div>
-      </form>
-      <!-- End Dropdown -->
-    </div>
-
-    <div class="card-body overflow-auto flex-grow-1">
-      <div class="timeline timeline-one-side" style="margin-left: 30px;">
-        @forelse($logPerangkatTeknisi as $item)
-          <div class="timeline-block mb-3">
-            <span class="timeline-step">
-              <i class="ni ni-settings text-primary text-gradient"></i>
-            </span>
-            <div class="timeline-content">
-              <h6 class="text-dark text-sm fw-bold mb-0">
-                <span class="text-secondary">#{{ $item->site_id }}</span> {{ $item->nama }}
-              </h6>
-              <p class="text-secondary text-xs mt-1 mb-0">Perangkat: {{ $item->perangkat }}</p>
-              <p class="text-secondary text-xs mt-1 mb-0">SN Lama: {{ $item->sn_lama }}</p>
-              <p class="text-secondary text-xs mt-1 mb-0">SN Baru: {{ $item->sn_baru }}</p>
-            </div>
+        <div class="card-body flex-grow-1 d-flex flex-column" style="min-height: 320px;">
+          <div class="chart flex-grow-1" style="min-height: 220px;">
+            <canvas id="chart-close-tiket" height="180"></canvas>
           </div>
-        @empty
-          <p class="text-center text-secondary">Tidak ada perangkat dengan keterangan terpilih.</p>
-        @endforelse
+        </div>
       </div>
     </div>
-  </div>
 </div>
 
 
@@ -191,9 +260,9 @@
   <div class="row mt-4 g-3">
      <div class="card h-100 d-flex flex-column">
         <div class="card-header pb-0">
-          <h5 class="card-title text-center" style="margin-bottom: 5px; margin-top: 10px">Jumlah Site</h5>
+          <h5 class="card-title text-center" style="margin-bottom: 5px; margin-top: 10px">Total Open Tiket Berdasarkan Kabupaten</h5>
           <p class="text-sm">
-            Total data site yang terdaftar dalam sistem berdasarkan kabupaten.
+            Jumlah site yang masih open tiket berdasarkan kabupaten.
           </p>
         </div>
         <div class="card-body p-3 flex-grow-1 d-flex flex-column">
@@ -226,105 +295,215 @@
 @endsection
 
 @push('dashboard')
-<canvas id="siteBarChart"></canvas>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
 <script>
-    function fetchActiveUsers() {
-        fetch('/active-users')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('activeUserCount').innerText = data.active_users + '';
-            });
-    }
+      document.addEventListener('DOMContentLoaded', function () {
+        const timeseries = @json($timeseries);
+        const labels = timeseries.map(i => i.bulan);
+        const dataClose = timeseries.map(i => i.total_close);
 
-    // Fetch every 10 seconds
-        setInterval(fetchActiveUsers, 1000);
-    fetchActiveUsers(); // initial load
-</script>
-<script>
-const barLabels = {!! json_encode($siteByKabupaten->pluck('kab')) !!};
-const barData = {!! json_encode($siteByKabupaten->pluck('total')) !!};
+        var ctx = document.getElementById("chart-close-tiket").getContext("2d");
+        var grad = ctx.createLinearGradient(0, 230, 0, 50);
+        grad.addColorStop(1, 'rgba(20,23,39,0.2)');
+        grad.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+        grad.addColorStop(0, 'rgba(20,23,39,0)');
 
-const backgroundColors = [
-  'rgba(156, 39, 176, 1)',
-  'rgba(0, 150, 136, 1)',
-  'rgba(33, 150, 243, 1)',
-  'rgba(255, 193, 7, 1)',
-  'rgba(76, 175, 80, 1)',
-  'rgba(244, 67, 54, 1)',
-  'rgba(103, 58, 183, 1)',
-  'rgba(0, 188, 212, 1)',
-  'rgba(255, 87, 34, 1)',
-  'rgba(205, 220, 57, 1)',
-  'rgba(121, 85, 72, 1)',
-  'rgba(63, 81, 181, 1)'
-];
-
-const ctx = document.getElementById('siteBarChart').getContext('2d');
-
-Chart.register(ChartDataLabels);
-
-const siteBarChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: barLabels,
-    datasets: [{
-      label: 'Jumlah Site',
-      data: barData,
-      backgroundColor: backgroundColors,
-      borderColor: backgroundColors,
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    animation: {
-      duration: 7000, // Efek animasi lambat
-      easing: 'easeOutQuart' // efek halus
-    },
-    plugins: {
-      legend: { display: false },
-      datalabels: {
-        anchor: 'end',
-        align: 'top',
-        color: '#000',
-        font: {
-          weight: 'bold'
-        },
-        formatter: value => value
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            size: 9,
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Close Tiket",
+              data: dataClose,
+              borderColor: "#3A416F",
+              backgroundColor: grad,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3
+            }]
           },
-          maxRotation: 20,
-          minRotation:20,
-          padding: 5,
-        },
-        grid: {
-          display: false
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true }
+            },
+            layout: {
+              padding: {
+                top: 10,
+                bottom: 10,
+                left: 10,
+                right: 10
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { borderDash: [5, 5] },
+                ticks: { color: '#b2b9bf' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: '#b2b9bf' }
+              }
+            }
+          }
+        });
+      });
+    </script>
+<script>
+  // Daftarkan plugin Datalabels
+  Chart.register(ChartDataLabels);
+
+  // Ambil panjang data kabupaten dari Laravel
+  const kabupatenLabels = {!! json_encode($openSitesByKabupaten->pluck('kab')) !!};
+  const siteTotals = {!! json_encode($openSitesByKabupaten->pluck('total')) !!};
+
+  // Fungsi untuk membuat warna acak
+  const getRandomColor = () => {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return `rgba(${r}, ${g}, ${b}, 0.7)`;
+  };
+
+  // Buat array warna berdasarkan jumlah kabupaten
+  const backgroundColors = kabupatenLabels.map(() => getRandomColor());
+  const borderColors = backgroundColors.map(color => color.replace('0.7', '1'));
+
+  // Inisialisasi chart
+  const ctx = document.getElementById('siteBarChart').getContext('2d');
+  const siteBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: kabupatenLabels,
+      datasets: [{
+        data: siteTotals,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          color: '#000',
+          font: {
+            weight: 'bold',
+            size: 12
+          },
+          formatter: value => value
         }
       },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 10
+      scales: {
+        y: {
+          beginAtZero: true,
+          min: 0,
+          max: 7,
+          ticks: {
+            stepSize: 1
+          },
+          title: {
+            display: true,
+          }
         },
-        grid: {
-          borderDash: [5, 5]
+        x: {
+          title: {
+            display: true,
+          }
         }
       }
-    }
-  },
-  plugins: [ChartDataLabels]
-});
+    },
+    plugins: [ChartDataLabels]
+  });
 </script>
+
+<script>
+  function fetchActiveUsers() {
+    fetch('/active-users')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('activeUserCount').innerText = data.active_users + '';
+      });
+  }
+
+  setInterval(fetchActiveUsers, 1000);
+  fetchActiveUsers(); // initial load
+</script>
+<script>
+  window.onload = function () {
+    const timeseries = @json($timeseries);
+    const labels = timeseries.map(i => i.bulan);
+    const dataOpen = timeseries.map(i => i.total_open);
+    const dataClose = timeseries.map(i => i.total_close);
+
+    var ctxLine = document.getElementById("chart-line").getContext("2d");
+    var grad1 = ctxLine.createLinearGradient(0, 230, 0, 50);
+    grad1.addColorStop(1, 'rgba(203,12,159,0.2)');
+    grad1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    grad1.addColorStop(0, 'rgba(203,12,159,0)');
+
+    var grad2 = ctxLine.createLinearGradient(0, 230, 0, 50);
+    grad2.addColorStop(1, 'rgba(20,23,39,0.2)');
+    grad2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    grad2.addColorStop(0, 'rgba(20,23,39,0)');
+
+    new Chart(ctxLine, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Open",
+            data: dataOpen,
+            borderColor: "#cb0c9f",
+            backgroundColor: grad1,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0
+          },
+          {
+            label: "Close",
+            data: dataClose,
+            borderColor: "#3A416F",
+            backgroundColor: grad2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: { display: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { borderDash: [5, 5] },
+            ticks: { color: '#b2b9bf' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#b2b9bf' }
+          }
+        }
+      }
+    });
+  }
+</script>
+
 <script>
   window.onload = function() {
     // hanya inisialisasi chart-line

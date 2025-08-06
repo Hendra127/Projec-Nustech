@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all();
+        // Hanya ambil task milik user yang login
+        $tasks = Task::where('user_id', auth()->id())->get();
         return view('todolist', compact('tasks'));
     }
 
@@ -18,7 +20,8 @@ class TaskController extends Controller
         try {
             Task::create([
                 'title' => $request->title,
-                'status' => 'todo'
+                'status' => 'todo',
+                'user_id' => Auth::id(), // Simpan ID user yang membuat
             ]);
             return redirect()->back()->with('success', 'Task berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -28,7 +31,8 @@ class TaskController extends Controller
 
     public function move(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        // Hanya ubah task milik user login
+        $task = Task::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
         $task->status = $request->status;
         $task->save();
         return response()->json(['success' => true]);
@@ -36,7 +40,8 @@ class TaskController extends Controller
 
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        // Hanya update task milik user login
+        $task = Task::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
         $task->title = $request->title;
         $task->save();
         return response()->json(['success' => true]);
@@ -44,7 +49,8 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
+        // Hanya hapus task milik user login
+        $task = Task::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
         $task->delete();
         return response()->json(['success' => true]);
     }

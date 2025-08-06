@@ -29,7 +29,7 @@
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 d-none">Role</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creation Date</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Terakhir Online</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
@@ -55,7 +55,7 @@
                                         <p class="text-xs font-weight-bold mb-0">{{ $user->role }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{ $user->created_at->format('d/m/Y') }}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{ $user->last_seen }}</span>
                                     </td>
                                     <td class="text-center" id="status-{{ $user->id }}">
                                         @if($user->is_online)
@@ -87,7 +87,7 @@
 <div class="modal fade" id="modalTambahUser" tabindex="-1" role="dialog" aria-labelledby="modalTambahUserLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form id="userForm" method="POST" enctype="multipart/form-data">
+            <form id="userForm" action="{{ url('/user') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahUserLabel">Tambah User Baru</h5>
@@ -118,14 +118,6 @@
                     <div class="form-group col-md-6">
                         <label>Photo</label>
                         <input type="file" accept="image/*" name="photo" class="form-control">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label">Role</label>
-                        <select name="role" id="" class="form-control" required>
-                            <option value="">>> Pilih Role <<</option>
-                            <option value="admin">admin</option>
-                            <option value="superadmin">superadmin</option>
-                        </select>
                     </div>
                     <div class="form-group col-md-12">
                         <label>Tentang Saya</label>

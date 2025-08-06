@@ -36,7 +36,72 @@
 
 {{-- SweetAlert2 CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Tombol Operasional -->
+<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
+    <h6 class="mb-0"><strong>Operasional</strong></h6>
+  </a>
+</div>
 
+<!-- Modal Operasional -->
+<div class="modal fade" id="operasionalModal" tabindex="-1" aria-labelledby="operasionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none;">
+            <div class="modal-header">
+                <div class="w-100 text-center mt-2 ">
+                    <h5 class="modal-title" id="operasionalModalLabel">Daftar Halaman Operasional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Data Site</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Tiket</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
+                            <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
+                            <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Log Perangkat</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
+                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Download</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Rekap SLA</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
+                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">To Do List</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('todolist') }}" class="text-decoration-none d-block">My Todo list</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-end" style="border-top: none;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
+        </div>
+    </div>
+</div>
 <div class="container py-4">
     <h2 class="mb-4">Download File</h2>
 
@@ -82,7 +147,8 @@
         </a>
     </div>
 
-    {{-- Upload File --}}
+    {{-- Upload File (Hanya untuk superadmin) --}}
+    @if(Auth::user()->role === 'superadmin')
     <form action="{{ route('file.upload') }}" method="POST" enctype="multipart/form-data" class="mb-4">
         @csrf
         <div class="form-group">
@@ -90,6 +156,7 @@
         </div>
         <button type="submit" class="btn btn-info mt-2">Upload</button>
     </form>
+    @endif
 
     {{-- Tabel File --}}
     <table class="table table-bordered table-hover">
@@ -109,6 +176,8 @@
                         <a href="{{ route('file.download', $file->id) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-download"></i> Download
                         </a>
+
+                        @if(Auth::user()->role === 'superadmin')
                         <form action="{{ route('file.destroy', $file->id) }}" method="POST" class="d-inline form-hapus">
                             @csrf
                             @method('DELETE')
@@ -116,6 +185,7 @@
                                 <i class="fas fa-trash-alt"></i> Hapus
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty

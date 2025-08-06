@@ -75,4 +75,45 @@ class LogPerangkatController extends Controller
 
         return $pdf->download('log-perangkat.pdf');
     }
+
+   public function sparetracker(Request $request) 
+{
+    $perangkatFilter = str_replace(' ', '', strtolower($request->input('perangkat')));
+    $selectedKeterangan = $request->input('keterangan');
+
+    // Filter data utama log perangkat
+    $logPerangkatTeknisi = LogPerangkat::when($perangkatFilter, function ($query, $perangkatFilter) {
+        return $query->whereRaw("LOWER(REPLACE(perangkat, ' ', '')) LIKE ?", ['%' . $perangkatFilter . '%']);
+    })->when($selectedKeterangan, function ($query, $selectedKeterangan) {
+        return $query->where('keterangan', $selectedKeterangan);
+    })->orderBy('created_at', 'desc')->get();
+
+    // Data statistik
+    $spareTotal = LogPerangkat::count();
+    $spareUsed = LogPerangkat::where('keterangan', 'like', '%digunakan%')->count();
+    $spareAvailable = LogPerangkat::where('keterangan', 'like', '%tersedia%')->count();
+
+    $routerCount = LogPerangkat::whereRaw("LOWER(REPLACE(perangkat, ' ', '')) LIKE ?", ['%router%'])->count();
+    $modemCount = LogPerangkat::whereRaw("LOWER(REPLACE(perangkat, ' ', '')) LIKE ?", ['%modem%'])->count();
+    $transceiverCount = LogPerangkat::whereRaw("LOWER(REPLACE(perangkat, ' ', '')) LIKE ?", ['%tranciever%'])->count(); // sesuai isi database
+    $accessPointCount = LogPerangkat::whereRaw("LOWER(REPLACE(perangkat, ' ', '')) LIKE ?", ['%accesspoint%'])->count();
+
+    // Keterangan filter dropdown
+    $keteranganList = LogPerangkat::select('keterangan')->distinct()->pluck('keterangan');
+
+    return view('sparetracker', compact(
+        'logPerangkatTeknisi',
+        'spareTotal',
+        'spareUsed',
+        'spareAvailable',
+        'routerCount',
+        'modemCount',
+        'transceiverCount',
+        'accessPointCount',
+        'keteranganList',
+        'selectedKeterangan',
+        'perangkatFilter'
+    ));
+}
+
 }

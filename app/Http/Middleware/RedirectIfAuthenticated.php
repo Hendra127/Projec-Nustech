@@ -23,7 +23,8 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                // ✅ redirect ke intended jika ada, fallback ke HOME
+                return redirect()->intended(RouteServiceProvider::HOME);
             }
         }
 

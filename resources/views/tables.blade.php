@@ -8,7 +8,7 @@
   }
   table.table td,
   table.table th {
-    font-size: 9px; /* Atur ukuran font yang lebih kecil */
+    font-size: 16px; /* Atur ukuran font yang lebih kecil */
   }
  table.table tbody td {
   padding: 0px 5px !important;   /* Atas-bawah: 0px, Kiri-kanan: 5px */
@@ -18,29 +18,185 @@
 }
 
 </style>
-<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
-    <div class="content">
+<!-- Tombol Operasional -->
+<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
+    <h6 class="mb-0"><strong>Operasional</strong></h6>
+  </a>
+</div>
+
+<!-- Modal Operasional -->
+<div class="modal fade" id="operasionalModal" tabindex="-1" aria-labelledby="operasionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none;">
+            <div class="modal-header">
+                <div class="w-100 text-center mt-2 ">
+                    <h5 class="modal-title" id="operasionalModalLabel">Daftar Halaman Operasional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Data Site</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
+                            <a href="{{ url('tables') }}" class="text-decoration-none d-block">Data All Sites</a>
+                            <a href="{{ route('laporanPM') }}" class="text-decoration-none d-block">Laporan PM</a>
+                            <a href="{{ route('pmliberta') }}" class="text-decoration-none d-block">PM Liberta 2025</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Tiket</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
+                            <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
+                            <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Log Perangkat</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
+                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Download</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">Rekap SLA</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
+                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
+                        </div>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <div class="fw-bold mb-1">To Do List</div>
+                        <div class="ms-2 mb-2">
+                            <a href="{{ url('todolist') }}" class="text-decoration-none d-block">My Todo list</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-end" style="border-top: none;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                <i class="fa fa-user-circle fa-2x text-primary"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" href="{{ url('user-profile') }}">
+                        <i class="fa fa-user me-2"></i> User Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('logout') }}">
+                        <i class="fa fa-sign-out me-2"></i> Logout
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('logout') }}">
+                        <i class="fa fa-sign-out me-2"></i> Users Managemen
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <style>
+        .btn-custom {
+            font-size: 0.75rem;
+            padding: 0.3rem 1rem;           /* <--- ini yang bikin lebih kecil */
+            border-radius: 12px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-inactive {
+            background-color: transparent;
+            border: 2px solid #c026d3;
+            color: black;
+        }
+
+        .btn-active {
+            background-color: #22c55e;
+            color: black;
+            border: 2px solid #22c55e;
+        }
+
+        .btn-inactive:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+    <div class="content"> 
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 d-flex justify-content gap-3" style="font-family: 'Quicksand', sans-serif;">
+                    <a href="{{ url('tables') }}"
+                        class="btn-custom {{ Request::is('tables') ? 'btn-active' : 'btn-inactive' }}">
+                        Data All Sites
+                    </a>
+
+                    <a href="{{ url('datapass') }}"
+                        class="btn-custom {{ Request::is('datapass') ? 'btn-active' : 'btn-inactive' }}">
+                        Data Manajemen Password
+                    </a>
+
+                    <a href="{{ route('laporanPM') }}"
+                        class="btn-custom {{ Request::routeIs('laporanPM') ? 'btn-active' : 'btn-inactive' }}">
+                        Laporan PM
+                    </a>
+
+                    <a href="{{ route('pmliberta') }}"
+                        class="btn-custom {{ Request::routeIs('pmliberta') ? 'btn-active' : 'btn-inactive' }}">
+                        PM Liberta 2025
+                    </a>
+                    <a href="{{ route('summary') }}"
+                        class="btn-custom {{ Request::routeIs('summary') ? 'btn-active' : 'btn-inactive' }}">
+                        Summary PM
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+        @php
+            $role = Auth::user()->role;
+        @endphp
         <div class="card card-info card-outline">
             <div class="card-header">
                 <!-- Tombol Tambah, Export, Import -->
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                     <!-- Tombol Tambah, Export, Import -->
-                    <div class="mb-2">
-                        <a href="{{ route('datacreate') }}" class="btn btn-primary mr-2 mb-2">
-                            <i class="fa fa-plus"></i> Tambah
+                    <div class="d-flex gap-2 mb-2">
+                        @if (in_array($role, ['admin', 'superadmin']))
+                        <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalLong" title="Import Data">
+                            <i class="fa fa-upload"></i>
                         </a>
-                        <a href="{{ route('dataexport') }}" class="btn btn-success mr-2 mb-2">
-                            <i class="fa fa-file-excel-o"></i> Export
+                        <a href="{{ route('datacreate') }}" class="btn btn-outline-primary btn-sm" title="Tambah Data">
+                            <i class="fa fa-plus"></i>
                         </a>
-                        <a href="#" class="btn btn-info mb-2" data-toggle="modal" data-target="#exampleModalLong">
-                            <i class="fa fa-upload"></i> Import
+                        @endif
+                        <a href="{{ route('dataexport') }}" class="btn btn-outline-success btn-sm" title="Export Data">
+                            <i class="fa fa-download"></i>
                         </a>
                     </div>
 
-                    <!-- Form Search (di kanan) -->
-                    <form action="{{ route('tables') }}" method="GET" class="d-flex align-items-center">
-                        <input type="text" name="query" class="form-control form-control-sm me-2" placeholder="Enter To Search" value="{{ request()->query('query') }}">
-                        <button type="submit" class="btn btn-primary btn-sm mb-0">Search</button>
+                    <!-- Form Search -->
+                    <form action="{{ route('tables') }}" method="GET">
+                        <div class="input-group input-group-sm" style="width: 220px;">
+                            <input type="text" name="query" class="form-control" placeholder="Enter To Search" value="{{ request()->query('query') }}">
+                            <span class="input-group-text" style="cursor: pointer;" onclick="this.closest('form').submit()">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
                     </form>
                 </div>
             </div>
