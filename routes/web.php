@@ -24,6 +24,7 @@ use App\Http\Controllers\PmLibertaController;
 use App\Http\Controllers\logspareController;
 use App\Http\Controllers\SiteReviewController;
 use App\Http\Controllers\LaporanInstalasiController;
+use App\Http\Controllers\SummaryTiketController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -193,6 +194,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporaninstalasi', [LaporanInstalasiController::class, 'index'])->name('laporaninstalasi');
     Route::post('/laporaninstalasi/upload-foto', [LaporanInstalasiController::class, 'uploadFoto'])->name('laporan.upload_foto');
     Route::post('/dokumentasi/store', [LaporanInstalasiController::class, 'store'])->name('dokumentasi.store');
+
+    // Route Summary Tiket
+    Route::get('/summarytiket', [SummaryTiketController::class, 'index'])->name('summarytiket');
 
     Route::get('/aboutus', function () {
     return view('aboutus');
