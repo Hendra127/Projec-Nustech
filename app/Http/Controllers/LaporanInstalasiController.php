@@ -3,68 +3,53 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Dokumentasi;
-
-
+use App\Models\LaporanInstalasi;
+use App\Models\Sitenewinsalasion;
 
 class LaporanInstalasiController extends Controller
 {
-    // Tampilkan halaman utama
     public function index()
     {
-        $dokumentasi = Dokumentasi::latest()->get();
+        $dokumentasi = LaporanInstalasi::latest()->get();
         return view('laporaninstalasi', compact('dokumentasi'));
     }
 
-    // Proses upload foto
-    public function uploadFoto(Request $request)
-{
-    \Log::info('Upload dipanggil');
-    \Log::info($request->all());
-
-    $request->validate([
-        'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        'nama_foto' => 'required|string|max:255',
-        'keterangan' => 'nullable|string',
-    ]);
-
-    $file = $request->file('foto');
-    $filename = time() . '_' . $file->getClientOriginalName();
-    $file->storeAs('public/photos', $filename);
-
-    Dokumentasi::create([
-        'nama_foto' => $request->nama_foto,
-        'keterangan' => $request->keterangan,
-        'path' => 'storage/photos/' . $filename,
-    ]);
-
-    \Log::info('Berhasil simpan ke database');
-
-    return redirect()->route('laporaninstalasi')->with('success', 'Foto berhasil diupload.');
-}
-
     public function store(Request $request)
-{
-    $request->validate([
-        'keterangan' => 'required',
-        'foto.*' => 'image|mimes:jpeg,png,jpg|max:2048'
-    ]);
+    {
+        $request->validate([
+            'keterangan' => 'required|string',
+            'foto.*' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-    if ($request->hasfile('foto')) {
         foreach ($request->file('foto') as $file) {
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->storeAs('public/photos', $filename);
 
-            Dokumentasi::create([
-                'nama_foto' => $file->getClientOriginalName(),
+            // 🔥 PALING AMAN (tanpa spasi, tanpa karakter aneh)
+            $path = $file->store('photos', 'public');
+
+            LaporanInstalasi::create([
+                'nama_foto' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
                 'keterangan' => $request->keterangan,
-                'path' => 'storage/photos/' . $filename
+                'path' => $path // <-- SIMPAN: photos/xxxx.jpg
             ]);
         }
+
+        return redirect()->back()->with('success', 'Foto berhasil diupload.');
     }
+    public function storeInstallation(Request $request)
+    {
+        $request->validate([
+            'nama_site' => 'required|string|max:255',
+            'keterangan' => 'nullable|string'
+        ]);
 
-    return redirect()->back()->with('success', 'Foto berhasil diupload.');
-}
+        $site = Sitenewinsalasion::create([
+            'nama_site' => $request->nama_site,
+            'keterangan' => $request->keterangan
+        ]);
 
+        return redirect()
+            ->route('installation.show', $site->id)
+            ->with('success', 'Installation Data berhasil disimpan');
+    }
+    
 }

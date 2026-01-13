@@ -100,92 +100,10 @@
   }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-<!-- Tombol Operasional -->
-<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
-  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
-    <h6 class="mb-0"><strong>Operasional</strong></h6>
-  </a>
-</div>
 
 <!-- Modal Operasional -->
-<div class="modal fade" id="operasionalModal" tabindex="-1" aria-labelledby="operasionalModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border: none;">
-            <div class="modal-header">
-                <div class="w-100 text-center mt-2 ">
-                    <h5 class="modal-title" id="operasionalModalLabel">Daftar Halaman Operasional</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Data Site</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
-                        </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Tiket</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
-                            <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
-                            <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
-                        </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Log Perangkat</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
-                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
-                        </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Download</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
-                        </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Rekap SLA</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
-                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
-                        </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">To Do List</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('my-todolist') }}" class="text-decoration-none d-block">My Todo list</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-end" style="border-top: none;">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
-        </div>
-    </div>
-</div>
 <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
     <div class="content">
-        <div class="container-fluid py-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-12 col-md-12 d-flex justify-content gap-3" style="font-family: 'Quicksand', sans-serif;">
-                    <a href="{{ url('tiket') }}"
-                        class="btn-custom {{ Request::is('tiket') ? 'btn-active' : 'btn-inactive' }}">
-                        Open Tiket
-                    </a>
-                    <a href="{{ route('close.tiket') }}"
-                        class="btn-custom {{ request()->routeIs('close.tiket') ? 'btn-active' : 'btn-inactive' }}">
-                        Close Tiket
-                    </a>
-                    <a href="{{ route('dashboard') }}"
-                        class="btn-custom {{ request()->routeIs('dashboard') ? 'btn-active' : 'btn-inactive' }}">
-                        Detail Tiket
-                    </a>
-                </div>
-            </div>
-        </div>
       <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
         <div class="dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
@@ -275,22 +193,6 @@
   </div>
 
   <!-- Maps -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="card h-100">
-        <div class="card-body p-3">
-          <div class="map-responsive">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13212105.007711887!2d116.807041!3d0.655536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sid!4v1625210912345!5m2!1sen!2sid"
-              allowfullscreen
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 @endsection
 

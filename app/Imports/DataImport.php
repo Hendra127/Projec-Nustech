@@ -13,6 +13,9 @@ class DataImport implements OnEachRow, WithHeadingRow
 {
     $row = $row->toArray();
 
+    // Ubah semua key ke lowercase dulu
+    $row = array_change_key_case($row, CASE_LOWER);
+
     // Normalisasi key ke lowercase dan hapus spasi
     $normalizedRow = [];
     foreach ($row as $key => $value) {
@@ -53,8 +56,13 @@ class DataImport implements OnEachRow, WithHeadingRow
         'longitude'       => $longitude,
         'provinsi'        => $normalizedRow['provinsi'] ?? null,
         'kab'             => $normalizedRow['kabupaten'] ?? $normalizedRow['kab'] ?? null,
-        'kecamatan'       => $normalizedRow['kecamatan'] ?? null,
-        'kelurahan'       => $normalizedRow['kelurahan_desa'] ?? null,
+        'kecamatan' => $normalizedRow['kecamatan'] 
+            ?? $normalizedRow['KACAMATAN'] 
+            ?? null,
+
+        'kelurahan' => $normalizedRow['kelurahan'] 
+            ?? $normalizedRow['KELURAHAN'] 
+            ?? null,
         'alamat_lokasi'   => $normalizedRow['alamat_lokasi'] ?? null,
         'nama_pic'        => $normalizedRow['nama_pic_lokasi'] ?? null,
         'nomor_pic'       => $normalizedRow['nomor_pic_lokasi'] ?? null,

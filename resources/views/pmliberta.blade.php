@@ -4,6 +4,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
 <style>
+    .select2-container--bootstrap-5 .select2-selection {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    height: 42px;
+    padding: 5px 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #495057;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection__rendered {
+        color: #495057;
+        line-height: 30px;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection__placeholder {
+        color: #9ca3af;
+    }
+
+    .select2-results__options {
+        max-height: 200px !important; /* atur sesuai kebutuhan */
+        overflow-y: auto !important;
+    }
+    
+    .select2-results__options {
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        scrollbar-width: thin;
+    }
+
+    /* Pastikan lebar Select2 mengikuti lebar input */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Perbaiki tinggi & alignment teks di dalam kotak */
+.select2-container--bootstrap-5 .select2-selection--single {
+    height: 42px !important; /* sama dengan tinggi input form */
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+}
+
+/* Pastikan teks muncul di tengah vertikal */
+.select2-container--bootstrap-5 .select2-selection__rendered {
+    line-height: normal !important;
+    padding-left: 4px !important;
+}
+
+/* Posisi tanda panah tetap rapi */
+.select2-container--bootstrap-5 .select2-selection__arrow {
+    height: 42px !important;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
   body {
     background: #FEF3E2;
     min-height: 100vh;
@@ -203,8 +259,9 @@
           @php
                 $role = Auth::user()->role;
             @endphp
+            
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2 flex-wrap">
-    
+                                        
                 <!-- Tambah Data -->
                 <div class="d-flex flex-wrap gap-2">
                     @if (in_array($role, ['admin', 'superadmin']))
@@ -225,59 +282,101 @@
                             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Tutup"></button>
                         </div>
                         <form action="{{ route('pmliberta.store') }}" method="POST">
-                            @csrf
-                            <div class="modal-body row g-3 px-4 py-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Site ID</label>
-                                <input type="text" name="site_id" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Nama Lokasi</label>
-                                <input type="text" name="nama_lokasi" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Provinsi</label>
-                                <input type="text" name="provinsi" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Kabupaten/Kota</label>
-                                <input type="text" name="kabupaten_kota" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">PIC CE</label>
-                                <input type="text" name="pic_ce" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Month</label>
-                                <input type="text" name="month" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Date</label>
-                                <input type="date" name="date" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Status</label>
-                                <input type="text" name="status" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Week</label>
-                                <input type="text" name="week" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Kategori</label>
-                                <select name="kategori" class="form-select">
-                                <option value="SL">SL</option>
-                                <option value="BMN">BMN</option>
-                                <option value="BMN PAPUA">BMN PAPUA</option>
-                                <option value="BMN NON PAPUA">BMN NON PAPUA</option>
-                                </select>
-                            </div>
-                            </div>
-                            <div class="modal-footer px-4">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-danger">Simpan</button>
-                            </div>
-                        </form>
+                                @csrf
+                                <div class="modal-body row g-3 px-4 py-3">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Lokasi</label>
+                                        <select name="nama_lokasi" id="nama_lokasi" class="form-select" required>
+                                            <option value="">Pilih atau cari Nama Site</option>
+                                            @foreach($sites as $site)
+                                                <option value="{{ $site->id }}">{{ $site->sitename }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Site ID</label>
+                                        <input type="text" name="site_id" id="site_id" class="form-control" readonly>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Provinsi</label>
+                                        <input type="text" name="provinsi" id="provinsi" class="form-control" readonly>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kabupaten/Kota</label>
+                                        <input type="text" name="kabupaten_kota" id="kabupaten_kota" class="form-control" readonly>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">PIC CE</label>
+                                        <input type="text" name="pic_ce" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Month</label>
+                                        <select name="month" class="form-select" required>
+                                            <option value="">-- Pilih Bulan --</option>
+                                            <option value="Januari">Januari</option>
+                                            <option value="Februari">Februari</option>
+                                            <option value="Maret">Maret</option>
+                                            <option value="April">April</option>
+                                            <option value="Mei">Mei</option>
+                                            <option value="Juni">Juni</option>
+                                            <option value="Juli">Juli</option>
+                                            <option value="Agustus">Agustus</option>
+                                            <option value="September">September</option>
+                                            <option value="Oktober">Oktober</option>
+                                            <option value="November">November</option>
+                                            <option value="Desember">Desember</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Date</label>
+                                        <input type="date" name="date" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Status</label>
+                                        <select name="status" class="form-select" required>
+                                            <option value="">-- Pilih Status --</option>
+                                            <option value="DONE">DONE</option>
+                                            <option value="PENDING">PENDING</option>
+                                            <option value="HOLD">HOLD</option>
+                                        </select>
+                                    </div>
+
+                                   <div class="col-md-6">
+                                        <label class="form-label">WEEK</label>
+                                        <select name="week" class="form-select" required>
+                                            <option value="">-- Pilih Week --</option>
+                                            <option value="WEEK 1">WEEK 1</option>
+                                            <option value="WEEK 2">WEEK 2</option>
+                                            <option value="WEEK 3">WEEK 3</option>
+                                            <option value="WEEK 4">WEEK 4</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kategori</label>
+                                        <select name="kategori" id="kategori" class="form-select" required>
+                                            <option value="">-- Pilih Kategori --</option>
+                                            <option value="SL">SL</option>
+                                            <option value="BMN">BMN</option>
+                                            <option value="BMN PAPUA">BMN PAPUA</option>
+                                            <option value="BMN NON PAPUA">BMN NON PAPUA</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer px-4">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger">Simpan</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     </div>
@@ -310,8 +409,75 @@
                     </div>
                 </form>
             </div>
+            <style>
+                table.table {
+                    border-collapse: collapse !important;
+                    margin: 0 !important;
+                    font-size: 13px !important;
+                    line-height: 1.1 !important;
+                }
+
+                /* Supersuper rapat */
+                table.table th,
+                table.table td {
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                    padding-left: 3px !important;
+                    padding-right: 3px !important;
+                    margin: 0 !important;
+                    height: 30px !important; /* tambahkan batas tinggi minimum */
+                    line-height: 1 !important; /* benar-benar rapat antar huruf */
+                    vertical-align: middle !important; /* <--- ini penting agar teks di tengah vertikal */
+                }
+
+
+                .table-bordered > :not(caption) > * > * {
+                    border-width: 1px !important;
+                }
+
+                thead.table-dark th {
+                    padding: 4px !important;
+                    font-size: 13px !important;
+                }
+
+                .action-btn {
+                    padding: 2px 6px !important;
+                    font-size: 10px !important;
+
+                td.d-flex.gap-2 {
+                    gap: 4px !important;
+                }
+            </style>
+            <style>
+            .table td .action-btn {
+                background: none;
+                border: none;
+                color: #007bff; /* warna ikon biru */
+                font-size: 18px;
+                padding: 2px 4px;
+                margin: 0 2px;
+                cursor: pointer;
+                transition: transform 0.15s ease, color 0.15s ease;
+            }
+
+            /* Hover: sedikit membesar dan warna lebih gelap */
+            .table td .action-btn:hover {
+                color: #0056b3;
+                transform: scale(1.2);
+            }
+
+            
+
+            /* Hilangkan margin form dan tombol di dalam kolom */
+            .table td form,
+            .table td button {
+                display: inline-block;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm text-nowrap align-middle">
+                <table class="table table-bordered table-striped table-sm text-nowrap align-middle" style="font-family: 'Quicksand', sans-serif; font-size: 12px;">
                     <thead class="table-dark">
                         <tr>
                             <th>No</th>
@@ -347,7 +513,9 @@
                             @endphp
                             <td>
                                 <!-- Tombol Edit -->
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">Edit</button>
+                                <button class="action-btn" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
 
                                 <!-- Modal Edit -->
                                 <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
@@ -415,7 +583,9 @@
                                   </div>
                                 </div>
                                 @if (in_array($role, ['admin', 'superadmin']))
-                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $item->id }}">Hapus</button>    
+                                <button type="button" class="action-btn btn-delete" data-id="{{ $item->id }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>   
                                 <!-- Form delete tersembunyi -->
                                 <form id="delete-form-{{ $item->id }}" action="{{ route('pmliberta.destroy', $item->id) }}" method="POST" style="display:none;">
                                     @csrf
@@ -521,6 +691,62 @@ document.addEventListener('DOMContentLoaded', function () {
             text: '{{ session('error') }}',
         });
     @endif
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('#nama_lokasi').select2({
+        theme: 'bootstrap-5',
+        placeholder: "Pilih atau cari Nama Site",
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#createModal') // Ganti ID sesuai ID modal kamu
+    });
+
+    // Saat user pilih site → ambil data via AJAX
+    $('#nama_lokasi').on('change', function() {
+        var siteId = $(this).val();
+        if (siteId) {
+            $.ajax({
+                url: '/get-datasite/' + siteId,
+                type: 'GET',
+                success: function(data) {
+                    // Isi otomatis field berdasarkan respon dari backend
+                    $('#site_id').val(data.site_id);
+                    $('#provinsi').val(data.provinsi);
+                    $('#kabupaten_kota').val(data.kab);
+
+                    // --- logika otomatis kategori ---
+                    if (data.tipe && data.tipe.toUpperCase() === 'SEWA LAYANAN') {
+                        $('#kategori').val('SL');
+                    } else if (data.tipe && data.tipe.toUpperCase() === 'BARANG MILIK NEGARA (BMN)') {
+                        $('#kategori').val('BMN');
+                    } else {
+                        $('#kategori').val('');
+                    }
+                },
+                error: function() {
+                    alert('Gagal mengambil data site!');
+                }
+            });
+        } else {
+            // Kosongkan semua field jika tidak ada yang dipilih
+            $('#site_id, #provinsi, #kabupaten_kota, #kategori').val('');
+        }
+    });
+});
+</script>
+<script>
+    $('#nama_site').select2({
+    width: '100%'
+}).on('select2:open', function () {
+    // Agar mouse wheel bisa langsung digunakan saat dropdown terbuka
+    const select2Results = document.querySelector('.select2-results__options');
+    if (select2Results) {
+        select2Results.addEventListener('wheel', (e) => {
+            e.stopPropagation();
+        });
+    }
 });
 </script>
 @endsection

@@ -212,6 +212,72 @@
             </form>
 
         {{-- Tabel --}}
+        <style>
+                table.table {
+                    border-collapse: collapse !important;
+                    margin: 0 !important;
+                    font-size: 13px !important;
+                    line-height: 1.1 !important;
+                }
+
+                /* Supersuper rapat */
+                table.table th,
+                table.table td {
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                    padding-left: 3px !important;
+                    padding-right: 3px !important;
+                    margin: 0 !important;
+                    height: 30px !important; /* tambahkan batas tinggi minimum */
+                    line-height: 1 !important; /* benar-benar rapat antar huruf */
+                    vertical-align: middle !important; /* <--- ini penting agar teks di tengah vertikal */
+                }
+
+
+                .table-bordered > :not(caption) > * > * {
+                    border-width: 1px !important;
+                }
+
+                thead.table-dark th {
+                    padding: 4px !important;
+                    font-size: 13px !important;
+                }
+
+                .action-btn {
+                    padding: 2px 6px !important;
+                    font-size: 10px !important;
+
+                td.d-flex.gap-2 {
+                    gap: 4px !important;
+                }
+            </style>
+        <style>
+            /* === Style ikon tombol aksi === */
+        .table td .action-btn {
+            background: none;
+            border: none;
+            color: #007bff; /* warna biru ikon */
+            font-size: 18px;
+            padding: 2px 4px;
+            margin: 0 2px;
+            cursor: pointer;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        /* Hover efek: sedikit membesar dan warna lebih gelap */
+        .table td .action-btn:hover {
+            color: #0056b3;
+            transform: scale(1.2);
+        }
+
+        /* Pastikan ikon rata horizontal tanpa spasi berlebihan */
+        .table td form,
+        .table td button {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+        }
+        </style>
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover w-100">
                 <thead>
@@ -312,13 +378,41 @@
                 </div>
                 <div class="modal-body">
                     <input type="date" name="tanggal_submit" class="form-control mb-2" required placeholder="Tanggal Submit">
-                    <input type="text" name="site_id" class="form-control mb-2" required placeholder="Site ID">
-                    <input type="text" name="lokasi_site" class="form-control mb-2" required placeholder="Lokasi Site">
-                    <input type="text" name="kabupaten_kota" class="form-control mb-2" required placeholder="Kabupaten/Kota">
-                    <input type="text" name="provinsi" class="form-control mb-2" required placeholder="Provinsi">
-                    <input type="text" name="pm_bulan" class="form-control mb-2" required placeholder="PM Bulan">
+
+                    <select id="namaSite" name="namaSite" class="form-control mb-2 select2">
+                        <option value="">Pilih atau cari Nama Site</option>
+                        @forelse($sites as $site)
+                            <option value="{{ $site->site_id }}">{{ $site->sitename }}</option>
+                        @empty
+                            <option value="">Data site tidak tersedia</option>
+                        @endforelse
+                    </select>
+                    
+                    <input type="text" id="site_id" name="site_id" class="form-control mb-2 mt-2" readonly placeholder="Site ID">
+
+                    <select name="pm_bulan" class="form-control mb-2" required>
+                        <option value="">Select Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+
                     <input type="text" name="teknisi" class="form-control mb-2" required placeholder="Teknisi">
-                    <input type="text" name="status_laporan" class="form-control mb-2" required placeholder="Status">
+                    <select name="status_laporan" class="form-control mb-2" required>
+                        <option value="">Select Status</option>
+                        <option value="DONE">DONE</option>
+                        <option value="PENDING">PENDING</option>
+                    </select>
+
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success btn-sm">Simpan</button>
@@ -352,8 +446,29 @@
     </div>
 </div>
 @endsection
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @section('scripts')
+
+<script>
+$(document).ready(function() {
+    // Inisialisasi Select2 pada select namaSite
+    $('#namaSite').select2({
+        dropdownParent: $('#addModal'),
+        width: '100%',
+        placeholder: 'Pilih atau cari Nama Site',
+        allowClear: true
+    });
+
+    // Isi otomatis site_id ketika memilih site
+    $('#namaSite').on('change', function() {
+        var selectedSiteId = $(this).val();
+        $('#site_id').val(selectedSiteId ? selectedSiteId : '');
+    });
+});
+</script>
 <script>
     @if (session('success'))
         Swal.fire({

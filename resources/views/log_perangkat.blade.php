@@ -191,6 +191,46 @@
         {{-- Pesan Sukses --}}
 
         {{-- Tabel --}}
+        <style>
+            table.table {
+                border-collapse: collapse !important;
+                margin: 0 !important;
+                font-size: 13px !important;
+                line-height: 1.1 !important;
+            }
+
+            /* Supersuper rapat */
+            table.table th,
+            table.table td {
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+                padding-left: 1px !important;   /* super mepet kiri */
+                padding-right: 1px !important;  /* super mepet kanan */
+                margin: 0 !important;
+                height: 12px !important; /* tinggi baris kecil dan rapi */
+                line-height: 1 !important; /* huruf rapat */
+                vertical-align: middle !important; /* teks di tengah vertikal */
+            }
+
+            .table-bordered > :not(caption) > * > * {
+                border-width: 1px !important;
+            }
+
+            thead.table-dark th {
+                padding: 3px !important;
+                font-size: 13px !important;
+            }
+
+            .action-btn {
+                padding: 2px 6px !important;
+                font-size: 10px !important;
+            }
+
+            td.d-flex.gap-2 {
+                gap: 4px !important;
+            }
+        </style>
+
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-dark">

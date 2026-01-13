@@ -25,6 +25,10 @@ use App\Http\Controllers\logspareController;
 use App\Http\Controllers\SiteReviewController;
 use App\Http\Controllers\LaporanInstalasiController;
 use App\Http\Controllers\SummaryTiketController;
+use App\Http\Controllers\SparetrackerController;
+use App\Http\Controllers\MyDashboardController;
+use App\Http\Controllers\JadwalPiketController;
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,6 +39,14 @@ use App\Http\Controllers\SummaryTiketController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Route My dashboard
+    Route::get('/mydashboard', [MyDashboardController::class, 'index'])->name('mydashboard');
+
+
+    // Chat Routes
+    Route::get('/chat/fetch', [ChatController::class, 'fetch']);
+    Route::post('/chat/send', [ChatController::class, 'send']);
 
 // ✅ Landing page (semua tombol menu ada di sini)
 Route::get('/', function () {
@@ -94,7 +106,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/close_tiket/update-tanggal/{id}', [TiketController::class, 'updateTanggalClose'])->name('close.tiket.updateTanggal');
     Route::put('/tiket/update-plan/{id}', [TiketController::class, 'updatePlan'])->name('tiket.updatePlan');
     Route::get('/tiket/{id}', [TiketController::class, 'show']);
-
 
     // SLA
     Route::get('/sla', [SlaController::class, 'index'])->name('sla.index');
@@ -161,6 +172,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pmliberta/export', [PmLibertaController::class, 'export'])->name('pmliberta.export');
     Route::get('/summary', [PmLibertaController::class, 'summary'])->name('summary');
     Route::get('/summary/search', [PmLibertaController::class, 'ajaxSearch']);
+    Route::get('/get-datasite/{id}', [App\Http\Controllers\PmLibertaController::class, 'getDataSite']);
 
     // Sparetracker
     Route::get('/logtracker', [LogspareController::class, 'index'])->name('logtracker');
@@ -195,8 +207,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporaninstalasi/upload-foto', [LaporanInstalasiController::class, 'uploadFoto'])->name('laporan.upload_foto');
     Route::post('/dokumentasi/store', [LaporanInstalasiController::class, 'store'])->name('dokumentasi.store');
 
+    // Route Jadwal Piket
+    Route::get('/jadwal-piket', [JadwalPiketController::class, 'index'])->name('jadwal.piket');
+
+    Route::get('/jadwalpiket', [JadwalPiketController::class, 'index'])->name('jadwal.piket.index');
+    Route::post('/jadwal-piket/update', [JadwalPiketController::class, 'update'])->name('jadwal.piket.update');
+    Route::post('/jadwal/generate/{tahun}/{bulan}', [JadwalPiketController::class, 'generate'])->name('jadwal.generate');
+    Route::get('/jadwal/export-excel', [JadwalPiketController::class, 'exportExcel']);
+
     // Route Summary Tiket
     Route::get('/summarytiket', [SummaryTiketController::class, 'index'])->name('summarytiket');
+
+    //Route Summary Sparepart
+    Route::get('/summaryspare', [SparetrackerController::class, 'summary'])->name('summaryspare');
 
     Route::get('/aboutus', function () {
     return view('aboutus');

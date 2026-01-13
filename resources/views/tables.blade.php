@@ -1,22 +1,50 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    background: linear-gradient(to bottom right,rgb(209, 215, 231),rgb(134, 173, 229));
+   body {
+    background: #FEF3E2;
     min-height: 100vh;
+    font-family: 'Quicksand', sans-serif;
   }
-  table.table td,
-  table.table th {
-    font-size: 16px; /* Atur ukuran font yang lebih kecil */
-  }
- table.table tbody td {
-  padding: 0px 5px !important;   /* Atas-bawah: 0px, Kiri-kanan: 5px */
-  line-height: 0px !important;     /* Line height pas sama font size */
-  font-size: 9px !important;
-  vertical-align: middle !important;
-}
-
+    /* Tabel utama */
+    .table-wrapper-real table.table {
+        border-collapse: separate;   /* wajib supaya border-spacing jalan */
+        border-spacing: 0 4px;       /* jarak antar row (vertikal) */
+        width: 100%;
+    }
+    
+    /* Header */
+    .table-wrapper-real table.table thead th {
+        padding: 6px 8px;            /* lebih ramping dari contoh */
+        font-size: 13px;
+        line-height: 1.2;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    
+    /* Body cell */
+    .table-wrapper-real table.table tbody td {
+        padding: 6px 10px;           /* KUNCI: kecil tapi masih enak dibaca */
+        font-size: 13px;
+        line-height: 1.2;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    
+    /* Pastikan button tidak bikin row jadi tinggi */
+    .table-wrapper-real table.table td .btn {
+        padding: 2px 6px;
+        font-size: 12px;
+        line-height: 1;
+        margin: 0 !important;
+    }
+    
+    /* Override Bootstrap 5 spacing bawaan */
+    .table-wrapper-real .table > :not(caption) > * > * {
+        padding-top: 6px;
+        padding-bottom: 6px;
 </style>
 <!-- Tombol Operasional -->
 <div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
@@ -35,58 +63,65 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="d-flex flex-wrap gap-3 justify-content-start ps-6" style="flex-wrap: wrap;">
-                    <div style="min-width: 200px;">
+            <div class="row row-cols-1 row-cols-md-3 g-4 ps-5 pe-4">
+                    <div class="col">
                         <div class="fw-bold mb-1">Data Site</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('datapass') }}" class="text-decoration-none">Manajemen Password</a>
-                            <a href="{{ url('tables') }}" class="text-decoration-none d-block">Data All Sites</a>
-                            <a href="{{ route('laporanPM') }}" class="text-decoration-none d-block">Laporan PM</a>
-                            <a href="{{ route('pmliberta') }}" class="text-decoration-none d-block">PM Liberta 2025</a>
+                        <div class="ms-2">
+                            <a href="{{ url('tables') }}" class="text-decoration-none d-block">Data Site</a>
+                            <a href="{{ url('datapass') }}" class="text-decoration-none d-block">Manajemen Password</a>
+                            <a href="{{ url('laporanPM') }}" class="text-decoration-none d-block">Laporan PM</a>
+                            <a href="{{ url('pmliberta') }}" class="text-decoration-none d-block">Pm Liberta</a>
+                            <a href="{{ url('summary') }}" class="text-decoration-none d-block">Summary</a>
                         </div>
-                    </div>
-                    <div style="min-width: 200px;">
+                        </div>
+
+                        <div class="col">
                         <div class="fw-bold mb-1">Tiket</div>
-                        <div class="ms-2 mb-2">
+                        <div class="ms-2">
                             <a href="{{ url('tiket') }}" class="text-decoration-none d-block">Open Tiket</a>
                             <a href="{{ url('close/tiket') }}" class="text-decoration-none d-block">Close Tiket</a>
                             <a href="{{ url('dashboard') }}" class="text-decoration-none d-block">Detail Tiket</a>
                         </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Log Perangkat</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Log Perangkat</a>
-                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
                         </div>
-                    </div>
-                    <div style="min-width: 200px;">
+
+                        <div class="col">
+                        <div class="fw-bold mb-1">Log Perangkat</div>
+                        <div class="ms-2">
+                            <a href="{{ url('log_perangkat') }}" class="text-decoration-none d-block">Pergantian Perangkat</a>
+                            <a href="{{ url('sparetracker') }}" class="text-decoration-none d-block">Log Perangkat</a>
+                            <a href="{{ url('logtracker') }}" class="text-decoration-none d-block">Spare Tracker</a>
+                        </div>
+                        </div>
+
+                        <div class="col">
                         <div class="fw-bold mb-1">Download</div>
-                        <div class="ms-2 mb-2">
+                        <div class="ms-2">
                             <a href="{{ url('download_file') }}" class="text-decoration-none d-block">Download File</a>
                         </div>
-                    </div>
-                    <div style="min-width: 200px;">
-                        <div class="fw-bold mb-1">Rekap SLA</div>
-                        <div class="ms-2 mb-2">
-                            <a href="{{ url('rekap-bmn') }}" class="text-decoration-none d-block">BMN</a>
-                            <a href="{{ url('rekap-sl') }}" class="text-decoration-none d-block">SL</a>
                         </div>
-                    </div>
-                    <div style="min-width: 200px;">
+
+                        <div class="col">
+                        <div class="fw-bold mb-1">Rekap SLA</div>
+                        <div class="ms-2">
+                            <a href="{{ url('#') }}" class="text-decoration-none d-block">BMN</a>
+                            <a href="{{ url('#') }}" class="text-decoration-none d-block">SL</a>
+                        </div>
+                        </div>
+
+                        <div class="col">
                         <div class="fw-bold mb-1">To Do List</div>
-                        <div class="ms-2 mb-2">
+                        <div class="ms-2">
                             <a href="{{ url('todolist') }}" class="text-decoration-none d-block">My Todo list</a>
                         </div>
                     </div>
                 </div>
-            </div>
             <div class="modal-footer justify-content-end" style="border-top: none;">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
         </div>
     </div>
 </div>
+
+<!-- Sisa kode lama -->
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
         <div class="dropdown">
@@ -105,7 +140,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="{{ url('logout') }}">
+                    <a class="dropdown-item" href="{{ url('users') }}">
                         <i class="fa fa-sign-out me-2"></i> Users Managemen
                     </a>
                 </li>
@@ -180,11 +215,11 @@
                         <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalLong" title="Import Data">
                             <i class="fa fa-upload"></i>
                         </a>
-                        <a href="{{ route('datacreate') }}" class="btn btn-outline-primary btn-sm" title="Tambah Data">
+                        <a href="{{ route('datacreate') }}" class="btn btn-outline-info btn-sm" title="Tambah Data">
                             <i class="fa fa-plus"></i>
                         </a>
                         @endif
-                        <a href="{{ route('dataexport') }}" class="btn btn-outline-success btn-sm" title="Export Data">
+                        <a href="{{ route('dataexport') }}" class="btn btn-outline-info btn-sm" title="Export Data">
                             <i class="fa fa-download"></i>
                         </a>
                     </div>
@@ -201,10 +236,46 @@
                 </div>
             </div>
 
+            <style>
+                .fake-scrollbar-container {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 20px;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    background-color: #f8f9fa;
+                    z-index: 9999;
+                }
+
+                .fake-scrollbar-content {
+                    height: 1px;
+                }
+
+                .table-wrapper-real {
+                    overflow-x: auto;
+                    max-width: 100%;
+                    padding-bottom: 25px; /* biar isi gak ketiban scroll */
+                }
+
+                .table-wrapper-real table {
+                    width: max-content;
+                    min-width: 100%;
+                    table-layout: auto;
+                }
+
+                body {
+                    padding-bottom: 60px;
+                }
+                table.table td {
+                    font-size: 13 !important;
+                }
+            </style>
             <div class="card-body">
-                <!-- Tabel dengan scroll horizontal yang selalu aktif -->
-                <div class="table-responsive" style="margin-top: -40px;">
-                    <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
+                <!-- Tabel dengan scroll horizontal -->
+                <div id="tableScroll" class="table-wrapper-real" style="margin-top: -60px; font-family: 'Quicksand', sans-serif;">
+                    <table table class="table table-bordered table-striped table-sm align-middle text-nowrap">
                         <thead class="table-dark">
                             <tr>
                                 <th class="text-center">NO</th>
@@ -277,14 +348,19 @@
                                 <td class="text-center">{{ $item->ip_ap1 }}</td>
                                 <td class="text-center">{{ $item->ip_ap2 }}</td>
                                 <td class="text-center">{{ $item->expected_sqf }}</td>
+                                @php
+                                    $role = Auth::user()->role;
+                                @endphp
                                 <td>
-                                    <a href="#" class="btn btn-info mr-3 mb-3" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
-                                        <i class="fa fa-info-circle"></i> Detail
-                                    </a>
+                                    @if (in_array($role, ['admin', 'superadmin']))
                                     <a href="/dataupdate/{{ $item->id }}">
                                         <button class="btn btn-primary">
                                             <i class="fa fa-pencil"></i> Update
                                         </button>
+                                    </a>
+                                    @endif
+                                    <a href="#" class="btn btn-info" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
+                                        <i class="fa fa-info-circle"></i> Detail
                                     </a>
                                 </td>
                             </tr>
@@ -293,16 +369,59 @@
                     </table>
                 </div>
 
+                <style>
+                    .pagination {
+                        justify-content: center;
+                        flex-wrap: wrap;
+                    }
+                
+                    .pagination .page-item {
+                        margin: 0 4px;
+                    }
+                
+                    .pagination .page-link {
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        padding: 0;
+                        line-height: 40px;
+                        text-align: center;
+                        border: 1px solid #ccc;
+                        color: #5c6e91;
+                        font-weight: 500;
+                    }
+                
+                    .pagination .page-item.active .page-link {
+                        background-color: #c700a1; /* magenta seperti gambar */
+                        border-color: #c700a1;
+                    }
+                
+                    .pagination .page-link:focus {
+                        box-shadow: none;
+                    }
+                
+                    .pagination .page-link:hover {
+                        background-color: #f0f0f0;
+                    }
+                </style>
                 <!-- Sticky Pagination -->
-                <div class="position-sticky bottom-0 end-0 bg-white py-3" style="z-index: 1000;">
-                    <div class="d-flex justify-content-end pe-3">
-                        {{ $site->links() }}
-                    </div>
+              <div class="position-sticky bottom-0 start-0 w-100 bg-white py-3" style="z-index: 1000;">
+                    @if ($site->hasPages())
+                        <div class="d-flex justify-content-center">
+                            {{ $site->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
                 </div>
+
             </div>
         </div>
     </div>
-
+    
+     <!-- Fake Scrollbar always visible at bottom -->
+    <div id="fakeScroll" class="fake-scrollbar-container">
+        <div id="scrollSpacer" class="fake-scrollbar-content"></div>
+    </div>
+    
     <!-- Modal Import -->
     <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -477,6 +596,37 @@
 @endsection
 
 @section('scripts')
+<!--Scrollbar-->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const realScroll = document.getElementById('tableScroll');
+        const fakeScroll = document.getElementById('fakeScroll');
+        const scrollSpacer = document.getElementById('scrollSpacer');
+    
+        function syncWidth() {
+            const table = realScroll.querySelector('table');
+            if (table) {
+                // Tambah offset ekstra untuk kompensasi scroll bar native
+                const tableWidth = table.scrollWidth;
+                scrollSpacer.style.width = (tableWidth + 150) + 'px';
+            }
+        }
+    
+        fakeScroll.addEventListener('scroll', () => {
+            realScroll.scrollLeft = fakeScroll.scrollLeft;
+        });
+    
+        realScroll.addEventListener('scroll', () => {
+            fakeScroll.scrollLeft = realScroll.scrollLeft;
+        });
+    
+        window.addEventListener('load', syncWidth);
+        window.addEventListener('resize', syncWidth);
+    
+        const observer = new MutationObserver(syncWidth);
+        observer.observe(realScroll, { childList: true, subtree: true });
+    });
+</script>
 <script>
 
     function openEditModal(id) {

@@ -4,12 +4,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body {
-    background: linear-gradient(to bottom right, rgb(209, 215, 231), rgb(134, 173, 229));
+    background: #FEF3E2;
     min-height: 100vh;
     font-family: 'Quicksand', sans-serif;
   }
 </style>
+
+<style>
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        font-size: 14px;
+    }
+    .table th, 
+    .table td {
+     padding-left: 6px !important;
+     padding-right: 6px !important;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<!-- Tombol Operasional -->
+<div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
+    <h6 class="mb-0"><strong>Operasional</strong></h6>
+  </a>
+</div>
+
 <!-- Tombol Operasional -->
 <div class="d-flex justify-content-center align-items-center mb-3" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;">
   <a href="#" data-bs-toggle="modal" data-bs-target="#operasionalModal" style="text-decoration: none; color: #000;">
@@ -27,16 +52,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="row row-cols-1 row-cols-md-3 g-4 ps-4 pe-4">
+            <div class="row row-cols-1 row-cols-md-3 g-4 ps-5 pe-4">
                     <div class="col">
                         <div class="fw-bold mb-1">Data Site</div>
                         <div class="ms-2">
                             <a href="{{ url('tables') }}" class="text-decoration-none d-block">Data Site</a>
                             <a href="{{ url('datapass') }}" class="text-decoration-none d-block">Manajemen Password</a>
-                            <a href="{{ url('LaporanPM') }}?type=site" class="text-decoration-none d-block">Laporan PM</a>
-                            <a href="{{ url('pmliberta') }}?type=asset" class="text-decoration-none d-block">Pm Liberta</a>
-                            <a href="{{ url('summary') }}?type=site" class="text-decoration-none d-block">Summary</a>
+                            <a href="{{ url('laporanPM') }}" class="text-decoration-none d-block">Laporan PM</a>
+                            <a href="{{ url('pmliberta') }}" class="text-decoration-none d-block">Pm Liberta</a>
+                            <a href="{{ url('summary') }}" class="text-decoration-none d-block">Summary</a>
                         </div>
                         </div>
 
@@ -80,25 +104,39 @@
                         </div>
                     </div>
                 </div>
-                </div>
             <div class="modal-footer justify-content-end" style="border-top: none;">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px; filter: invert(1);"></button></div>
         </div>
     </div>
 </div>
-<style>
-    #operasionalModal .modal-content {
-        border: none;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    }
-    #operasionalModal .modal-body {
-        padding-bottom: 0;
-    }
-    #operasionalModal .fw-bold {
-        color: #344767;
-        font-size: 1.05rem;
-    }
-</style>
+
+<!-- Sisa kode lama -->
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                <i class="fa fa-user-circle fa-2x text-primary"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" href="{{ url('user-profile') }}">
+                        <i class="fa fa-user me-2"></i> User Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('logout') }}">
+                        <i class="fa fa-sign-out me-2"></i> Logout
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('users') }}">
+                        <i class="fa fa-sign-out me-2"></i> Users Managemen
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <style>
   .btn-custom {
     font-size: 0.75rem;
@@ -140,48 +178,24 @@
                         class="btn-custom {{ request()->routeIs('dashboard') ? 'btn-active' : 'btn-inactive' }}">
                         Detail Tiket
                     </a>
+                    <a href="{{ route('summarytiket') }}"
+                        class="btn-custom {{ request()->routeIs('summarytiket') ? 'btn-active' : 'btn-inactive' }}">
+                        Summary Tiket
+                    </a>    
                 </div>
             </div>
-        </div>
-        
-    <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
-        <div class="dropdown">
-            <a class="nav-link d-flex align-items-center gap-1 dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu" style="padding: 0;">
-                <span style="position: relative; display: inline-block;">
-                    <i class="fa fa-user-circle fa-2x text-primary"></i>
-                    <span style="position: absolute; top: 0; right: 0; font-size: 1em;">
-                        <i class="fa fa-caret-down text-secondary"></i>
-                    </span>
-                </span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li>
-                    <a class="dropdown-item" href="{{ url('user-profile') }}">
-                        <i class="fa fa-user me-2"></i> User Profile
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="{{ url('logout') }}">
-                        <i class="fa fa-sign-out me-2"></i> Logout
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="{{ url('users') }}">
-                        <i class="fa fa-cog me-2"></i> Users Settings
-                    </a>
-            </ul>
         </div>
     </div>
         <div class="card card-info card-outline">
             <div class="card-header">
                 <div class="row justify-content-center text-center mt-2 mb-2">
-                    @php
+                   @php
                         $cards = [
                             ['label' => 'Tiket Open All', 'count' => $tiketOpenCount, 'filter' => 'open_all'],
                             ['label' => 'Tiket Open Yesterday', 'count' => $tiketOpenYesterdayCount, 'filter' => 'open_yesterday'],
                             ['label' => 'Tiket Open Today', 'count' => $tiketOpenTodayCount, 'filter' => 'open_today'],
                         ];
-                        $cardBg = '#113F67';
+                        $cardBg = '#35486b';
                     @endphp
 
                     <div class="d-flex flex-row gap-2 flex-nowrap overflow-auto mb-2 justify-content-center w-100">
@@ -194,7 +208,7 @@
                                             {{ $card['label'] }}
                                         </span>
                                         <!-- Jumlah tiket warna merah -->
-                                        <span class="fw-bolder" style="font-size:1.5rem; color: #ff0000;">
+                                        <span class="fw-bolder" style="font-size:1.5rem; color: #DB1514;">
                                             {{ $card['count'] }}
                                         </span>
                                     </div>
@@ -203,6 +217,7 @@
                         @endforeach
                     </div>
                 </div>
+                <!-- Tombol Tambah, Export, Import -->
                 @php
                     $role = Auth::user()->role;
                 @endphp
@@ -250,9 +265,9 @@
                             @endif
                         </form>
                     </div>
-                   <form method="GET" action="{{ route('tiket') }}" class="d-flex align-items-center gap-2 flex-wrap">
+                   <form method="GET" action="{{ route('tiket') }}" class="d-flex align-items-center gap-2 flex-wrap" style="margin-top:-10px;">
                         <!-- Filter Kategori -->
-                        <span class="fw-bold text-white" style="white-space: nowrap; position: relative; top: 6px;">KATEGORI</span>
+                        <span class="fw-bold text-white" style="white-space: nowrap; position: relative; top: 10px;">KATEGORI</span>
                         <select name="kategori" class="form-select form-select-sm" style="width: 100px; font-size: 12px;" onchange="this.form.submit()">
                             <option value="">Semua</option>
                             <option value="BMN" {{ request('kategori') == 'BMN' ? 'selected' : '' }}>BMN</option>
@@ -260,7 +275,7 @@
                         </select>
                     
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm" style="width: 220px; margin-top: -3px;">
+                        <div class="input-group input-group-sm" style="width: 220px;">
                             <input type="text" name="query" class="form-control" placeholder="Site ID, Nama Site, Provinsi, Kabupaten" value="{{ request()->query('query') }}">
                             <span class="input-group-text" style="cursor: pointer;" onclick="this.closest('form').submit()" title="Search">
                                 <i class="fa fa-search"></i>
@@ -269,45 +284,205 @@
                     </form>
                 </div>
             </div>
+                <style>
+                    .fake-scrollbar-container {
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        height: 20px;
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                        background-color: #f8f9fa;
+                        z-index: 9999;
+                    }
+    
+                    .fake-scrollbar-content {
+                        height: 1px;
+                    }
+    
+                    .table-wrapper-real {
+                        overflow-x: auto;
+                        max-width: 100%;
+                        padding-bottom: 25px; /* biar isi gak ketiban scroll */
+                    }
+    
+                    .table-wrapper-real table {
+                        width: max-content;
+                        min-width: 100%;
+                        table-layout: auto;
+                    }
+    
+                    body {
+                        padding-bottom: 60px;
+                    }
+                </style>
+                <!-- CSS agar isi tabel rapat -->
             <style>
-                .fake-scrollbar-container {
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 20px;
-                    overflow-x: auto;
-                    overflow-y: hidden;
-                    background-color: #f8f9fa;
-                    z-index: 9999;
+                table.table {
+                    border-collapse: collapse !important;
+                    margin: 0 !important;
+                    font-size: 13px !important;
+                    line-height: 1.1 !important;
                 }
 
-                .fake-scrollbar-content {
-                    height: 1px;
+                /* Supersuper rapat */
+                table.table th,
+                table.table td {
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                    padding-left: 3px !important;
+                    padding-right: 3px !important;
+                    margin: 0 !important;
+                    height: 30px !important; /* tambahkan batas tinggi minimum */
+                    line-height: 1 !important; /* benar-benar rapat antar huruf */
+                    vertical-align: middle !important; /* <--- ini penting agar teks di tengah vertikal */
                 }
 
-                .table-wrapper-real {
-                    overflow-x: auto;
-                    max-width: 100%;
-                    padding-bottom: 25px; /* biar isi gak ketiban scroll */
+
+                .table-bordered > :not(caption) > * > * {
+                    border-width: 1px !important;
                 }
 
-                .table-wrapper-real table {
-                    width: max-content;
-                    min-width: 100%;
-                    table-layout: auto;
+                thead.table-dark th {
+                    padding: 4px !important;
+                    font-size: 13px !important;
                 }
 
-                body {
-                    padding-bottom: 60px;
+                .action-btn {
+                    padding: 2px 6px !important;
+                    font-size: 10px !important;
+
+                td.d-flex.gap-2 {
+                    gap: 4px !important;
                 }
             </style>
-            <div class="card-body">
-                <!-- Tabel dengan scroll horizontal -->
-                <div id="tableScroll" class="table-wrapper-real" style="margin-top: -60px; font-family: 'Quicksand', sans-serif;">
-                    <table table class="table table-bordered table-striped table-sm align-middle text-nowrap">
-                        <thead class="table-dark text-center align-middle">
-                            <tr>
+            <style>
+                /* ================================
+                TABLE BASIC FIX
+                ================================ */
+                table.table {
+                    border-collapse: separate !important;
+                    border-spacing: 0 !important;
+                }
+
+                /* ================================
+                FIX WIDTH KOLOM STICKY
+                ================================ */
+                table.table th:nth-child(1),
+                table.table td:nth-child(1) {
+                    width: 60px;
+                    min-width: 60px;
+                    text-align: center;
+                }
+
+                table.table th:nth-child(2),
+                table.table td:nth-child(2) {
+                    width: 220px;
+                    min-width: 220px;
+                }
+
+                table.table th:nth-child(3),
+                table.table td:nth-child(3) {
+                    width: 300px;
+                    min-width: 300px;
+                }
+
+                /* ================================
+                STICKY COLUMNS
+                No | SITE ID | NAMA SITE
+                ================================ */
+                table.table thead th:nth-child(1),
+                table.table tbody td:nth-child(1) {
+                    position: sticky !important;
+                    left: 0 !important;
+                    z-index: 11 !important;
+                }
+
+                table.table thead th:nth-child(2),
+                table.table tbody td:nth-child(2) {
+                    position: sticky !important;
+                    left: 60px !important; /* width kolom No */
+                    z-index: 11 !important;
+                }
+
+                table.table thead th:nth-child(3),
+                table.table tbody td:nth-child(3) {
+                    position: sticky !important;
+                    left: 280px !important; /* 60 + 220 */
+                    z-index: 11 !important;
+                }
+
+                /* ================================
+                HEADER BACKGROUND
+                ================================ */
+                table.table thead th:nth-child(1),
+                table.table thead th:nth-child(2),
+                table.table thead th:nth-child(3) {
+                    background-color: #212529 !important;
+                    color: #ffffff !important;
+                }
+
+                /* ================================
+                BODY BACKGROUND
+                ================================ */
+                table.table tbody td:nth-child(1),
+                table.table tbody td:nth-child(2),
+                table.table tbody td:nth-child(3) {
+                    background-color: #ffffff !important;
+                }
+
+                /* ================================
+                ALTERNATING ROW COLORS
+                ================================ */
+                table.table tbody tr:nth-child(odd) td:nth-child(1),
+                table.table tbody tr:nth-child(odd) td:nth-child(2),
+                table.table tbody tr:nth-child(odd) td:nth-child(3) {
+                    background-color: #f8f9fa !important;
+                }
+
+                table.table tbody tr:nth-child(even) td:nth-child(1),
+                table.table tbody tr:nth-child(even) td:nth-child(2),
+                table.table tbody tr:nth-child(3) {
+                    background-color: #ffffff !important;
+                }
+
+                /* ================================
+                BUTTON ICON STYLE (AMAN)
+                ================================ */
+                td.d-flex.gap-2 {
+                    align-items: center !important;
+                    justify-content: center !important;
+                    padding: 0 !important;
+                }
+
+                .btn-icon-only {
+                    background: none !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    padding: 12px !important;
+                    margin: 0 2px !important;
+                }
+
+                .btn-icon-only i {
+                    color: #007bff !important;
+                    font-size: 14px !important;
+                    transition: color 0.2s ease;
+                }
+
+                .btn-icon-only:hover i {
+                    color: #0056b3 !important;
+                }
+            </style>
+            @php 
+                $limit = 10;
+            @endphp
+                <div class="card-body">
+                    <!-- Tabel dengan scroll horizontal -->
+                    <div id="tableScroll" class="table-wrapper-real" style="margin-top: -80px; font-family: 'Quicksand', sans-serif;">
+                        <table table class="table table-bordered table-striped table-sm align-middle text-nowrap">
+                            <thead class="table-dark">
+                            <tr class="text-center align-middle">
                                 @php
                                     $bulan = [
                                         '01' => 'Januari',
@@ -327,8 +502,6 @@
                                 <th class="text-center">No</th>
                                 <th class="text-center">SITE ID</th>
                                 <th>NAMA SITE</th>
-                                <th>PROVINSI</th>
-                                <th>KABUPATEN</th>
                                 <th>
                                     @php
                                         $currentSort = request()->query('sort', 'desc');
@@ -343,22 +516,22 @@
                                 <th class="text-center">KENDALA</th>
                                 <!--<th class="text-center">TANGGAL CLOSE</th>
                                 <th class="text-center">BULAN CLOSE</th>-->
-                                <th class="text-center">EVIDENCE</th>
+                                <!--<th class="text-center">EVIDENCE</th>-->
                                 <!--<th>DETAIL PROBLEM</th>
                                 <th>PLAN ACTIONS</th>-->
+                                <th>PROVINSI</th>
+                                <th>KABUPATEN</th>
                                 <th>CE</th>
                                 <th class="text-center">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tiket as $index => $item)
-                            <tr>
-                                <td class="text-center">{{ $tiket->firstItem() + $index }}</td>
+                            <tr class="tiket-row {{ $index >= $limit ? 'd-none' : '' }}">
+                                <td class="text-center">{{ $loop->iteration }}</td>
                                 <td class="text-center">{{ $item->site_id }}</td>
                                 <td>{{ $item->nama_site }}</td>
-                                <td>{{ $item->provinsi }}</td>
-                                <td>{{ $item->kabupaten }}</td>
-                                <td class="durasi text-center">{{ $item->durasi_terbaru }}</td>
+                                <td class="durasi text-center">{{ $item->durasi_terbaru}}</td>
                                 <td class="text-center">{{ $item->kategori }}</td>
                                 <td class="tanggal-rekap text-center">{{ $item->tanggal_rekap }}</td>
                                 <!--<td class="text-center">{{ $item->bulan_open }}</td
@@ -373,15 +546,17 @@
                                     {{ $item->bulan_close && isset($bulan[$item->bulan_close]) ? $bulan[$item->bulan_close] : ($item->bulan_close ?? 'BELUM CLOSE') }}
                                 </td>-->
                                 
-                                <td class="text-center">
-                                    @if ($item->evidence)
-                                        <a href="#" onclick="showEvidence('{{ asset('storage/'.$item->evidence) }}')">ADA</a>
-                                    @else
-                                        TIDAK ADA
-                                    @endif
-                                </td>
+                                <!--<td class="text-center">
+                                    @if ($item->evidence)-
+                                        <a href="#" onclick="showEvidence('{{ asset('storage/'.$item->evidence) }}')">ADA</a>-
+                                    @else-
+                                        TIDAK ADA-
+                                    @endif-
+                                </td>-->
                                 <!--<td>{{ $item->detail_problem }}</td>
                                 <td>{{ $item->plan_actions }}</td>-->
+                                <td>{{ $item->provinsi }}</td>
+                                <td>{{ $item->kabupaten }}</td>
                                 <td>{{ $item->ce }}</td>
                                 @php
                                     $role = Auth::user()->role;
@@ -391,7 +566,6 @@
 
                                     {{-- Tombol EDIT tampil untuk semua role --}}
                                     
-
                                     {{-- Jika role admin/superadmin, tampilkan tombol tambahan --}}
                                     @if (in_array($role, ['admin', 'superadmin']))
 
@@ -403,36 +577,86 @@
                                                 <input type="hidden" name="status_tiket" value="CLOSE">
                                                 <input type="hidden" name="tanggal_close" id="tanggal_close{{ $item->id }}">
                                                 <input type="hidden" name="bulan_close" id="bulan_close{{ $item->id }}">
-                                                <button type="submit" class="btn btn-danger mr-3 mb-3 btn-submit-close" data-id="{{ $item->id }}">
-                                                    <i class="fa fa-times"></i> Close
+                                                <button type="button" 
+                                                    class="btn btn-icon-only text-primary btn-open-close-modal"
+                                                    data-id="{{ $item->id }}"
+                                                    title="Close">
+                                                    <i class="fa fa-times mt-3"></i>
                                                 </button>
                                             </form>
                                         @endif
 
                                         {{-- Tombol DELETE --}}
-                                        <a href="#" class="btn btn-info action-btn btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-
+                                        <a href="#" class="btn btn-icon-only text-primary btn-delete" data-id="{{ $item->id }}" data-url="{{ route('tiket.delete', ['id' => $item->id]) }}" title="Delete">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
                                     @endif
-					                <a href="#" class="btn btn-primary action-btn" data-toggle="modal" onclick="openEditModal({{ $item->id }})">
+
+                                    <a href="#" class="btn btn-icon-only text-primary" data-toggle="modal" onclick="openEditModal({{ $item->id }})" title="Edit">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                
-                                    <a href="#" class="btn btn-info action-btn" onclick="openInfoModal({{ $item->id }})">
+
+                                    <a href="#" class="btn btn-icon-only text-primary" onclick="openInfoModal({{ $item->id }})" title="Info">
                                         <i class="fa fa-info-circle"></i>
                                     </a>
-				
+
                                 </td>
                             </tr>
                             @endforeach
+                            <!-- Modal CLOSE TIKET -->
+                            <div class="modal fade" id="closeTiketModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Close Tiket</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <form id="closeTiketForm" method="POST">
+                                        @csrf
+                                        @method("PUT")
+
+                                        <div class="modal-body">
+
+                                            <div class="mb-2">
+                                                <label class="fw-bold">Tanggal Close</label>
+                                                <input 
+                                                    type="date" 
+                                                    name="tanggal_close" 
+                                                    id="close_tanggal_input" 
+                                                    class="form-control"
+                                                    required
+                                                    value="{{ old('tanggal_close') }}"
+                                                >
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <label class="fw-bold">Detail Problem</label>
+                                                <textarea name="detail_problem" id="close_detail_problem" class="form-control" required></textarea>
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <label class="fw-bold">Actions Plan</label>
+                                                <textarea name="plan_actions" id="close_plan_actions" class="form-control" required></textarea>
+                                            </div>
+
+                                            <input type="hidden" name="status_tiket" value="CLOSE">
+                                            <input type="hidden" name="bulan_close" id="close_bulan">
+                                            <!-- HAPUS hidden tanggal_close -->
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-primary">Submit Close</button>
+                                        </div>
+                                    </form>
+
+                                    </div>
+                                </div>
+                            </div>
                         </tbody>
                     </table>
-                    <!-- Fake Scrollbar always visible at bottom -->
-                    <div id="fakeScroll" class="fake-scrollbar-container">
-                        <div id="scrollSpacer" class="fake-scrollbar-content"></div>
-                    </div>
-
                     <!-- Modal untuk menampilkan gambar -->
                     <div class="modal fade" id="evidenceModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -444,16 +668,28 @@
                         </div>
                     </div>
                 </div>
+                
                 <!-- Sticky Pagination -->
-                <div class="position-sticky bottom-0 end-0 bg-white py-3" style="z-index: 1000;">
-                    <div class="d-flex justify-content-end pe-3">
-                        {{ $tiket->links() }}
-                    </div>
+                <div class="mt-1 d-flex align-items-center gap-3" style="min-height: 20px;">
+                    <!-- Counter jumlah data -->
+                    <span id="dataCounter" class="fw-bold" style="line-height: 30px; display: inline-block; margin-top: -17px;">
+                        {{ $limit }} of {{ count($tiket) }}
+                    </span>
+
+                    <button id="showMoreBtn" class="btn btn-sm px-4" style="background-color: #E83C91; border-color: #E83C91; color: white;">
+                        Show More
+                    </button>
                 </div>
+
             </div>
         </div>
     </div>
-
+    
+    <!-- Fake Scrollbar always visible at bottom -->
+    <div id="fakeScroll" class="fake-scrollbar-container">
+        <div id="scrollSpacer" class="fake-scrollbar-content"></div>
+    </div>
+    
     <!-- Modal Info Tiket -->
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document"> <!-- Ubah ke modal-lg agar lebih lebar -->
@@ -466,7 +702,7 @@
                 <p><strong>Site ID:</strong> <span id="info-site-id"></span></p>
                 <p><strong>Nama Site:</strong> <span id="info-nama-site"></span></p>
                 <p><strong>Detail Problem:</strong> <span id="info-detail-problem"></span></p>
-                <p><strong>Plan Actions:</strong> <span id="info-plan-actions"></span></p>
+                <p><strong>Actions Plan:</strong> <span id="info-plan-actions"></span></p>
                 <p><strong>Durasi:</strong> <span id="info-durasi"></span></p>
                 <p><strong>Kategori:</strong> <span id="info-kategori"></span></p>
                 <p><strong>Tanggal Rekap:</strong> <span id="info-tanggal-rekap"></span></p>
@@ -478,7 +714,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Modal Import -->
     <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -660,14 +896,20 @@
 
           <!-- Plan Actions -->
           <div class="form-group col-md-6">
-            <label>Plan Actions</label>
+            <label>Actions Plan</label>
             <textarea name="plan_actions" class="form-control" rows="2"></textarea>
           </div>
 
           <!-- CE -->
           <div class="form-group col-md-6">
             <label>Cluster Engineer (CE)</label>
-            <input type="text" name="ce" class="form-control" required>
+            <select name="ce" class="form-control" required>
+              <option value="">-- Pilih CE --</option>
+              <option value="EKA MAHATVA YUDHA">EKA MAHATVA YUDHA</option>
+              <option value="AHMAD SUHAINI">AHMAD SUHAINI</option>
+              <option value="HERMAN SEPRIANTO">HERMAN SEPRIANTO</option>
+              <option value="HASRUL FANDI SERANG">HASRUL FANDI SERANG</option>
+            </select>
           </div>
 
         </div> <!-- END MODAL-BODY -->
@@ -805,13 +1047,19 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label>Plan Actions</label>
+                        <label>Actions Plan</label>
                         <textarea name="plan_actions" class="form-control" rows="2"></textarea>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label>Cluster Engineer (CE)</label>
-                        <input type="text" name="ce" class="form-control" required>
+                        <select name="ce" id="edit_ce" class="form-control" required>
+                          <option value="">-- Pilih CE --</option>
+                          <option value="EKA MAHATVA YUDHA">EKA MAHATVA YUDHA</option>
+                          <option value="AHMAD SUHAINI">AHMAD SUHAINI</option>
+                          <option value="HERMAN SEPRIANTO">HERMAN SEPRIANTO</option>
+                          <option value="HASRUL FANDI SERANG">HASRUL FANDI SERANG</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -833,36 +1081,39 @@
 
 @section('scripts')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--Scrollbar-->
 <script>
-    const realScroll = document.getElementById('tableScroll');
-    const fakeScroll = document.getElementById('fakeScroll');
-    const scrollSpacer = document.getElementById('scrollSpacer');
-
-    function syncWidth() {
-        const table = realScroll.querySelector('table');
-        if (table) {
-            // Tambah offset ekstra untuk kompensasi scroll bar native
-            const tableWidth = table.scrollWidth;
-            scrollSpacer.style.width = (tableWidth + 100) + 'px';
+    document.addEventListener('DOMContentLoaded', () => {
+        const realScroll = document.getElementById('tableScroll');
+        const fakeScroll = document.getElementById('fakeScroll');
+        const scrollSpacer = document.getElementById('scrollSpacer');
+    
+        function syncWidth() {
+            const table = realScroll.querySelector('table');
+            if (table) {
+                // Tambah offset ekstra untuk kompensasi scroll bar native
+                const tableWidth = table.scrollWidth;
+                scrollSpacer.style.width = (tableWidth + 100) + 'px';
+            }
         }
-    }
-
-    fakeScroll.addEventListener('scroll', () => {
-        realScroll.scrollLeft = fakeScroll.scrollLeft;
+    
+        fakeScroll.addEventListener('scroll', () => {
+            realScroll.scrollLeft = fakeScroll.scrollLeft;
+        });
+    
+        realScroll.addEventListener('scroll', () => {
+            fakeScroll.scrollLeft = realScroll.scrollLeft;
+        });
+    
+        window.addEventListener('load', syncWidth);
+        window.addEventListener('resize', syncWidth);
+    
+        const observer = new MutationObserver(syncWidth);
+        observer.observe(realScroll, { childList: true, subtree: true });
     });
-
-    realScroll.addEventListener('scroll', () => {
-        fakeScroll.scrollLeft = realScroll.scrollLeft;
-    });
-
-    window.addEventListener('load', syncWidth);
-    window.addEventListener('resize', syncWidth);
-
-    const observer = new MutationObserver(syncWidth);
-    observer.observe(realScroll, { childList: true, subtree: true });
 </script>
 <script>
     function openInfoModal(id) {
@@ -875,7 +1126,7 @@
             document.getElementById('info-nama-site').innerText = data.nama_site;
             document.getElementById('info-detail-problem').innerText = data.detail_problem;
             document.getElementById('info-plan-actions').innerText = data.plan_actions;
-            document.getElementById('info-durasi').innerText = data.durasi_terbaru;
+            document.getElementById('info-durasi').innerText = Math.floor(data.durasi);
             document.getElementById('info-kategori').innerText = data.kategori; 
             document.getElementById('info-tanggal-rekap').innerText = data.tanggal_rekap;
             document.getElementById('info-bulan-open').innerText = data.bulan_open;
@@ -1195,7 +1446,7 @@
                 $('#formEditTiket input[name="tanggal_rekap"]').val(res.data.tanggal_rekap);
                 $('#formEditTiket input[name="tanggal_close"]').val(res.data.tanggal_close);
                 $('#formEditTiket input[name="bulan_close"]').val(res.data.bulan_close);
-                $('#formEditTiket input[name="ce"]').val(res.data.ce);
+                $('#formEditTiket select[name="ce"]').val(res.data.ce);
 
                 $('#formEditTiket select[name="kategori"]').val(res.data.kategori);
                 $('#formEditTiket select[name="bulan_open"]').val(res.data.bulan_open);
@@ -1212,7 +1463,87 @@
         }
     });
 }
+</script>
+{{-- Script Show More --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('showMoreBtn');
+    const rows = document.querySelectorAll('tr.tiket-row');
+    const limit = {{ $limit }};
+    const total = {{ count($tiket) }};
+    const counter = document.getElementById('dataCounter');
 
+    function updateCounter(showing) {
+        counter.textContent = showing + " of " + total;
+    }
 
+    // Set counter awal
+    updateCounter(limit);
+
+    btn.addEventListener('click', function () {
+        if (btn.textContent.trim() === 'Show More') {
+
+            // Tampilkan semua baris
+            rows.forEach(r => r.classList.remove('d-none'));
+
+            // Update tombol & counter
+            btn.textContent = 'Show Less';
+            updateCounter(total);
+
+        } else {
+
+            // Kembalikan ke batas limit
+            rows.forEach((r, i) => {
+                if (i >= limit) r.classList.add('d-none');
+            });
+
+            btn.textContent = 'Show More';
+            updateCounter(limit);
+
+            // Scroll kembali ke atas tabel
+            const tableTop = document.getElementById('tableScroll');
+            if (tableTop) tableTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+</script>
+{{-- Script Modal Close Tiket --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Saat tombol close ditekan
+    document.querySelectorAll(".btn-open-close-modal").forEach(btn => {
+        btn.addEventListener("click", function() {
+
+            let id = this.getAttribute("data-id");
+
+            // SET FORM ACTION YANG BENAR
+            document.getElementById("closeTiketForm").action =
+                "/tiket/update-plan/" + id;
+
+            // Ambil data tiket via AJAX
+            fetch(`/tiket/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Tampilkan nama site di modal header atau di atas form
+                    document.querySelector('#closeTiketModal .modal-title').textContent = 
+                        `Close Tiket - ${data.nama_site}`;
+                })
+                .catch(error => console.error('Error:', error));
+
+            // Auto isi tanggal close hari ini
+            document.getElementById("close_tanggal_input").value = "";
+            document.getElementById("close_bulan").value = "";
+
+            // Reset textarea
+            document.getElementById("close_detail_problem").value = "";
+            document.getElementById("close_plan_actions").value = "";
+
+            // Tampilkan modal
+            new bootstrap.Modal(document.getElementById("closeTiketModal")).show();
+        });
+    });
+
+});
 </script>
 @endsection

@@ -170,6 +170,10 @@
                         class="btn-custom {{ Request::is('logtracker') ? 'btn-active' : 'btn-inactive' }}">
                         Spare Tracker
                     </a>
+                    <a href="{{ route('summaryspare') }}"
+                        class="btn-custom {{ Request::is('sparetracker/summary') ? 'btn-active' : 'btn-inactive' }}">
+                        Summary Spare
+                    </a>
                 </div>
             </div>
         </div>
@@ -218,9 +222,48 @@
                     </div>
                 </form>
             </div>
+        <style>
+            table.table {
+                border-collapse: collapse !important;
+                margin: 0 !important;
+                font-size: 13px !important;
+                line-height: 1.1 !important;
+            }
+
+            /* Supersuper rapat */
+            table.table th,
+            table.table td {
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
+                padding-left: 2px !important;   /* super mepet kiri */
+                padding-right: 2px !important;  /* super mepet kanan */
+                margin: 0 !important;
+                height: 26px !important; /* tinggi baris kecil dan rapi */
+                line-height: 1 !important; /* huruf rapat */
+                vertical-align: middle !important; /* teks di tengah vertikal */
+            }
+
+            .table-bordered > :not(caption) > * > * {
+                border-width: 1px !important;
+            }
+
+            thead.table-dark th {
+                padding: 3px !important;
+                font-size: 13px !important;
+            }
+
+            .action-btn {
+                padding: 2px 6px !important;
+                font-size: 10px !important;
+            }
+
+            td.d-flex.gap-2 {
+                gap: 4px !important;
+            }
+        </style>
 
   <div class="table-responsive">
-    <table class="table table-bordered table-striped table-sm align-middle">
+    <table class="table table-bordered table-striped table-sm align-middle" style="margin-top: 10px;">
       <thead class="table-dark">
             <tr class="text-center">
                 <th><input type="checkbox" id="select-all"></th>

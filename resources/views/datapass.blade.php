@@ -195,6 +195,72 @@
         </form>
         </div>
         {{-- Tabel --}}
+        <style>
+                table.table {
+                    border-collapse: collapse !important;
+                    margin: 0 !important;
+                    font-size: 13px !important;
+                    line-height: 1.1 !important;
+                }
+
+                /* Supersuper rapat */
+                table.table th,
+                table.table td {
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                    padding-left: 3px !important;
+                    padding-right: 3px !important;
+                    margin: 0 !important;
+                    height: 30px !important; /* tambahkan batas tinggi minimum */
+                    line-height: 1 !important; /* benar-benar rapat antar huruf */
+                    vertical-align: middle !important; /* <--- ini penting agar teks di tengah vertikal */
+                }
+
+
+                .table-bordered > :not(caption) > * > * {
+                    border-width: 1px !important;
+                }
+
+                thead.table-dark th {
+                    padding: 4px !important;
+                    font-size: 13px !important;
+                }
+
+                .action-btn {
+                    padding: 2px 6px !important;
+                    font-size: 10px !important;
+
+                td.d-flex.gap-2 {
+                    gap: 4px !important;
+                }
+            </style>
+        <style>
+            /* === Style ikon tombol aksi === */
+        .table td .action-btn {
+            background: none;
+            border: none;
+            color: #007bff; /* warna biru ikon */
+            font-size: 18px;
+            padding: 2px 4px;
+            margin: 0 2px;
+            cursor: pointer;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        /* Hover efek: sedikit membesar dan warna lebih gelap */
+        .table td .action-btn:hover {
+            color: #0056b3;
+            transform: scale(1.2);
+        }
+
+        /* Pastikan ikon rata horizontal tanpa spasi berlebihan */
+        .table td form,
+        .table td button {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+        }
+        </style>
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-sm align-middle text-nowrap">
                 <thead class="table-dark">
@@ -222,19 +288,22 @@
                         @php
                             $role = Auth::user()->role;
                         @endphp
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
-                                <i class="fa fa-edit"></i> Edit
+                        <td class="text-center">
+                            <button class="action-btn" data-bs-toggle="modal" data-bs-target="#editModal{{ $data->id }}">
+                                <i class="fa fa-edit"></i>
                             </button>
                             @if (in_array($role, ['admin', 'superadmin']))
                             <form action="{{ route('datapass.destroy', $data->id) }}" method="POST" class="d-inline delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-name="{{ $data->site_id }}">
-                                    <i class="fa fa-trash"></i> Hapus
+                                <button type="button" class="action-btn delete-btn" data-name="{{ $data->site_id }}">
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             </form>
                             @endif
+                            <button class="action-btn" data-bs-toggle="modal" data-bs-target="#infoModal{{ $data->id }}">
+                                <i class="fa fa-info-circle"></i>
+                            </button>
                         </td>
                     </tr>
 
@@ -265,7 +334,6 @@
                             </form>
                         </div>
                     </div>
-
                     @endforeach
                 </tbody>
             </table>

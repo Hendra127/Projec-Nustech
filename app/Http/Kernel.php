@@ -39,7 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
 
             // ✅ Simpan URL yang dimaksudkan sebelum login
-            \App\Http\Middleware\StoreIntendedUrl::class,
+            
         ],
 
         'api' => [

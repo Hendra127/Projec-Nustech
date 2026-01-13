@@ -34,15 +34,22 @@ class PmLibertaImport implements ToModel, WithHeadingRow
     private function transformDate($value)
     {
         if (!$value) return null;
-
+    
         if (is_numeric($value)) {
+            // Kalau Excel simpan sebagai serial number
             return Carbon::instance(Date::excelToDateTimeObject($value))->format('Y-m-d');
         }
-
+    
         try {
-            return Carbon::parse($value)->format('Y-m-d');
+            // Paksa baca format dd/mm/yyyy
+            return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
         } catch (\Exception $e) {
-            return null;
+            // Kalau gagal, coba parse otomatis
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Exception $e) {
+                return null;
+            }
         }
     }
 }

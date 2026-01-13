@@ -26,3 +26,21 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/**
+ * Echo exposes an expressive API for subscribing to channels and listening
+ * for events that are broadcast by Laravel. Echo and event broadcasting
+ * allow your team to quickly build robust real-time web applications.
+ */
+
+import './echo';
+
+import Echo from 'laravel-echo';
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+});
+window.Echo.channel('public-chat')
+.listen('ChatSent', (e) => {
+    addMessage(e.chat);
+});

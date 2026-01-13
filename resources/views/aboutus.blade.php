@@ -10,6 +10,19 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .delay-200 { animation-delay: .2s; }
+    .delay-400 { animation-delay: .4s; }
+  </style>
+  <style>
     body {
       font-family: 'Quicksand', sans-serif;
       font-color: black;
@@ -143,10 +156,6 @@
   .animate-fade-in-up {
     animation: fadeInUp 1.2s ease-out both;
   }
-  #navbar {
-    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-weight: 400 !important;
-  }
 
   #navbar a {
     font-size: 12px; /* atau 1rem, atau sesuaikan */
@@ -252,83 +261,227 @@
 </style>
 </head>
 <body class="text-gray-900">
-  <!-- Navbar -->
 <!-- NAVBAR -->
-<nav id="navbar" class="fixed top-0 right-0 left-0 bg-transparent bg-opacity-90 z-50 w-full "
-  style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-16">
+<nav
+  id="navbar"
+  class="fixed top-0 left-0 right-0 z-50 w-full bg-transparent"
+  style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
 
-      <!-- Logo -->
-      <div class="text-sky-500 text-xl font-bold">
-        <a href="#"></a>
-      </div>
+  <!-- WRAPPER CENTER -->
+  <div class="flex justify-center px-4 sm:px-6 lg:px-8">
+    
+    <!-- NAV CONTAINER (BACKGROUND DI SINI) -->
+    <div
+      id="navCapsule"
+      class="mt-4 bg-white/90 backdrop-blur
+            shadow-lg rounded-full
+            px-6 transition-all duration-300">
 
-      <!-- Hamburger (Mobile) -->
-      <div class="md:hidden">
-        <button id="menu-toggle" class="text-sky-500 focus:outline-none">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
+      <div class="flex items-center h-14 space-x-6 text-sm font-medium">
 
-      <!-- Menu Desktop -->
-      <div class="hidden md:flex items-center space-x-6 text-black font-medium">
-        <a href="#beranda" class="hover:text-sky-500">Beranda</a>
-        <a href="#tentang" class="hover:text-sky-500">Tentang Kami</a>
-        <a href="#visimisi" class="hover:text-sky-500">Visi Misi</a>
-
-        <!-- Dropdown Layanan -->
-        <div class="relative group">
-          <a class="hover:text-sky-500 cursor-pointer">Layanan</a>
-          <div class="absolute left-0 mt-2 hidden group-hover:flex flex-col bg-white text-black shadow-lg rounded-md min-w-[200px] z-50">
-            <button onclick="showLayanan('networking')" class="text-left px-4 py-2 hover:bg-sky-100">Networking</button>
-            <button onclick="showLayanan('aplikasi')" class="text-left px-4 py-2 hover:bg-sky-100">Aplikasi</button>
-            <button onclick="showLayanan('reklame')" class="text-left px-4 py-2 hover:bg-sky-100">Reklame</button>
-            <button onclick="showLayanan('kelistrikan')" class="text-left px-4 py-2 hover:bg-sky-100">Kelistrikan</button>
-            <button onclick="showLayanan('ac')" class="text-left px-4 py-2 hover:bg-sky-100">Sistem Pendingin</button>
-            <button onclick="showLayanan('komputer')" class="text-left px-4 py-2 hover:bg-sky-100">Komputer & Printer</button>
-            <button onclick="showLayanan('elektronik')" class="text-left px-4 py-2 hover:bg-sky-100">Elektronik</button>
-            <button onclick="showLayanan('kantor')" class="text-left px-4 py-2 hover:bg-sky-100">Alat Kantor</button>
-          </div>
+        <!-- Hamburger (Mobile) -->
+        <div class="md:hidden">
+          <button id="menu-toggle" class="focus:outline-none">
+            <svg
+              id="hamburgerIcon"
+              class="w-6 h-6 text-sky-500"
+              fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
         </div>
 
-        <a href="#strategi" class="hover:text-sky-500">Strategi</a>
-        <a href="#kebijakan" class="hover:text-sky-500">Kebijakan</a>
-        <a href="#gallery" class="hover:text-sky-500">Galeri</a>
+        <!-- MENU DESKTOP -->
+        <div class="hidden md:flex items-center space-x-6">
+
+          <a href="#beranda" class="nav-link">Beranda</a>
+          <a href="#tentang" class="nav-link">Tentang Kami</a>
+          <a href="#visimisi" class="nav-link">Visi Misi</a>
+
+          <!-- Dropdown Layanan -->
+          <div id="layananDropdown" class="relative">
+            <button
+              id="layananToggle"
+              class="nav-link focus:outline-none flex items-center gap-1">
+              Layanan
+              <svg class="w-4 h-4 transition-transform duration-300" id="layananArrow"
+                fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <div
+              id="layananMenu"
+              class="absolute left-1/2 -translate-x-1/2 mt-4 hidden
+                    flex-col bg-white text-black
+                    shadow-2xl rounded-2xl min-w-[260px] z-50
+                    dropdown-animate origin-top">
+
+              <button onclick="showLayanan('networking')" class="dropdown-item">
+              Networking
+              </button>
+              <button onclick="showLayanan('aplikasi')" class="dropdown-item">
+              Aplikasi
+              </button>
+              <button onclick="showLayanan('reklame')" class="dropdown-item">
+              Reklame
+              </button>
+              <button onclick="showLayanan('kelistrikan')" class="dropdown-item">
+              Kelistrikan
+              </button>
+              <button onclick="showLayanan('ac')" class="dropdown-item">
+              Sistem Pendingin
+              </button>
+              <button onclick="showLayanan('komputer')" class="dropdown-item">
+              Komputer & Printer
+              </button>
+              <button onclick="showLayanan('elektronik')" class="dropdown-item">
+              Elektronik
+              </button>
+              <button onclick="showLayanan('kantor')" class="dropdown-item">
+              Alat Kantor
+              </button>
+            </div>
+          </div>
+          <a href="#gallery" class="nav-link">Galeri</a>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- Menu Mobile -->
-  <div id="mobile-menu" class="md:hidden hidden flex-col bg-white text-black font-medium space-y-2 px-4 pt-4 pb-6">
-    <a href="#beranda" class="hover:text-sky-500">Beranda</a>
-    <a href="#tentang" class="hover:text-sky-500">Tentang Kami</a>
-    <a href="#visimisi" class="hover:text-sky-500">Visi Misi</a>
-
-    <!-- Dropdown Layanan Mobile -->
-    <div>
-      <button onclick="toggleDropdown()" class="w-full text-left hover:text-sky-500">Layanan ▼</button>
-      <div id="dropdown-layanan" class="hidden flex-col pl-4 pt-2 space-y-2">
-        <button onclick="showLayanan('networking')" class="text-left hover:text-sky-500">Networking</button>
-        <button onclick="showLayanan('aplikasi')" class="text-left hover:text-sky-500">Aplikasi</button>
-        <button onclick="showLayanan('reklame')" class="text-left hover:text-sky-500">Reklame</button>
-        <button onclick="showLayanan('kelistrikan')" class="text-left hover:text-sky-500">Kelistrikan</button>
-        <button onclick="showLayanan('ac')" class="text-left hover:text-sky-500">Sistem Pendingin</button>
-        <button onclick="showLayanan('komputer')" class="text-left hover:text-sky-500">Komputer & Printer</button>
-        <button onclick="showLayanan('elektronik')" class="text-left hover:text-sky-500">Elektronik</button>
-        <button onclick="showLayanan('kantor')" class="text-left hover:text-sky-500">Alat Kantor</button>
-      </div>
-    </div>
-
-    <a href="#strategi" class="hover:text-sky-500">Strategi</a>
-    <a href="#kebijakan" class="hover:text-sky-500">Kebijakan</a>
-    <a href="#gallery" class="hover:text-sky-500">Galeri</a>
+  <!-- MOBILE MENU -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden mx-4 mt-4
+           bg-white rounded-xl shadow-lg
+           text-black font-medium
+           space-y-2 px-4 pt-4 pb-6">
+    <a href="#beranda">Beranda</a>
+    <a href="#tentang">Tentang Kami</a>
+    <a href="#visimisi">Visi Misi</a>
+    <a href="#gallery">Galeri</a>
   </div>
+
 </nav>
+<!-- DROPDOWN ANIMATION STYLE --> 
+<style>
+/* === Dropdown Animation === */
+.dropdown-animate {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition: all 0.25s ease;
+}
 
+.dropdown-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* === Dropdown item === */
+.dropdown-item {
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.dropdown-item:not(:last-child) {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Hover efek ala corporate */
+.dropdown-item:hover {
+  background: linear-gradient(90deg, #e0f2fe, #f0f9ff);
+  color: #0284c7;
+  padding-left: 24px;
+}
+
+/* Garis animasi kiri */
+.dropdown-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 60%;
+  background: #0ea5e9;
+  transform: translateY(-50%);
+  transition: width 0.25s ease;
+}
+
+.dropdown-item:hover::before {
+  width: 4px;
+}
+
+/* Panah ikut muter */
+#layananArrow.rotate {
+  transform: rotate(180deg);
+}
+</style>
+
+<!-- STYLES NAVBAR -->
+<style>
+/* Navbar transition */
+.navbar-transition {
+  transition: all 0.35s ease;
+}
+
+/* Navbar saat scroll */
+#navCapsule.scrolled {
+  background-color: rgba(255,255,255,0.95);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+/* Link */
+.nav-link {
+  color: #ffffff;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Link saat scroll */
+#navbar.scrolled .nav-link {
+  color: #111827;
+}
+
+/* Hover underline ala Primacom */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #0ea5e9;
+  transition: width 0.3s ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Dropdown */
+.dropdown-item {
+  text-align: left;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
+}
+.dropdown-item:hover {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+/* Hamburger ikut berubah */
+#navbar.scrolled #hamburgerIcon {
+  color: #111827;
+}
+</style>
   <!-- Hero Section -->
 <section id="beranda" class="w-full min-h-screen flex items-center justify-center text-black relative overflow-hidden" style="background: grey;">
 
@@ -343,21 +496,21 @@
     <!-- ... animasi bubble tetap di sini jika ada ... -->
   </div>
 
-  <!-- Logo -->
-  <div class="fixed top-6 left-6 z-50" style="width: 60px; height: 60px;">
-    <a href="{{ route('landingpage') }}">
-      <img src="{{ asset('assets/img/logonustech.png') }}" alt="nustech logo"
-           class="nav-link btn {{ request()->routeIs('landingpage') ? 'btn-primary active' : 'btn-outline-primary' }}">
-    </a>
-  </div>
+  <!-- Logo 
+  <div class="fixed top-6 left-6 z-50" style="width: 60px; height: 60px;">-
+    <a href="{{ route('landingpage') }}">-
+      <img src="{{ asset('assets/img/logonustech.png') }}" alt="nustech logo"-
+           class="nav-link btn {{ request()->routeIs('landingpage') ? 'btn-primary active' : 'btn-outline-primary' }}">-
+    </a>-
+  </div>-->
 
   <!-- Konten utama -->
   <div class="relative z-20 text-center px-4 animate-fade-in-up">
     <h1 class="mb-4 text-4xl md:text-5xl font-bold"
-        style="font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #B12C00">
+        style="font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF">
       CV. NUSTECH
     </h1>
-    <p class="mt-4 text-lg md:text-xl text-black fade-in-up"
+    <p class="mt-4 text-lg md:text-xl text-white fade-in-up"
        style="font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       Solusi Teknologi Informasi dan Komunikasi
     </p>
@@ -365,14 +518,34 @@
 </section>
 
 <!-- TENTANG KAMI SECTION -->
-<section id="tentang" class="w-full min-h-screen flex flex-col lg:flex-row items-center justify-between px-0 py-20 bg-white">
-  <!-- Kiri -->
-  <div class="w-full lg:w-1/2 px-10 lg:px-20">
+<section
+  id="tentang"
+  class="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-between px-0 py-4 overflow-hidden bg-white">
+
+  <!-- BACKGROUND GRADIENT -->
+  <div
+    class="absolute inset-0 bg-gradient-to-br
+           from-orange-50 via-white to-sky-50">
+  </div>
+
+  <!-- SHAPE SVG ORGANIC -->
+  <svg
+    class="absolute -top-12 -left-16 w-[1000px] opacity-30"
+    viewBox="0 0 200 200"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      fill="#FDBA74"
+      d="M47.3,-61.6C60.6,-54.2,70.5,-40.6,73.3,-26C76,-11.3,71.6,4.4,63.7,17.9C55.9,31.3,44.6,42.5,31.4,50.4C18.2,58.3,3.1,62.9,-12.2,63.5C-27.6,64.1,-43.2,60.6,-55.3,51.4C-67.4,42.2,-75.9,27.3,-77.4,11.4C-78.8,-4.5,-73.3,-21.5,-63.3,-34.8C-53.3,-48.1,-38.8,-57.7,-23.2,-63.8C-7.7,-69.9,8.9,-72.5,24.5,-69.5C40.1,-66.6,54.7,-58.2,47.3,-61.6Z"
+      transform="translate(100 100)" />
+  </svg>
+
+  <!-- KIRI -->
+  <div class="w-full lg:w-1/2 px-10 lg:px-20 z-10">
     <h2 class="text-4xl font-bold mb-6 leading-snug">
       Ini Tentang <span class="text-orange-600">Kami,</span> <span class="text-orange-400">Jagonya</span> <span class="text-gray-900">Teknologi Informasi</span>
     </h2>
     <p class="text-gray-600 mb-4 text-base leading-relaxed">
-      Kami telah menjadi partner puluhan ribu pelanggan untuk mewujudkan apa yang mereka inginkan dengan solusi yang kami berikan dengan pengalaman yang luas dalam berbagai macam bidang...
+      CV. NUSTECH adalah perusahaan yang berbasis di Lombok, Nusa Tenggara Barat dan bergerak di bidang pengadaan barang dan jasa, khususnya dalam sektor teknologi informasi, kelistrikan, dan rekayasa teknik (engineering)...
     </p>
     <button onclick="openModal()"
       class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
@@ -380,12 +553,12 @@
     </button>
   </div>
 
-  <!-- Kanan -->
+  <!-- KANAN -->
   <div class="relative w-full lg:w-1/2 px-10 lg:px-20 mt-8 lg:mt-0 z-10">
-    <img src="assets/img/tentangkami.png" alt="tentang kami" class="w-full h-auto -mt-24"/>
+    <img src="assets/img/tentangkami.png" alt="tentang kami" class="w-full h-auto"/>
   </div>
-</section>
 
+</section>
 
 <!-- Modal FULLSCREEN dan Bisa Scroll -->
 <div id="modalTentang" class="fixed inset-0 bg-black bg-opacity-60 z-50 overflow-y-auto hidden">
@@ -468,7 +641,7 @@
 
 <section id="visimisi" class="w-full bg-white text-gray-900 py-20 font-[quicksand,sans-serif]">
   <!-- Judul -->
-  <h2 class="text-4xl font-bold text-center text-black mb-16 animate-fade-in-down px-4 md:px-8">Tujuan Kami Untuk Anda</h2>
+  <h2 class="text-4xl font-bold text-center text-black mb-16 animate-fade-in-down px-4 md:px-8"></h2>
 
   <!-- Grid Utama -->
   <div class="flex flex-col lg:flex-row justify-between items-center gap-12 px-4 md:px-8 xl:px-20">
@@ -518,7 +691,7 @@
 
 <section id="layanan" class="w-full bg-white text-gray-900 py-20 font-[quicksand,sans-serif]">
   <!-- Judul -->
-  <h2 class="text-4xl font-bold text-sky-500 mb-12 text-end px-4 md:px-8">Layanan</h2>
+  <h2 class="text-4xl font-bold text-sky-500 mb-12 text-end px-4 md:px-8">Layanan Yang Kami Berikan</h2>
 
   <!-- Container -->
   <div class="flex flex-col lg:flex-row gap-12 px-4 md:px-8 xl:px-20 items-start">
@@ -530,13 +703,14 @@
         <div id="networking" class="layanan-item hidden">
           <h3 class="text-2xl font-semibold mb-3">Instalasi & Pemeliharaan Jaringan (Networking)</h3>
           <ul class="list-disc list-inside text-justify space-y-1">
-            <li>Instalasi dan maintenance jaringan komputer</li>
-            <li>Pemasangan dan perawatan jaringan VSAT</li>
-            <li>Pemasangan Baseband (BB) Tower</li>
+            <li class="cursor-pointer text-black-600 hover:underline" onclick="openJaringanModal()">Instalasi dan maintenance jaringan komputer</li>
+            <li class="cursor-pointer text-black-600 hover:underline" onclick="openVsatModal()"> Pemasangan dan Perawatan Jaringan VSAT </li>
+            <li class="cursor-pointer text-black-600 hover:underline" onclick="openBasebandModal()">Pemasangan Baseband (BB) Tower</li>
             <li>Instalasi dan pemeliharaan sistem CCTV</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Instalasi%20dan%20Pemeliharaan%20Jaringan%20(Networking)%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -551,7 +725,8 @@
             <li>Jasa pemrograman khusus untuk instansi dan perusahaan</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Pengembangan%20Aplikasi%20dan%20Program%20Komputer%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -566,7 +741,8 @@
             <li>Layanan cetak untuk berbagai kebutuhan perusahaan dan instansi</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Reklame%20dan%20Percetakan%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -580,7 +756,8 @@
             <li>Perancangan, pemasangan, dan perawatan sistem kelistrikan untuk bangunan kantor dan instansi</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+             <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Kelistrikan%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -595,7 +772,8 @@
             <li>Maintenance dan perbaikan berkala</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Instalasi%20dan%20Pemeliharaan%20Sistem%20Pendingin%20(AC)%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -610,7 +788,8 @@
             <li>Layanan perawatan dan perbaikan berkala</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Pengadaan%20dan%20Maintenance%20Perangkat%20Komputer%20dan%20Printer%20yang%20Anda%20tawarkan.%20Mohon%20info%20lebih%20lanjut."
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -624,7 +803,8 @@
             <li>Penyediaan berbagai jenis perangkat elektronik sesuai kebutuhan proyek</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20pengadaan%20peralatan%20elektronik%20yang%20Anda%20tawarkan" 
+                target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -639,7 +819,8 @@
             <li>Perawatan alat kantor secara rutin</li>
           </ul>
           <div class="mt-4">
-            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+            <a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20pengadaan%20dan%20perawatan%20alat-alat%20kantor%20yang%20Anda%20tawarkan.%20Saya%20ingin%20mendapatkan%20informasi%20lebih%20lanjut%20mengenai%20produk%20dan%20layanan%20yang%20tersedia.
+                " target="_blank"
               class="border border-gray-400 text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-all cursor-pointer">
               Hubungi Kami...
             </a>
@@ -667,7 +848,11 @@
               <span class="transform group-open:rotate-90 transition-transform duration-300 text-2xl">&gt;</span>
             </summary>
             <div class="mt-3 text-gray-700">
-              <p>Atur sistem CCTV, jaringan internet, dan AC hanya dalam satu langkah bersama kami. Dengan konfigurasi otomatis dan dukungan teknisi profesional, sistem Anda akan selalu optimal di berbagai kondisi — dari kantor pemerintahan hingga resort di Gili.</p>
+              <p>
+                Kelola CCTV, jaringan internet, dan sistem AC dalam satu ekosistem terpadu.
+                Instalasi cepat, konfigurasi otomatis, dan dukungan teknisi berpengalaman
+                memastikan sistem Anda selalu siap bekerja — di kantor, hotel, hingga kawasan wisata seperti Gili.
+              </p>
             </div>
           </details>
           <details class="group text-left cursor-pointer mt-4">
@@ -676,7 +861,13 @@
               <span class="transform group-open:rotate-90 transition-transform duration-300 text-2xl">&gt;</span>
             </summary>
             <div class="mt-3 text-gray-700">
-              <p>Kami menghadirkan jaringan internet Point-to-Point dan instalasi CCTV terkini yang siap pakai tanpa ribet. Semuanya didesain untuk bekerja maksimal di segala lokasi — dari pusat kota hingga daerah terpencil.</p>
+              <p>
+                Kami menyediakan solusi jaringan internet yang stabil, cepat, dan konsisten
+                melalui instalasi Point-to-Point serta infrastruktur jaringan yang andal,
+                ditangani langsung oleh teknisi berpengalaman dan profesional.
+                Dirancang untuk mendukung operasional tanpa hambatan, baik di pusat kota
+                maupun di wilayah dengan keterbatasan akses.
+              </p>
             </div>
           </details>
           <details class="group text-left cursor-pointer mt-4">
@@ -685,7 +876,11 @@
               <span class="transform group-open:rotate-90 transition-transform duration-300 text-2xl">&gt;</span>
             </summary>
             <div class="mt-3 text-gray-700">
-              <p>Dari AC yang selalu dingin hingga CCTV yang aktif 24 jam, semua dirancang untuk memberi Anda kenyamanan dan keamanan penuh. Teknisi kami siap menjaga sistem Anda tetap optimal tanpa gangguan.</p>
+              <p>
+                Nikmati kenyamanan tanpa henti dengan AC yang optimal dan sistem keamanan 24 jam.
+                Tim teknisi kami siap memantau, merawat, dan memastikan semua berjalan lancar —
+                sehingga Anda bisa fokus pada bisnis dan aktivitas utama.
+              </p>
             </div>
           </details>
         </div>
@@ -694,61 +889,109 @@
   </div>
 </section>
 
-
 <!-- Gallery Section -->
 <section id="gallery" class="py-16 px-4 md:px-10 relative">
   <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
-    <h2 class="text-3xl md:text-5xl font-bold mb-10 text-center text-gray-800" style="font-family: quicksand, sans-serif;">
-      Galeri Foto
+    <h2
+      class="text-3xl md:text-5xl font-bold mb-10 text-center text-gray-800"
+      style="font-family: quicksand, sans-serif;">
+      Pengalaman Kerja
     </h2>
 
-    <!-- Galeri Gambar -->
-    <div id="galleryContainer" class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory">
-      <!-- Gambar-gambar tetap seperti aslinya -->
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/ac.jpg') }}" alt="AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+    <!-- Wrapper agar overflow disembunyikan -->
+    <div id="galleryContainerWrapper" class="overflow-hidden relative">
+      <!-- Kontainer gambar dengan animasi scroll -->
+      <div id="galleryContainer" class="flex gap-6 animate-scroll">
+        <!-- Gambar Asli -->
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/ac.jpg') }}" alt="AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>-->
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/starlink.jpg') }}" alt="Starlink" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/starlink.jpg') }}" alt="Starlink" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/vsat.jpg') }}" alt="VSAT" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/vsat.jpg') }}" alt="VSAT" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/vsatatm.jpg') }}" alt="VSAT ATM" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/vsatatm.jpg') }}" alt="VSAT ATM" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/printer.jpg') }}" alt="Printer" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/printer.jpg') }}" alt="Printer" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/foto2.jpg') }}" alt="Foto 2" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/foto2.jpg') }}" alt="Foto 2" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/serviceac.jpg') }}" alt="Service AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/serviceac.jpg') }}" alt="Service AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
 
-      <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
-        <img src="{{ asset('assets/img/foto3.jpg') }}" alt="Foto 3" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
-      </a>
-    </div>
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/foto3.jpg') }}" alt="Foto 3" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
 
-    <!-- Tombol Navigasi -->
-    <div class="flex justify-end gap-4 mt-4">
-      <button onclick="scrollGallery(-1)" class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center shadow-md">
-        &#8592;
-      </button>
-      <button onclick="scrollGallery(1)" class="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center shadow-md">
-        &#8594;
-      </button>
+        <!-- Duplikasi Gambar untuk loop -->
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/ac.jpg') }}" alt="AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>-->
+
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/starlink.jpg') }}" alt="Starlink" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>
+
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/vsat.jpg') }}" alt="VSAT" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
+
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/vsatatm.jpg') }}" alt="VSAT ATM" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
+
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/printer.jpg') }}" alt="Printer" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
+
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/foto2.jpg') }}" alt="Foto 2" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
+
+        <a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/serviceac.jpg') }}" alt="Service AC" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">
+        </a>
+
+        <!--<a href="#" class="flex-shrink-0 w-64 snap-start rounded-lg shadow-lg group block">
+          <img src="{{ asset('assets/img/foto3.jpg') }}" alt="Foto 3" class="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110">--
+        </a>-->
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  @keyframes scrollGallery {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scrollGallery 40s linear infinite;
+    width: max-content;
+  }
+
+  #galleryContainerWrapper {
+    overflow: hidden;
+  }
+</style>
+
 
 <!-- Lightbox Popups -->
 <div id="img1" class="lightbox">
@@ -791,7 +1034,7 @@
         <li><i class="fa fa-clock mr-2 text-sky-400"></i>Open 24 Hours</li>
         <li>
           <i class="fab fa-instagram mr-2"></i>
-          <a href="https://www.instagram.com/nustech.co.id/" target="_blank" class="hover:underline text-black hover:text-100">
+          <a href="https://www.instagram.com/nustech.co.id/" target="_blank" class="hover:underline text-white hover:text-100">
             nustech.co.id
           </a>
         </li>
@@ -818,6 +1061,651 @@
     </div>
   </div>
 </footer>
+<!-- MODAL WRAPPER -->
+<div
+  id="basebandModal"
+  class="fixed inset-0 z-40 hidden bg-black/60">
+
+  <!-- MODAL BOX -->
+<div
+  id="basebandModalBox"
+  class="bg-white w-full h-full
+         transform transition-all duration-300
+         opacity-0 scale-95
+         overflow-hidden">
+
+  <!-- HEADER (STICKY DI BAWAH NAVBAR) -->
+  <div class="sticky top-16 bg-white z-20 border-b">
+    <div class="flex justify-center items-center px-6 py-4">
+      <h3 class="text-xl font-semibold">
+        Pemasangan Jaringan Internet BAKTI BTS
+      </h3>
+      <button
+        onclick="closeBasebandModal()"
+        class="absolute right-6 text-3xl leading-none hover:text-red-600 transition">
+          &times;
+      </button>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div
+    class="h-[calc(100vh-64px-64px)]
+           overflow-y-auto px-6">
+
+    <!-- CONTENT CENTER -->
+    <div class="min-h-full flex items-center justify-center">
+      <div class="max-w-3xl space-y-6 py-16 text-gray-700">
+
+        <p class="text-lg font-medium text-gray-800 text-center">
+          Pernahkah Anda bertanya bagaimana sinyal ponsel dapat bekerja
+          cepat, stabil, dan menjangkau hingga ke wilayah terpencil?
+        </p>
+
+        <p class="leading-relaxed text-justify">
+          Jawabannya terletak pada infrastruktur jaringan yang dirancang
+          dan dibangun dengan presisi tinggi. Melalui program
+          <strong>Jaringan Internet BAKTI BTS</strong>, kami menghadirkan
+          solusi konektivitas yang andal untuk mendukung transformasi
+          digital di wilayah tertinggal, terdepan, dan terluar (3T).
+        </p>
+
+        <p class="leading-relaxed text-justify">
+          <strong>Baseband Tower (BB)</strong> berperan sebagai pusat
+          pengolahan sinyal yang mengintegrasikan perangkat radio,
+          VSAT, serta sistem transmisi data ke dalam satu ekosistem
+          jaringan yang terhubung langsung ke backbone nasional.
+        </p>
+
+        <p class="leading-relaxed text-justify">
+          Kami tidak sekadar membangun menara—kami membangun
+          <strong>jembatan digital</strong> yang menghubungkan masyarakat,
+          layanan publik, dan peluang ekonomi. Seluruh proses instalasi
+          dilaksanakan oleh tenaga teknis profesional dan berpengalaman,
+          dengan mengutamakan standar keselamatan kerja, keandalan sistem,
+          serta kualitas layanan jangka panjang.
+        </p>
+
+        <!-- TIMELINE -->
+        <div class="mt-10 border-l-4 border-sky-600 pl-6 space-y-6 text-left max-h-72 overflow-y-auto pr-4 scroll-smooth">
+
+          <div>
+            <span class="font-semibold text-sky-600">Instalasi Perangkat Keras BTS</span>
+            <p class="text-gray-600 text-justify leading-relaxed">
+              Pemasangan perangkat
+              baseband, radio, dan antena sektoral dilakukan secara terstruktur
+              untuk memastikan jangkauan sinyal yang luas serta kualitas layanan
+              yang optimal di berbagai wilayah prioritas.
+            </p>
+          </div>
+
+          <div>
+            <span class="font-semibold text-sky-600">Optimalisasi Jaringan</span>
+            <p class="text-gray-600 text-justify leading-relaxed">
+              Memaksimalkan kinerja sistem
+              baseband melalui integrasi jaringan VSAT dan IP, sehingga transmisi
+              data menjadi lebih cepat, stabil, dan andal.
+            </p>
+          </div>
+
+          <div>
+            <span class="font-semibold text-sky-600">Solusi Cepat & Efisien</span>
+            <p class="text-gray-600 text-justify leading-relaxed">
+              Tim teknis kami bergerak
+              responsif untuk meningkatkan kapasitas BTS dan menyelesaikan proyek
+              dengan standar kualitas tertinggi sesuai kebutuhan konektivitas
+              yang terus berkembang.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="sticky bottom-0 bg-white border-t px-6 py-4 text-center">
+    <button
+      onclick="closeBasebandModal()"
+      class="px-8 py-2 bg-sky-600 text-white rounded-full hover:bg-sky-700 transition">
+      Tutup
+    </button>
+  </div>
+</div>
+</div>
+<div
+  id="vsatModal"
+  class="fixed inset-0 z-40 hidden bg-black/60">
+
+  <!-- MODAL BOX -->
+  <div
+    id="vsatModalBox"
+    class="bg-white w-full h-full
+           transform transition-all duration-300
+           opacity-0 scale-95
+           overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="sticky top-16 bg-white z-20 border-b">
+      <div class="flex justify-center items-center px-6 py-4 relative">
+        <h3 class="text-xl font-semibold">
+          Pemasangan & Perawatan Jaringan VSAT
+        </h3>
+        <button
+          onclick="closeVsatModal()"
+          class="absolute right-6 text-3xl leading-none hover:text-red-600 transition">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div
+      class="h-[calc(100vh-64px-64px)]
+             overflow-y-auto px-6">
+
+      <div class="min-h-full flex items-center justify-center">
+        <div class="max-w-3xl space-y-6 py-16 text-gray-700">
+
+          <p class="text-lg font-medium text-gray-800 text-center">
+            Bagaimana koneksi internet tetap tersedia di wilayah terpencil
+            yang belum terjangkau jaringan fiber maupun seluler?
+          </p>
+
+          <p class="leading-relaxed text-justify">
+            Jawabannya adalah teknologi
+            <strong>Very Small Aperture Terminal (VSAT)</strong>,
+            sebuah sistem komunikasi satelit yang memungkinkan akses
+            internet tetap stabil di daerah 3T (Tertinggal, Terdepan, Terluar).
+          </p>
+
+          <p class="leading-relaxed text-justify">
+            Melalui program <strong>Internet BAKTI</strong>, jaringan VSAT
+            dimanfaatkan sebagai tulang punggung konektivitas untuk
+            sekolah, fasilitas kesehatan, kantor pemerintahan,
+            serta layanan publik lainnya.
+          </p>
+
+          <p class="leading-relaxed text-justify">
+            Instalasi dan perawatan VSAT dilakukan oleh teknisi profesional
+            dengan standar keselamatan kerja tinggi, memastikan sistem
+            beroperasi optimal, tahan cuaca, dan andal untuk jangka panjang.
+          </p>
+
+          <!-- TIMELINE -->
+          <div
+            class="mt-10 border-l-4 border-sky-600 pl-6 space-y-6
+                   text-left max-h-72 overflow-y-auto pr-4 scroll-smooth">
+
+            <div>
+              <span class="font-semibold text-sky-600">
+                Instalasi Perangkat VSAT
+              </span>
+              <p class="text-gray-600 text-justify leading-relaxed">
+                Pemasangan antena parabola, modem satelit,
+                dan perangkat jaringan dilakukan secara presisi
+                untuk memastikan pointing satelit yang optimal.
+              </p>
+            </div>
+
+            <div>
+              <span class="font-semibold text-sky-600">
+                Integrasi Jaringan
+              </span>
+              <p class="text-gray-600 text-justify leading-relaxed">
+                Sistem VSAT diintegrasikan dengan jaringan lokal
+                dan perangkat IP agar distribusi internet
+                berjalan stabil dan efisien.
+              </p>
+            </div>
+
+            <div>
+              <span class="font-semibold text-sky-600">
+                Pemeliharaan & Monitoring
+              </span>
+              <p class="text-gray-600 text-justify leading-relaxed">
+                Pemantauan berkala dan perawatan rutin dilakukan
+                untuk menjaga kualitas koneksi serta meminimalkan
+                gangguan operasional.
+              </p>
+            </div>
+
+            <div class="milestone-wrapper">
+
+              <!-- ITEM -->
+              <div class="milestone-item">
+                <div class="milestone-year">2024</div>
+
+                <div class="milestone-line">
+                  <span class="milestone-dot"></span>
+                </div>
+
+                <div class="milestone-content">
+                  <img src="/images/vsat-2024.jpg" alt="VSAT 2024">
+                  <p>
+                    Instalasi VSAT BAKTI di Sulawesi Tengah dan Kalimantan Utara
+                    dengan ratusan lokasi untuk mendukung konektivitas wilayah 3T.
+                  </p>
+                </div>
+              </div>
+
+              <!-- ITEM -->
+              <div class="milestone-item">
+                <div class="milestone-year">2023</div>
+
+                <div class="milestone-line">
+                  <span class="milestone-dot"></span>
+                </div>
+
+                <div class="milestone-content">
+                  <img src="/images/vsat-2023.jpg" alt="VSAT 2023">
+                  <p>
+                    Ekspansi jaringan VSAT BAKTI di Sulawesi Utara, Sulawesi Tengah,
+                    Sulawesi Tenggara, dan Kota Sorong.
+                  </p>
+                </div>
+              </div>
+
+              <!-- ITEM -->
+              <div class="milestone-item">
+                <div class="milestone-year">2022</div>
+
+                <div class="milestone-line">
+                  <span class="milestone-dot"></span>
+                </div>
+
+                <div class="milestone-content">
+                  <img src="/images/vsat-2022.jpg" alt="VSAT 2022">
+                  <p>
+                    Instalasi dan maintenance VSAT BAKTI di Maluku, Papua, dan NTB
+                    dengan fokus pada stabilitas jaringan.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="sticky bottom-0 bg-white border-t px-6 py-4 text-center">
+      <button
+        onclick="closeVsatModal()"
+        class="px-8 py-2 bg-sky-600 text-white rounded-full hover:bg-sky-700 transition">
+        Tutup
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- MODAL BACKDROP -->
+<!-- MODAL JARINGAN KOMPUTER -->
+<div
+  id="jaringanModal"
+  class="fixed inset-0 z-40 hidden bg-black/60">
+
+  <!-- MODAL BOX -->
+  <div
+    id="jaringanModalBox"
+    class="bg-white w-full h-full flex flex-col
+           transform transition-all duration-300
+           opacity-0 scale-95">
+
+    <!-- HEADER (TIDAK IKUT SCROLL) -->
+    <div class="sticky top-16 bg-white z-20 border-b shrink-0">
+      <div class="flex justify-center items-center px-6 py-4 relative">
+        <h3 class="text-xl font-semibold text-gray-800">
+          Instalasi & Maintenance Jaringan Komputer
+        </h3>
+        <button
+          onclick="closeJaringanModal()"
+          class="absolute right-6 text-3xl leading-none hover:text-red-600 transition">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY (SCROLL DI SINI) -->
+    <div class="flex-1 overflow-y-auto px-6">
+
+      <div class="max-w-4xl mx-auto w-full py-16 space-y-14 text-gray-700">
+
+        <!-- HERO -->
+        <div class="text-center space-y-4 animate-fade-in-up">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20
+                   rounded-full bg-sky-100 mx-auto animate-float">
+            <svg class="w-10 h-10 text-sky-600"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </div>
+
+          <h4 class="text-2xl font-semibold text-gray-800">
+            Fondasi Digital yang Andal
+          </h4>
+
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Jaringan yang stabil, aman, dan siap berkembang
+            tidak terjadi secara kebetulan —
+            semuanya dimulai dari instalasi dan perawatan
+            yang dirancang dengan tepat.
+          </p>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="space-y-4 leading-relaxed text-justify animate-fade delay-200">
+          <p>
+            Kami menghadirkan layanan
+            <strong>Instalasi dan Maintenance Jaringan Komputer</strong>
+            untuk memastikan konektivitas berjalan
+            <strong>cepat, stabil, dan minim gangguan</strong>.
+          </p>
+          <p>
+            Seluruh proses dikerjakan oleh tenaga teknis profesional,
+            mulai dari perencanaan jaringan, pemasangan perangkat,
+            hingga pemeliharaan berkala dengan standar kerja terbaik.
+          </p>
+        </div>
+
+        <!-- SERVICE CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div class="p-6 rounded-xl border shadow-sm
+                      hover:shadow-lg transition animate-fade delay-300">
+            <h5 class="font-semibold text-sky-600 mb-2">
+              🔧 Perencanaan & Instalasi
+            </h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Instalasi LAN, WAN, dan WiFi yang disesuaikan dengan
+              kebutuhan area kerja, termasuk penarikan kabel UTP/Fiber,
+              penataan rack, dan konfigurasi awal sistem.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl border shadow-sm
+                      hover:shadow-lg transition animate-fade delay-400">
+            <h5 class="font-semibold text-sky-600 mb-2">
+              ⚙️ Konfigurasi Perangkat
+            </h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Pengaturan router, switch, access point, firewall,
+              VLAN, serta manajemen bandwidth
+              agar koneksi stabil dan aman.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl border shadow-sm
+                      hover:shadow-lg transition animate-fade delay-500">
+            <h5 class="font-semibold text-sky-600 mb-2">
+              📊 Maintenance & Monitoring
+            </h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Pemeliharaan rutin, monitoring performa jaringan,
+              serta troubleshooting cepat
+              untuk meminimalkan downtime.
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl border shadow-sm
+                      hover:shadow-lg transition animate-fade delay-600">
+            <h5 class="font-semibold text-sky-600 mb-2">
+              🔐 Keamanan & Pengembangan
+            </h5>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Peningkatan keamanan jaringan dan kesiapan infrastruktur
+              agar mudah dikembangkan
+              seiring pertumbuhan bisnis.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- VALUE STRIP -->
+        <div
+          class="bg-sky-50 rounded-xl p-8 text-center
+                 animate-fade-in-up">
+          <h5 class="text-lg font-semibold text-gray-800 mb-2">
+            Kenapa Memilih Kami?
+          </h5>
+          <p class="text-gray-600">
+            ✔ Teknisi Berpengalaman & Profesional<br>
+            ✔ Respon Cepat & Solusi Efisien<br>
+            ✔ Jaringan Rapi, Aman & Scalable<br>
+            ✔ Dukungan Jangka Panjang
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER (TIDAK IKUT SCROLL) -->
+    <div class="sticky bottom-0 bg-white border-t px-6 py-4 text-center shrink-0">
+      <button
+        onclick="closeJaringanModal()"
+        class="px-8 py-2 bg-sky-600 text-white rounded-full
+               hover:bg-sky-700 transition">
+        Tutup
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<style>
+  .milestone-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+
+  .milestone-item {
+    display: grid;
+    grid-template-columns: 120px 40px 1fr;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 100px;
+
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.9s ease;
+  }
+
+  .milestone-item.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* YEAR */
+  .milestone-year {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0ea5e9;
+    text-align: right;
+  }
+
+  /* LINE */
+  .milestone-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .milestone-line::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: -100px;
+    width: 3px;
+    background: #0ea5e9;
+  }
+
+  .milestone-dot {
+    width: 14px;
+    height: 14px;
+    background: #0ea5e9;
+    border-radius: 50%;
+    margin-top: 10px;
+    z-index: 2;
+  }
+
+  /* CONTENT */
+  .milestone-content {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+
+    opacity: 0;
+    transform: translateX(60px) scale(0.95);
+    transition: all 0.9s ease 0.2s;
+  }
+
+  .milestone-item.show .milestone-content {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  .milestone-content img {
+    width: 220px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .milestone-content p {
+    color: #374151;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .milestone-item {
+      grid-template-columns: 1fr;
+    }
+
+    .milestone-year {
+      text-align: left;
+    }
+
+    .milestone-line {
+      display: none;
+    }
+
+    .milestone-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+<!-- Script Milestone -->
+<script>
+const milestones = document.querySelectorAll('.milestone-item');
+
+const milestoneObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    }
+  });
+}, {
+  threshold: 0.25
+});
+
+milestones.forEach(item => milestoneObserver.observe(item));
+</script>
+<!-- Script Modal Jaringan -->
+<script>
+  function openJaringanModal() {
+    const modal = document.getElementById('jaringanModal');
+    const box = document.getElementById('jaringanModalBox');
+
+    modal.classList.remove('hidden');
+
+    setTimeout(() => {
+      box.classList.remove('opacity-0', 'scale-95');
+      box.classList.add('opacity-100', 'scale-100');
+    }, 10);
+
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function closeJaringanModal() {
+    const modal = document.getElementById('jaringanModal');
+    const box = document.getElementById('jaringanModalBox');
+
+    box.classList.add('opacity-0', 'scale-95');
+    box.classList.remove('opacity-100', 'scale-100');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }, 300);
+  }
+</script>
+<!-- Script Modal VSAT -->
+<script>
+function openVsatModal() {
+  const modal = document.getElementById('vsatModal');
+  const box   = document.getElementById('vsatModalBox');
+
+  modal.classList.remove('hidden');
+
+  setTimeout(() => {
+    box.classList.remove('opacity-0', 'scale-95');
+    box.classList.add('opacity-100', 'scale-100');
+  }, 50);
+
+  document.body.classList.add('overflow-hidden');
+}
+
+function closeVsatModal() {
+  const modal = document.getElementById('vsatModal');
+  const box   = document.getElementById('vsatModalBox');
+
+  box.classList.add('opacity-0', 'scale-95');
+
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }, 300);
+}
+</script>
+
+<script>
+function openBasebandModal() {
+  const modal = document.getElementById('basebandModal');
+  const box = document.getElementById('basebandModalBox');
+
+  modal.classList.remove('hidden');
+
+  setTimeout(() => {
+    box.classList.remove('opacity-0', 'scale-95');
+    box.classList.add('opacity-100', 'scale-100');
+  }, 50);
+
+  document.body.classList.add('overflow-hidden');
+}
+
+function closeBasebandModal() {
+  const modal = document.getElementById('basebandModal');
+  const box = document.getElementById('basebandModalBox');
+
+  box.classList.add('opacity-0', 'scale-95');
+
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }, 300);
+}
+</script>
 <script>
   document.querySelectorAll("details").forEach((targetDetail) => {
     targetDetail.addEventListener("toggle", () => {
@@ -1189,8 +2077,87 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+<script>
+/* Navbar scroll effect */
+const navbar = document.getElementById('navbar');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+});
+
+/* Dropdown hover */
+(function () {
+  const wrapper = document.getElementById('layananDropdown');
+  const menu = document.getElementById('layananMenu');
+  let hideTimeout;
+
+  if (!wrapper || !menu) return;
+
+  const showMenu = () => {
+    clearTimeout(hideTimeout);
+    menu.classList.remove('hidden');
+    menu.classList.add('flex');
+  };
+
+  const hideMenu = () => {
+    hideTimeout = setTimeout(() => {
+      menu.classList.add('hidden');
+      menu.classList.remove('flex');
+    }, 200);
+  };
+
+  wrapper.addEventListener('mouseenter', showMenu);
+  wrapper.addEventListener('mouseleave', hideMenu);
+
+  menu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+  menu.addEventListener('mouseleave', hideMenu);
+})();
+
+/* Mobile menu toggle */
+document.getElementById('menu-toggle').addEventListener('click', () => {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+});
+</script>
+<!-- Dropdown dengan animasi -->
+<script>
+(function () {
+  const wrapper = document.getElementById('layananDropdown');
+  const menu = document.getElementById('layananMenu');
+  const arrow = document.getElementById('layananArrow');
+  let hideTimeout;
+
+  const showMenu = () => {
+    clearTimeout(hideTimeout);
+    menu.classList.remove('hidden');
+    menu.classList.add('flex');
+    requestAnimationFrame(() => {
+      menu.classList.add('dropdown-show');
+    });
+    arrow.classList.add('rotate');
+  };
+
+  const hideMenu = () => {
+    hideTimeout = setTimeout(() => {
+      menu.classList.remove('dropdown-show');
+      arrow.classList.remove('rotate');
+      setTimeout(() => {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+      }, 200);
+    }, 150);
+  };
+
+  wrapper.addEventListener('mouseenter', showMenu);
+  wrapper.addEventListener('mouseleave', hideMenu);
+})();
+</script>
+
 <!-- Tombol WhatsApp -->
-<a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20Anda" target="_blank"
+<a href="https://wa.me/6281332809923?text=Halo%2C%20saya%20tertarik%20dengan%20layanan%20undangan%20digital%20yang%20Anda%20tawarkan.%20Boleh%20saya%20minta%20informasi%20lebih%20lanjut%20terkait%20paket%2C%20fitur%2C%20dan%20cara%20pemesanan%3F%20Terima%20kasih. " target="_blank"
    class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg flex items-center space-x-2 transition-all duration-300">
   <!-- Ikon WhatsApp -->
   <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">

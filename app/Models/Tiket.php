@@ -31,6 +31,10 @@ class Tiket extends Model
     ];
  public function site()
     {
-        return $this->belongsTo(Site::class, 'site_id', 'id');
+        return $this->belongsTo(
+            Datasite::class,
+            'site_id',   // kolom di tabel tiket
+            'site_id'    // kolom di tabel datasite
+        );
     }
 }

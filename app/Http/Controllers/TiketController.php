@@ -89,7 +89,7 @@ class TiketController extends Controller
 
             // DATA UTAMA: TIKET
             $tiket = Tiket::select('*')
-                ->selectRaw("durasi + DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
+                ->selectRaw("DATEDIFF(CURDATE(), tanggal_rekap) AS durasi_terbaru")
                 ->when($query, function ($q) use ($query) {
                     $q->where(function ($sub) use ($query) {
                         $sub->where('site_id', 'like', '%' . $query . '%')
@@ -120,8 +120,7 @@ class TiketController extends Controller
                     $q->whereBetween('tanggal_rekap', [$startDate, $endDate]);
                 })
                 ->orderBy('durasi_terbaru', $sort)
-                ->paginate(10)
-                ->withQueryString();
+                ->get();
 
             // Tambahan data tiket OPEN (untuk bagian lain)
             $tiketOpenQuery = Tiket::where('status_tiket', 'OPEN');
@@ -159,6 +158,7 @@ class TiketController extends Controller
             dd($th);
         }
     }
+
     public function detailTiket($id)
     {
         $kabupatenList = DB::table('datasite')->select('kab')->distinct()->pluck('kab');
@@ -248,37 +248,37 @@ class TiketController extends Controller
     }
 
     // Simpan data tiket baru
-    public function store(Request $request)
-    {
-        try {
-            // dd($request->all());
-            $request->validate([
-                'nama_site' => 'required',
-                'provinsi' => 'required',
-                'kabupaten' => 'required',
-                'durasi' => 'nullable',
-                'kategori' => 'nullable',
-                'tanggal_rekap' => 'nullable|date',
-                'bulan_open' => 'nullable',
-                'status_tiket' => 'nullable',
-                'kendala' => 'nullable',
-                'tanggal_close' => 'nullable|date',
-                'bulan_close' => 'nullable',
-                'evidence' => 'nullable',
-                'detail_problem' => 'nullable',
-                'plan_actions' => 'nullable',
-                'ce' => 'nullable|string',
-            ]);
+public function store(Request $request)
+{
+    try {
+        $request->validate([
+            'site_id' => 'required',
+            'nama_site' => 'required|string',
+            'provinsi' => 'required|string',
+            'kabupaten' => 'required|string',
+            'durasi' => 'nullable|string',
+            'kategori' => 'nullable|string',
+            'tanggal_rekap' => 'nullable|date',
+            'bulan_open' => 'nullable|string',
+            'status_tiket' => 'nullable|string',
+            'kendala' => 'nullable|string',
+            'tanggal_close' => 'nullable|date',
+            'bulan_close' => 'nullable|string',
+            'evidence' => 'nullable|file|mimes:jpg,jpeg,png,mp4,avi,mkv|max:20480',
+            'detail_problem' => 'nullable|string',
+            'plan_actions' => 'nullable|string',
+            'ce' => 'nullable|string',
+        ]);
 
-            // Cek apakah data dengan kombinasi nama_site, provinsi, kabupaten dan status OPEN sudah ada
-            $existing = Tiket::where('nama_site', $request->nama_site)
-                        ->where('provinsi', $request->provinsi)
-                        ->where('kabupaten', $request->kabupaten)
-                        ->where('tanggal_rekap', $request->tanggal_rekap)
-                        ->where('status_tiket', 'OPEN')
-                        ->first();
-            
-            if ($existing) {
+        // Cek duplikasi
+        $existing = Tiket::where('nama_site', $request->nama_site)
+            ->where('provinsi', $request->provinsi)
+            ->where('kabupaten', $request->kabupaten)
+            ->where('tanggal_rekap', $request->tanggal_rekap)
+            ->where('status_tiket', 'OPEN')
+            ->first();
+
+        if ($existing) {
                 return redirect()->route('tiket')->with('error', 'Data tiket dengan kombinasi Nama Site, Site ID, Provinsi, Kabupeten, Tanggal Rekap dan status OPEN yang anda masukkan sudah ada.');
             }
             if ($request->hasFile('evidence')) {
@@ -290,19 +290,17 @@ class TiketController extends Controller
 
             Tiket::create($request->all());
 
-            return redirect()->route('tiket')->with('success', 'Data tiket berhasil disimpan.');
-        } catch (\Throwable $th) {
-            // dd($th);
-            // throw $th;
-            return redirect()->route('tiket')->with('error', 'Terjadi kesalahan saat menyimpan data.');
-    }
-        
-    }
+        return redirect()->route('tiket')->with('success', 'Data tiket berhasil disimpan.');
+    } catch (\Throwable $th) {
+        \Log::error($th);
+        return redirect()->route('tiket')->with('error', 'Terjadi kesalahan saat menyimpan data.');
+   }
+}
 
     // Update data tiket dari modal
     public function update(Request $request, $id)
     {
-        // Batasi akses hanya untuk user atau admin
+        // Batasi akses hanya untuk user, admin dan superadmin
         if (!in_array(auth()->user()->role, ['user', 'admin', 'superadmin'])) {
             abort(403, 'Unauthorized');
         }
@@ -546,6 +544,7 @@ class TiketController extends Controller
         // Partial harus ADA!
         return view('partials.table_tiket', compact('tiket'))->render();
     }
+    
     public function updateTanggalClose(Request $request, $id)
     {
         $request->validate([
@@ -559,6 +558,7 @@ class TiketController extends Controller
 
         return redirect()->route('close.tiket')->with('success', 'Tanggal Close berhasil diupdate.');
     }
+    
     public function updatePlan(Request $request, $id)
     {
         $request->validate([
@@ -567,30 +567,46 @@ class TiketController extends Controller
         ]);
 
         $tiket = Tiket::findOrFail($id);
-        $tiket->tanggal_close = $request->tanggal_close;
+
+        // Simpan detail problem (jika ada)
+        if ($request->has('detail_problem')) {
+            $tiket->detail_problem = $request->detail_problem;
+        }
+
+        // Simpan plan action
         $tiket->plan_actions = $request->plan_actions;
+
+        // Simpan tanggal close
+        $tiket->tanggal_close = $request->tanggal_close;
+
+        // Simpan bulan close secara otomatis
+        $tiket->bulan_close = date('m', strtotime($request->tanggal_close));
+
+        // Ubah status tiket menjadi CLOSE
+        $tiket->status_tiket = 'close';
+
         $tiket->save();
 
-        return redirect()->route('close.tiket')->with('success', 'Plan Action & Tanggal Close berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Tiket berhasil di-close.');
     }
+    
     public function show($id)
-{
-    $tiket = Tiket::findOrFail($id);
-
-    // Hitung durasi terbaru secara dinamis
-    $durasi = $tiket->durasi;
-    if ($tiket->status !== 'closed') {
-        $tanggalRekap = Carbon::parse($tiket->tanggal_rekap);
-        $today = Carbon::today();
-        if ($today->gt($tanggalRekap)) {
-            $durasi += $tanggalRekap->diffInDays($today); // atau +1 saja jika mau fixed 1 hari
+    {
+        $tiket = Tiket::findOrFail($id);
+    
+        // Hitung durasi terbaru secara dinamis
+        $durasi = $tiket->durasi;
+        if ($tiket->status !== 'closed') {
+            $tanggalRekap = Carbon::parse($tiket->tanggal_rekap);
+            $today = Carbon::today();
+            if ($today->gt($tanggalRekap)) {
+                $durasi += $tanggalRekap->diffInDays($today); // atau +1 saja jika mau fixed 1 hari
+            }
         }
+    
+        // Tambahkan ke response
+        $tiket->durasi_terbaru = $durasi;
+    
+        return response()->json($tiket);
     }
-
-    // Tambahkan ke response
-    $tiket->durasi_terbaru = $durasi;
-
-    return response()->json($tiket);
-}
-
 }

@@ -16,6 +16,8 @@ class PmLibertaController extends Controller
     {
         $query = PmLiberta::query();
 
+        $sites = \App\Models\Datasite::all();
+
         // Filter kategori
         if ($request->filled('kategori')) {
             $query->where('kategori', $request->kategori);
@@ -58,6 +60,7 @@ class PmLibertaController extends Controller
             'totalData',
             'donePercentage',
             'kategoriCount'
+            ,'sites'
         ));
     }
     public function create()
@@ -245,7 +248,30 @@ class PmLibertaController extends Controller
     $html = view('summary_table_ajax', compact('filteredData'))->render();
     return response()->json(['html' => $html]);
 }
+    public function getDataSite($id)
+    {
+        $site = \App\Models\Datasite::where('id', $id)->first();
 
+        if (!$site) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
+
+        // Tentukan kategori otomatis
+        $kategori = '';
+        if (strtolower($site->kategori) === 'sewa layanan') {
+            $kategori = 'SL';
+        } elseif (strtolower($site->kategori) === 'barang milik negara') {
+            $kategori = 'BMN';
+        }
+
+        return response()->json([
+            'site_id' => $site->site_id,
+            'provinsi' => $site->provinsi,
+            'kab' => $site->kab,
+            'kategori' => $kategori,
+            'tipe' => $site->tipe,
+        ]);
+    }
 }
    
 

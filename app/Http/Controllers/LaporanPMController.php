@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanPM;
+use App\Models\Site;
 use App\Imports\LaporanPMImport;
 use App\Exports\LaporanPMExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -15,6 +16,10 @@ class LaporanPMController extends Controller
     public function index(Request $request)
     {
         $laporan = LaporanPM::latest()->paginate(10);
+
+        $sites = Site::select('site_id','sitename')
+                ->orderBy('sitename','asc')
+                ->get();
 
         // Cek apakah ada query pencarian
         if ($request->has('search')) {
@@ -29,12 +34,16 @@ class LaporanPMController extends Controller
                 ->paginate(10);
         }
 
-        return view('laporanPM', compact('laporan'));
+        return view('laporanPM', compact('laporan', 'sites'));
     }
 
     public function create()
     {
-        return view('laporanpm.create');
+        $sites = Site::select('site_id', 'sitename')
+                    ->orderBy('sitename', 'asc')
+                    ->get();
+
+        return view('laporanpm.create', compact('sites'));
     }
 
     public function store(Request $request)

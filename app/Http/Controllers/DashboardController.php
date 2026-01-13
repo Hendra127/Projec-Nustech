@@ -22,6 +22,7 @@ class DashboardController extends Controller
             $tiketCloseCount = Tiket::where('status_tiket', 'CLOSE')->count();
             $userCount = User::count();
             $activeUserCount = User::where('is_online', true)->count();
+            $tiket = Tiket::with('site')->get();
             
             $today = Carbon::today(); // Mendapatkan tanggal hari ini
             $tiketCloseTodayCount = Tiket::where('status_tiket', 'CLOSE')
