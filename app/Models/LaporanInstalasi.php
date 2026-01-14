@@ -14,6 +14,8 @@ class LaporanInstalasi extends Model
     protected $fillable = [
         'nama_foto',
         'keterangan',
+        'status',
+        'reject_reason',
         'path',
     ];
 }

@@ -45,7 +45,138 @@
         }
     </style>
 </head>
+<style>
+    :root{
+        --primary:#2563eb;
+        --danger:#ef4444;
+        --success:#22c55e;
+        --warning:#f59e0b;
+        --bg:#f1f5f9;
+        --dark:#020617;
+    }
+
+    body{
+        font-family:'Poppins',sans-serif;
+        background:var(--bg);
+    }
+
+    /* ===== HEADER ===== */
+    .header{
+        background:linear-gradient(135deg,#020617,#1e3a8a);
+        color:#fff;
+        padding:28px 40px;
+        border-radius:0 0 28px 28px;
+    }
+
+    /* ===== CARD ===== */
+    .card-bms{
+        background:#fff;
+        border-radius:20px;
+        box-shadow:0 14px 35px rgba(0,0,0,.12);
+        transition:.3s;
+    }
+    .card-bms:hover{
+        transform:translateY(-6px);
+    }
+
+    /* ===== KPI ===== */
+    .kpi{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+    }
+    .kpi-icon{
+        width:52px;height:52px;
+        border-radius:14px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#fff;
+        font-size:22px;
+    }
+    .counter{
+        font-size:28px;
+        font-weight:700;
+    }
+
+    /* ===== STATUS ===== */
+    .online{color:var(--success)}
+    .offline{color:var(--danger)}
+    .warning{color:var(--warning)}
+
+    .badge-alarm{
+        background:var(--danger);
+        animation:pulse 1.4s infinite;
+    }
+    @keyframes pulse{
+        0%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}
+        70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}
+        100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}
+    }
+
+    /* ===== TABLE ===== */
+    .table thead{
+        background:var(--dark);
+        color:#fff;
+    }
+    .table-hover tbody tr:hover{
+        background:#e0f2fe;
+    }
+
+    /* ===== TIMELINE ===== */
+    .timeline{
+        position:relative;
+        padding-left:24px;
+    }
+    .timeline::before{
+        content:'';
+        position:absolute;
+        left:6px;
+        top:0;
+        width:3px;
+        height:100%;
+        background:#c7d2fe;
+    }
+    .timeline-item{
+        position:relative;
+        margin-bottom:18px;
+        padding-left:18px;
+    }
+    .timeline-item::before{
+        content:'';
+        position:absolute;
+        left:-1px;
+        top:6px;
+        width:12px;
+        height:12px;
+        background:var(--primary);
+        border-radius:50%;
+    }
+
+    footer{
+        text-align:center;
+        font-size:13px;
+        color:#64748b;
+        padding:24px 0;
+    }
+</style>
+
 <body class="p-3">
+<!-- HEADER -->
+<section class="header" style="margin-top: -15px;">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h3 class="fw-bold mb-1">📡 NUSTECH Monitoring Dashboard</h3>
+            <small class="opacity-75">
+                Real-Time Network & Site Operation Center
+            </small>
+        </div>
+
+        <span class="badge bg-success px-4 py-2 mt-3 mt-md-0">
+            <i class="bi bi-wifi"></i> MNS AI BAKTI LIBERTA - NUSTECH
+        </span>
+    </div>
+</section>
 
 {{-- Header dengan ikon jam di kiri, judul di tengah, dan jam digital di kanan --}}
 <style>
@@ -76,19 +207,6 @@
         text-align: left;
     }
 </style>
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-    <!-- IKON JAM (KIRI) 
-    <div class="clock-icon">
-        <i class="fa-solid fa-clock" id="icon-clock"></i>
-    </div>-->
-
-    <!-- JUDUL (TENGAH) -->
-    <h1 class="fw-bold title-text text-center">
-        MANAGE AND SERVICE AI BAKTI LIBERTA - NUSTECH
-    </h1>
-
-</div>
 
 <div class="d-flex justify-content-center align-items-center gap-3 my-4 flex-wrap">
     

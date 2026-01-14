@@ -29,6 +29,7 @@ use App\Http\Controllers\SparetrackerController;
 use App\Http\Controllers\MyDashboardController;
 use App\Http\Controllers\JadwalPiketController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\BMSDashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -113,6 +114,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/sla/import', [SlaController::class, 'import'])->name('sla.import');
     Route::post('/import-sla', [SlaController::class, 'import'])->name('import.excel');
     Route::post('/sla/update-inline/{id}', [SlaController::class, 'updateInline'])->name('sla.update-inline');
+
+    // Route BMSDashboard
+    Route::get('/BMSDashboard', [BMSDashboardController::class, 'index'])->name('BMSDashboard');
 
     // Download File
     Route::get('/download_file', [FileController::class, 'index'])->name('file.index');
@@ -206,6 +210,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporaninstalasi', [LaporanInstalasiController::class, 'index'])->name('laporaninstalasi');
     Route::post('/laporaninstalasi/upload-foto', [LaporanInstalasiController::class, 'uploadFoto'])->name('laporan.upload_foto');
     Route::post('/dokumentasi/store', [LaporanInstalasiController::class, 'store'])->name('dokumentasi.store');
+    Route::post('dokumentasi/approve', [LaporanInstalasiController::class, 'approve'])->name('dokumentasi.approve');
+    Route::post('dokumentasi/reject', [LaporanInstalasiController::class, 'reject'])->name('dokumentasi.reject');
 
     // Route Jadwal Piket
     Route::get('/jadwal-piket', [JadwalPiketController::class, 'index'])->name('jadwal.piket');
@@ -224,7 +230,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/aboutus', function () {
     return view('aboutus');
 });
-
     // Users (Role-based)
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/users', [InfoUserController::class, 'index'])->name('users');
@@ -234,14 +239,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/api/user/{id}', [InfoUserController::class, 'getUser']);
     });
     Route::middleware(['auth'])->group(function () {
-        Route::get('/laporanPM', [LaporanPMController::class, 'index'])->name('laporanPM');
-        Route::get('/laporanPM/create', [LaporanPMController::class, 'create'])->name('laporanPM.create');
-        Route::post('/laporanPM', [LaporanPMController::class, 'store'])->name('laporanPM.store');
-        Route::post('/laporanPM/import', [LaporanPMController::class, 'import'])->name('laporanPM.import');
-        Route::get('/laporanPM/export', [LaporanPMController::class, 'export'])->name('laporanPM.export');
-        Route::get('/laporanPM/search', [LaporanPMController::class, 'search'])->name('laporanPM.search');
-        // Route edit & update
-        Route::get('/laporanPM/{id}/edit', [LaporanPMController::class, 'edit'])->name('laporanPM.edit');
-        Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
-    });
+    Route::get('/laporanPM', [LaporanPMController::class, 'index'])->name('laporanPM');
+    Route::get('/laporanPM/create', [LaporanPMController::class, 'create'])->name('laporanPM.create');
+    Route::post('/laporanPM', [LaporanPMController::class, 'store'])->name('laporanPM.store');
+    Route::post('/laporanPM/import', [LaporanPMController::class, 'import'])->name('laporanPM.import');
+    Route::get('/laporanPM/export', [LaporanPMController::class, 'export'])->name('laporanPM.export');
+    Route::get('/laporanPM/search', [LaporanPMController::class, 'search'])->name('laporanPM.search');
+
+    // Route edit & update
+    Route::get('/laporanPM/{id}/edit', [LaporanPMController::class, 'edit'])->name('laporanPM.edit');
+    Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
+});   
 });

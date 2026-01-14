@@ -51,5 +51,28 @@ class LaporanInstalasiController extends Controller
             ->route('installation.show', $site->id)
             ->with('success', 'Installation Data berhasil disimpan');
     }
-    
+    public function approve(Request $request)
+    {
+        $item = LaporanInstalasi::findOrFail($request->id);
+        $item->status = 'approved';
+        $item->reject_reason = null;
+        $item->save();
+
+        return response()->json(['success' => true, 'message' => 'Foto telah diapprove.']);
+    }
+
+    public function reject(Request $request)
+    {
+        $request->validate([
+            'reject_reason' => 'required|string|max:255',
+        ]);
+
+        $item = LaporanInstalasi::findOrFail($request->id);
+        $item->status = 'rejected';
+        $item->reject_reason = $request->reject_reason;
+        $item->save();
+
+        return response()->json(['success' => true, 'message' => 'Foto telah direject.']);
+    }
+
 }
