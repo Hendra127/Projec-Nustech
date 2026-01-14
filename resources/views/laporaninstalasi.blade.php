@@ -80,39 +80,94 @@
 
                 <!-- ================= UPLOAD KATEGORI ================= -->
                 @php
-                    $kategoris = ['modem' => 'Modem', 'router' => 'Router', 'power_stabilizer' => 'Power Stabilizer', 'lainnya' => 'Lainnya'];
-                @endphp
+                    $kategoris = ['modem' => 'Modem', 'router' => 'Router', 'power_stabilizer' => 'Power Stabilizer', 'foto_teknisi_pxlang_lokasi' => 'Foto teknisi di plang lokasi', 'foto_perangkat_sebelum_instalasi' =>'Foto keseluruhan perangkat sebelum instalasi ',    'sumber_kelistrikan' =>
+        'Sumber kelistrikan', 'speedtest_sigmon'=>'Speedtest dan titik koordinat (SIGMON)', 'Before_Antena_VSAT'=>'Before Antenna VSAT ','FOTO SQF'=>'FOTO SQF ', 'After_Antenna_VSAT'=>'After Antenna VSAT ', 'SN_Antenna_VSAT_dan_Perangkat_RF'=>'SN Antenna VSAT & Perangkat RF', 'Pointing_antenna'=>'Pointing antenna', 'Grounding_Sebelum_di_Tanam'=>'Grounding Sebelum di Tanam', 'Grounding_setelah_di_tanam'=>'Grounding setelah di tanam', 'SN_Tranciever'=>'SN Tranciever','Terminasi_Grounding antenna/tranciver'=>'Terminasi Grounding antenna/tranciver','SN_Antenna_VSAT_dan_Perangkat_RF'=>'SN Antenna VSAT & Perangkat RF','Pointing antenna'=>'Pointing antenna',
+        'Grounding_Sebelum_di_Tanam'=>'Grounding Sebelum di Tanam',
+        'Grounding_setelah_di_tanam'=>'Grounding setelah di tanam',
+        'SN_Tranciever'=>'SN Tranciever',
+        'Terminasi_Grounding antenna/tranciver'=>'Terminasi Grounding antenna/tranciver',
+        'Ruangan_perangkat_indoor'=>'Ruangan perangkat indoor',
+        'Jalur_kabel_IFL'=>'Jalur kabel IFL',
+        'Rak_indoor_Tertutup'=>'Rak indoor Tertutup',
+        'Rak_Indoor_terbuka'=>'Rak Indoor terbuka',
+        'SN_Rak_indoor'=>'SN Rak indoor',
+        'Terminasi_grounding_rak'=>'Terminasi grounding rak',
+        'SN_AP_1'=>'SN AP 1',
+        'Instalasi_AP_1'=>'Instalasi AP 1',
+        'Foto_AP_1_terpasang'=>'Foto AP 1 terpasang',
+        'SN_AP_2'=>'SN AP 2',
+        'Instalasi_AP_2'=>'Instalasi AP 2',
+        'Foto_AP_2_terpasang'=>'Foto AP 2 terpasang',
+        'Foto_bersama_PIC_(depan_rak_dan_depan_antena_sambil_membawa_bai_bast)'=>'Foto bersama PIC (depan rak dan depan antena sambil membawa bai bast)',
+        'Denah_lokasi'=>'Denah lokasi',
+        'Scan_File_BAI'=>'Scan File BAI',
+        'Scan_File_BAST'=>'Scan File BAST',
+        'Video_Perangkat'=>'Video Perangkat',
+        'FOTO_speedtest_AP_1_(speedtest.net_ke_singapore)'=>'FOTO speedtest AP 1 (speedtest.net ke singapore/server internasional)',
+        'FOTO_speedtest_AP_2_(speedtest.net_ke_singapore)'=>'FOTO speedtest AP 2 (speedtest.net ke singapore/server internasional)',
+        'FOTO_speedtest_Directmodem_(speedtest.net_ke_singapore)'=>'FOTO speedtest Directmodem (speedtest.net ke singapore/server internasional)',
+        'Capture wifi analyzer AP 1 (10 meter dan 20 meter)'=>'Capture wifi analyzer AP 1 (10 meter dan 20 meter)',
+        'Capture_wifi_analyzer_AP_2_(10_meter_dan_20_meter)'=>'Capture wifi analyzer AP 2 BAKTI AKSI (10 meter dan 20 meter)',
+        'Foto_detik.com'=>'Foto detik.com',
+        'Tanda_tangan_&_setempel_di_kertas_kosong'=>'Tanda tangan & setempel di kertas kosong',
+        'AKSES_menuju_ke_lokasi'=>'AKSES menuju ke lokasi'
+    ];
+@endphp
 
-                @foreach($kategoris as $key => $label)
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-body">
+               @foreach($kategoris as $key => $label)
+<div class="col-12 col-md-6 col-lg-3 d-flex">
+    <div class="card flex-fill h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
 
-                            <h6 class="fw-bold mb-3">{{ $label }}</h6>
+            <h6 class="fw-semibold text-center mb-2"
+    style="
+        font-size:13px;
+        line-height:1.3;
+        height: 34px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    ">
+    {{ $label }}
+</h6>
 
-                            <form class="formUploadKategori" action="{{ route('dokumentasi.store') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" name="kategori" value="{{ $key }}">
 
-                                <div class="mb-3">
-                                    <label>Keterangan {{ $label }}</label>
-                                    <textarea class="form-control" name="keterangan"></textarea>
-                                </div>
 
-                                <div class="mb-3">
-                                    <label>Foto {{ $label }}</label>
-                                    <input type="file" class="form-control fotoInstalasi" name="foto[]" multiple>
-                                </div>
+            <form class="formUploadKategori d-flex flex-column flex-grow-1"
+                  action="{{ route('dokumentasi.store') }}"
+                  method="POST"
+                  enctype="multipart/form-data">
+                @csrf
 
-                                <div class="preview mb-3"></div>
+                <input type="hidden" name="kategori" value="{{ $key }}">
 
-                                <button type="submit" class="btn btn-success btn-sm w-100">Upload {{ $label }}</button>
-                            </form>
-
-                        </div>
-                    </div>
+                <div class="mb-2">
+                  
+                    <input
+                        type="file"
+                        class="form-control form-control-sm fotoInstalasi"
+                        name="foto[]"
+                        multiple
+                    >
                 </div>
-                @endforeach
+
+                <!-- PREVIEW (tinggi dikunci) -->
+                <div class="preview border rounded mb-2"
+                     style="min-height: 20px;"></div>
+
+                <!-- BUTTON SELALU DI BAWAH -->
+                <button type="submit"
+                        class="btn btn-success btn-sm w-100 mt-auto">
+                    Upload Foto
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+@endforeach
+
 
             </div>
         </div>
