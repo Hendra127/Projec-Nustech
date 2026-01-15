@@ -30,6 +30,7 @@ use App\Http\Controllers\MyDashboardController;
 use App\Http\Controllers\JadwalPiketController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BMSDashboardController;
+use App\Http\Controllers\CardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -140,6 +141,12 @@ Route::middleware(['auth'])->group(function () {
     // New Project
     Route::get('/newproject', [NewProjectController::class, 'index'])->name('newproject.index');
 
+    // Card
+    Route::post('/cards/store', [CardController::class, 'store'])
+    ->name('cards.store');
+    Route::delete('/cards/delete/{id}', [CardController::class, 'destroy'])
+    ->name('cards.destroy');
+
     // Log Pergantian Perangkat
     Route::get('/log_perangkat', [LogPerangkatController::class, 'index'])->name('log_perangkat.index');
     Route::post('/log_perangkat/store', [LogPerangkatController::class, 'store'])->name('log_perangkat.store');
@@ -195,8 +202,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/newproject/export', [NewProjectController::class, 'export'])->name('newprojectexport');
     Route::post('/newproject/import', [NewProjectController::class, 'import'])->name('newprojectimport');
     Route::get('/newproject/export', [NewProjectController::class, 'export'])->name('newprojectexport');
-    Route::post('/newproject/import', [NewProjectController::class, 'import'])->name('newprojectimport');
-    Route::post('/newproject/update/{id}', [NewProjectController::class, 'update'])->name('newproject.update');
+    Route::put('/newproject/update/{id}', [NewProjectController::class, 'update'])->name('newproject.update');
+    Route::delete('/newproject/delete/{id}', [NewProjectController::class, 'destroy'])->name('newproject.delete');
     Route::get('/newproject/{id}', [NewProjectController::class, 'show']);
     Route::get('/get-provinsi', [NewProjectController::class, 'getProvinsi']);
 
@@ -204,6 +211,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sitereview', [SiteReviewController::class, 'index'])->name('sitereview');
     Route::get('/sitereview/filter', [SiteReviewController::class, 'filter'])->name('sitereview.filter');
     Route::get('/filter-batch', [SiteReviewController::class, 'filterByBatch'])->name('filter.batch');
+    Route::get('/sitereview/filter-card', [SiteReviewController::class, 'filterByCard'])->name('sitereview.filter.card');
     Route::get('/filter-data', [NewProjectController::class, 'filter']);
 
     //Route Laporan Instalasi

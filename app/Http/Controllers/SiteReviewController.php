@@ -3,47 +3,78 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\NewProject; // Ganti sesuai model yang digunakan
-use Illuminate\Support\Facades\DB; // ✅ Tambahkan ini untuk akses DB
+use App\Models\NewProject;
+use App\Models\Card; // model project phase
+use Illuminate\Support\Facades\DB;
 
 class SiteReviewController extends Controller
 {
+    // =====================
+    // HALAMAN UTAMA
+    // =====================
     public function index()
     {
-        // Ambil semua data dari tabel NewProject
-        $sites = NewProject::all();
+        // Ambil semua site
+        $sites = NewProject::with('card') // pastikan relasi card ada di model NewProject
+            ->orderBy('id', 'desc')
+            ->get();
 
-        // Ambil daftar provinsi unik dari tabel
+        // Ambil daftar project phase dari tabel cards
+        $projectPhases = Card::orderBy('title')->get();
+
+        // Ambil daftar provinsi unik
         $provinsiList = DB::table('newprojects')
-                    ->select('provinsi')
-                    ->distinct()
-                    ->orderBy('provinsi', 'asc')
-                    ->pluck('provinsi');
+            ->select('provinsi')
+            ->whereNotNull('provinsi')
+            ->distinct()
+            ->orderBy('provinsi')
+            ->pluck('provinsi');
 
+        // Ambil daftar kabupaten unik
         $kabupaten = DB::table('newprojects')
-                    ->select('kab')
-                    ->distinct()
-                    ->orderBy('kab', 'asc')
-                    ->pluck('kab');
-        
-        $kecamatan = DB::table('newprojects')
-                    ->select('kecamatan')
-                    ->distinct()
-                    ->orderBy('kecamatan', 'asc')
-                    ->pluck('kecamatan');
-        
-        $batchList = DB::table('newprojects')
-                    ->select('batch')
-                    ->distinct()
-                    ->orderBy('batch', 'asc')
-                    ->pluck('batch');
+            ->select('kab')
+            ->whereNotNull('kab')
+            ->distinct()
+            ->orderBy('kab')
+            ->pluck('kab');
 
-        // Kirim ke view
-        return view('sitereview', compact('sites', 'provinsiList', 'kabupaten', 'kecamatan', 'batchList'));
+        // Ambil daftar kecamatan unik
+        $kecamatan = DB::table('newprojects')
+            ->select('kecamatan')
+            ->whereNotNull('kecamatan')
+            ->distinct()
+            ->orderBy('kecamatan')
+            ->pluck('kecamatan');
+
+        // Ambil daftar batch unik
+        $batchList = DB::table('newprojects')
+            ->select('batch')
+            ->whereNotNull('batch')
+            ->distinct()
+            ->orderBy('batch')
+            ->pluck('batch');
+
+        // Kirim semua variabel ke view
+        return view('sitereview', compact(
+            'sites',
+            'projectPhases',
+            'provinsiList',
+            'kabupaten',
+            'kecamatan',
+            'batchList'
+        ));
     }
+
+    // =====================
+    // FILTER AJAX
+    // =====================
     public function filter(Request $request)
     {
-        $query = NewProject::query();
+        $query = NewProject::with('card');
+
+        if ($request->card_id) {
+            $query->where('card_id', $request->card_id);
+        }
 
         if ($request->provinsi) {
             $query->where('provinsi', $request->provinsi);
@@ -57,42 +88,18 @@ class SiteReviewController extends Controller
             $query->where('kecamatan', $request->kecamatan);
         }
 
-        if ($request->batch && is_array($request->batch)) {
-            $query->whereIn('batch', $request->batch);
+        if ($request->batch) {
+            $query->where('batch', $request->batch);
+        }
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('site_id', 'like', '%'.$request->search.'%')
+                ->orWhere('sitename', 'like', '%'.$request->search.'%');
+            });
         }
 
-        $sites = $query->get();
+        $sites = $query->orderBy('id', 'desc')->get();
 
-        // Return sebagai JSON array, bukan HTML
         return response()->json($sites);
     }
-
-    public function filterByBatch(Request $request)
-    {
-        $batches = $request->input('batches');
-
-        $query = DB::table('newprojects');
-
-        if (!empty($batches)) {
-            $query->whereIn('batch', $batches);
-        }
-
-        $filteredSites = $query->get();
-
-        $html = '';
-        foreach ($filteredSites as $index => $site) {
-            $html .= '<tr>
-                <td class="text-center">'.($index + 1).'</td>
-                <td>'.$site->site_id.'</td>
-                <td>'.$site->sitename.'</td>
-                <td>'.$site->kab.'</td>
-                <td>'.$site->provinsi.'</td>
-                <td>'.$site->batch.'</td>
-                <td class="text-center"><span class="badge bg-success">act</span></td>
-            </tr>';
-        }
-
-        return $html;
-    }
-
 }

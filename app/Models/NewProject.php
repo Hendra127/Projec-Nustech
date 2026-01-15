@@ -13,6 +13,7 @@ class NewProject extends Model
 
     // Daftar kolom yang bisa diisi secara massal
     protected $fillable = [
+        'card_id',
         'no',
         'site_id',
         'sitename',
@@ -46,4 +47,9 @@ class NewProject extends Model
         'ip_ap2',
         'expected_sqf',
     ];
+
+    public function card()
+    {
+        return $this->belongsTo(Card::class, 'card_id');
+    }
 }
