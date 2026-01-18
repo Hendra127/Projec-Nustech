@@ -199,7 +199,18 @@ function loadSites(){
                 <td>${s.kecamatan ?? '-'}</td>
                 <td>${s.project?.batch ?? '-'}</td>
                 <td>${s.project?.mitra ?? '-'}</td>
-                <td class="text-center">${s.progress ?? 0}%</td>
+                    <td>
+                        <div class="progress position-relative" style="height:20px">
+    <div class="progress-bar"
+         style="width:${s.progress}%">
+    </div>
+    <span class="position-absolute top-50 start-50 translate-middle fw-bold text-dark">
+        ${s.progress}%
+    </span>
+</div>
+
+                    </td>
+
             </tr>`;
         });
     });

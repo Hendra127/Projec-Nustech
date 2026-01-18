@@ -74,7 +74,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h4 class="mb-0">📁 Project Phase</h4>
-        <small class="text-muted">Manajemen project & site per wilayah</small>
     </div>
 
     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">
