@@ -3,103 +3,55 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\NewProject;
-use App\Models\Card; // model project phase
-use Illuminate\Support\Facades\DB;
+use App\Models\Project;
+use App\Models\ProjectSite;
 
 class SiteReviewController extends Controller
 {
-    // =====================
-    // HALAMAN UTAMA
-    // =====================
     public function index()
     {
-        // Ambil semua site
-        $sites = NewProject::with('card') // pastikan relasi card ada di model NewProject
-            ->orderBy('id', 'desc')
-            ->get();
-
-        // Ambil daftar project phase dari tabel cards
-        $projectPhases = Card::orderBy('title')->get();
-
-        // Ambil daftar provinsi unik
-        $provinsiList = DB::table('newprojects')
-            ->select('provinsi')
-            ->whereNotNull('provinsi')
-            ->distinct()
-            ->orderBy('provinsi')
-            ->pluck('provinsi');
-
-        // Ambil daftar kabupaten unik
-        $kabupaten = DB::table('newprojects')
-            ->select('kab')
-            ->whereNotNull('kab')
-            ->distinct()
-            ->orderBy('kab')
-            ->pluck('kab');
-
-        // Ambil daftar kecamatan unik
-        $kecamatan = DB::table('newprojects')
-            ->select('kecamatan')
-            ->whereNotNull('kecamatan')
-            ->distinct()
-            ->orderBy('kecamatan')
-            ->pluck('kecamatan');
-
-        // Ambil daftar batch unik
-        $batchList = DB::table('newprojects')
-            ->select('batch')
-            ->whereNotNull('batch')
-            ->distinct()
-            ->orderBy('batch')
-            ->pluck('batch');
-
-        // Kirim semua variabel ke view
-        return view('sitereview', compact(
-            'sites',
-            'projectPhases',
-            'provinsiList',
-            'kabupaten',
-            'kecamatan',
-            'batchList'
-        ));
+        $projects = Project::orderBy('mitra')->get();
+        return view('sitereview', compact('projects'));
     }
 
-    // =====================
-    // FILTER AJAX
-    // =====================
+    // AJAX untuk load site
     public function filter(Request $request)
     {
-        $query = NewProject::with('card');
+        $query = ProjectSite::with('project');
 
-        if ($request->card_id) {
-            $query->where('card_id', $request->card_id);
-        }
-
-        if ($request->provinsi) {
-            $query->where('provinsi', $request->provinsi);
-        }
-
-        if ($request->kabupaten) {
-            $query->where('kab', $request->kabupaten);
-        }
-
-        if ($request->kecamatan) {
-            $query->where('kecamatan', $request->kecamatan);
-        }
-
-        if ($request->batch) {
-            $query->where('batch', $request->batch);
-        }
-        if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('site_id', 'like', '%'.$request->search.'%')
-                ->orWhere('sitename', 'like', '%'.$request->search.'%');
+        if($request->project_id) $query->where('project_id', $request->project_id);
+        if($request->provinsi) $query->where('provinsi', $request->provinsi);
+        if($request->kabupaten) $query->where('kabupaten', $request->kabupaten);
+        if($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
+        if($request->search){
+            $query->where(function($q) use($request){
+                $q->where('site_id','like','%'.$request->search.'%')
+                  ->orWhere('site_name','like','%'.$request->search.'%');
             });
         }
 
-        $sites = $query->orderBy('id', 'desc')->get();
-
-        return response()->json($sites);
+        return response()->json($query->orderBy('id','desc')->get());
     }
+
+    // Simpan site baru
+    public function storeSite(Request $request)
+{
+    $data = $request->validate([
+        'project_id' => 'required|exists:projects,id',
+        'site_name'  => 'required',
+        'site_id'    => 'required',
+        'provinsi'   => 'required',
+        'kabupaten'  => 'required',
+        'kecamatan'  => 'required',
+    ]);
+
+    $site = ProjectSite::create($data);
+
+    return response()->json([
+        'success' => true,
+        'site' => $site
+    ]);
+}
+
+
 }

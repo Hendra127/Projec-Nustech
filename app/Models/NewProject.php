@@ -48,8 +48,8 @@ class NewProject extends Model
         'expected_sqf',
     ];
 
-    public function card()
+    public function project()
     {
-        return $this->belongsTo(Card::class, 'card_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 }

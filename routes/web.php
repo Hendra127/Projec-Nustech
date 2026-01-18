@@ -197,29 +197,21 @@ Route::middleware(['auth'])->group(function () {
 
     // New Project Routes
     Route::get('/newproject', [NewProjectController::class, 'index'])->name('newproject');
-    Route::get('/newproject/create', [NewProjectController::class, 'create'])->name('newprojectcreate');
-    Route::post('/newproject/store', [NewProjectController::class, 'store'])->name('newproject.store');
-    Route::get('/newproject/export', [NewProjectController::class, 'export'])->name('newprojectexport');
-    Route::post('/newproject/import', [NewProjectController::class, 'import'])->name('newprojectimport');
-    Route::get('/newproject/export', [NewProjectController::class, 'export'])->name('newprojectexport');
-    Route::put('/newproject/update/{id}', [NewProjectController::class, 'update'])->name('newproject.update');
-    Route::delete('/newproject/delete/{id}', [NewProjectController::class, 'destroy'])->name('newproject.delete');
-    Route::get('/newproject/{id}', [NewProjectController::class, 'show']);
-    Route::get('/get-provinsi', [NewProjectController::class, 'getProvinsi']);
+    Route::post('/newproject', [NewProjectController::class, 'store'])->name('newproject.store');
+    Route::delete('/newproject/{id}', [NewProjectController::class, 'destroy'])->name('newproject.destroy');
 
     // Site Review
-    Route::get('/sitereview', [SiteReviewController::class, 'index'])->name('sitereview');
-    Route::get('/sitereview/filter', [SiteReviewController::class, 'filter'])->name('sitereview.filter');
-    Route::get('/filter-batch', [SiteReviewController::class, 'filterByBatch'])->name('filter.batch');
-    Route::get('/sitereview/filter-card', [SiteReviewController::class, 'filterByCard'])->name('sitereview.filter.card');
-    Route::get('/filter-data', [NewProjectController::class, 'filter']);
+    Route::get('/sitereview', [SiteReviewController::class, 'index'])->name('sitereview.index');
+    Route::post('/sitereview/filter', [SiteReviewController::class, 'filter'])->name('sitereview.filter');
+    Route::post('/sitereview/store-site', [SiteReviewController::class, 'storeSite'])->name('sitereview.storeSite');
 
     //Route Laporan Instalasi
     Route::get('/laporaninstalasi', [LaporanInstalasiController::class, 'index'])->name('laporaninstalasi');
     Route::post('/laporaninstalasi/upload-foto', [LaporanInstalasiController::class, 'uploadFoto'])->name('laporan.upload_foto');
-    Route::post('/dokumentasi/store', [LaporanInstalasiController::class, 'store'])->name('dokumentasi.store');
-    Route::post('dokumentasi/approve', [LaporanInstalasiController::class, 'approve'])->name('dokumentasi.approve');
-    Route::post('dokumentasi/reject', [LaporanInstalasiController::class, 'reject'])->name('dokumentasi.reject');
+    Route::post('/laporan-instalasi/store', [LaporanInstalasiController::class, 'store'])->name('laporaninstalasi.store');
+    Route::post('/laporan-instalasi/approve',[LaporanInstalasiController::class, 'approve'])->name('laporaninstalasi.approve');
+    Route::post('/laporan-instalasi/reject',[LaporanInstalasiController::class, 'reject'])->name('laporaninstalasi.reject');
+    Route::get('/laporan-instalasi/download-word', [LaporanInstalasiController::class, 'downloadWord'])->name('laporan.downloadWord');
 
     // Route Jadwal Piket
     Route::get('/jadwal-piket', [JadwalPiketController::class, 'index'])->name('jadwal.piket');
@@ -235,8 +227,7 @@ Route::middleware(['auth'])->group(function () {
     //Route Summary Sparepart
     Route::get('/summaryspare', [SparetrackerController::class, 'summary'])->name('summaryspare');
 
-    Route::get('/aboutus', function () {
-    return view('aboutus');
+    Route::get('/aboutus', function () {return view('aboutus');
 });
     // Users (Role-based)
     Route::middleware('role:superadmin')->group(function () {
@@ -246,16 +237,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/user/delete/{id}', [InfoUserController::class, 'delete'])->name('user.delete');
         Route::get('/api/user/{id}', [InfoUserController::class, 'getUser']);
     });
-    Route::middleware(['auth'])->group(function () {
-    Route::get('/laporanPM', [LaporanPMController::class, 'index'])->name('laporanPM');
-    Route::get('/laporanPM/create', [LaporanPMController::class, 'create'])->name('laporanPM.create');
-    Route::post('/laporanPM', [LaporanPMController::class, 'store'])->name('laporanPM.store');
-    Route::post('/laporanPM/import', [LaporanPMController::class, 'import'])->name('laporanPM.import');
-    Route::get('/laporanPM/export', [LaporanPMController::class, 'export'])->name('laporanPM.export');
-    Route::get('/laporanPM/search', [LaporanPMController::class, 'search'])->name('laporanPM.search');
+        Route::middleware(['auth'])->group(function () {
+        Route::get('/laporanPM', [LaporanPMController::class, 'index'])->name('laporanPM');
+        Route::get('/laporanPM/create', [LaporanPMController::class, 'create'])->name('laporanPM.create');
+        Route::post('/laporanPM', [LaporanPMController::class, 'store'])->name('laporanPM.store');
+        Route::post('/laporanPM/import', [LaporanPMController::class, 'import'])->name('laporanPM.import');
+        Route::get('/laporanPM/export', [LaporanPMController::class, 'export'])->name('laporanPM.export');
+        Route::get('/laporanPM/search', [LaporanPMController::class, 'search'])->name('laporanPM.search');
 
-    // Route edit & update
-    Route::get('/laporanPM/{id}/edit', [LaporanPMController::class, 'edit'])->name('laporanPM.edit');
-    Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
-});   
+        // Route edit & update
+        Route::get('/laporanPM/{id}/edit', [LaporanPMController::class, 'edit'])->name('laporanPM.edit');
+        Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
+    });   
 });

@@ -21,56 +21,48 @@
 
     <!-- NAV -->
     <div class="mb-4 d-flex gap-3">
-        <a href="{{ url('newproject') }}" class="btn-custom btn-inactive">New Project</a>
-        <a href="{{ url('sitereview') }}" class="btn-custom btn-active">Site Review</a>
-        <a href="{{ url('laporaninstalasi') }}" class="btn-custom btn-inactive">Laporan Instalasi</a>
+
+        <a href="{{ url('newproject') }}"
+        class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
+            New Project
+        </a>
+
+        <a href="{{ url('sitereview') }}"
+        class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
+            Site Review
+        </a>
+
+        <a href="{{ url('laporaninstalasi') }}"
+        class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
+            Laporan Instalasi
+        </a>
+
     </div>
+    <h4>📊 Site Review</h4>
 
-    <h5>DATA SITE PENYEDIA : CV. NUSTECH</h5>
-
-    <!-- FILTERS -->
+    <!-- FILTER PROJECT & LOKASI -->
     <div class="row g-2 mb-3">
-
         <div class="col-md-3">
             <label class="fw-bold">PROJECT PHASE</label>
-            <select id="projectPhaseFilter" class="form-select">
-                <option value="">SEMUA PROJECT PHASE</option>
-                @foreach ($projectPhases as $phase)
-                    <option value="{{ $phase->title }}">{{ $phase->title }}</option>
+            <select id="projectFilter" class="form-select">
+                <option value="">Pilih Project Phase</option>
+                @foreach($projects as $p)
+                    <option value="{{ $p->id }}">{{ $p->mitra }} ({{ $p->phase ?? '-' }})</option>
                 @endforeach
             </select>
         </div>
-
         <div class="col-md-3">
             <label class="fw-bold">PROVINSI</label>
-            <select id="provinsiFilter" class="form-select">
-                <option value="">SEMUA PROVINSI</option>
-                @foreach ($provinsiList as $p)
-                    <option value="{{ $p }}">{{ $p }}</option>
-                @endforeach
-            </select>
+            <input type="text" id="provinsiFilter" class="form-control" placeholder="Provinsi">
         </div>
-
         <div class="col-md-3">
             <label class="fw-bold">KABUPATEN</label>
-            <select id="kabupatenFilter" class="form-select">
-                <option value="">SEMUA KABUPATEN</option>
-                @foreach ($kabupaten as $k)
-                    <option value="{{ $k }}">{{ $k }}</option>
-                @endforeach
-            </select>
+            <input type="text" id="kabFilter" class="form-control" placeholder="Kabupaten">
         </div>
-
         <div class="col-md-3">
             <label class="fw-bold">KECAMATAN</label>
-            <select id="kecamatanFilter" class="form-select">
-                <option value="">SEMUA KECAMATAN</option>
-                @foreach ($kecamatan as $kec)
-                    <option value="{{ $kec }}">{{ $kec }}</option>
-                @endforeach
-            </select>
+            <input type="text" id="kecFilter" class="form-control" placeholder="Kecamatan">
         </div>
-
     </div>
 
     <!-- SEARCH -->
@@ -78,83 +70,178 @@
         <input type="text" id="searchInput" class="form-control" placeholder="Cari Site ID atau Nama Site">
     </div>
 
-    <!-- TABLE -->
+    <!-- BUTTON TAMBAH SITE -->
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahSite">
+        ➕ Tambah Site
+    </button>
+
+    <!-- TABLE SITE -->
     <div class="card">
-    <div class="card-body table-responsive">
-        <table class="table table-bordered table-sm">
-            <thead class="table-light text-center">
-                <tr>
-                    <th>No</th>
-                    <th>Site ID</th>
-                    <th>Site</th>
-                    <th>Kabupaten</th>
-                    <th>Provinsi</th>
-                    <th>Batch</th>
-                    <th>Project Phase</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="siteTableBody">
-                    @foreach ($sites as $i => $site)
-                        <tr>
-                            <td class="text-center">{{ $i + 1 }}</td>
-                            <td>{{ $site->site_id }}</td>
-                            <td>{{ $site->sitename }}</td>
-                            <td>{{ $site->kab }}</td>
-                            <td>{{ $site->provinsi }}</td>
-                            <td>{{ $site->batch ?? '-' }}</td>
-                            <td>{{ $site->card->title ?? '-' }}</td>
-                            <td class="text-center">
-                                <span class="badge bg-success">ACT</span>
-                            </td>
-                        </tr>
-                    @endforeach
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>No</th>
+                        <th>Site ID</th>
+                        <th>Site Name</th>
+                        <th>Provinsi</th>
+                        <th>Kabupaten</th>
+                        <th>Kecamatan</th>
+                        <th>Batch</th>
+                        <th>Project Phase</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody id="siteTableBody">
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">
+                            Pilih Project Phase untuk melihat site
+                        </td>
+                    </tr>
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
+
 </div>
 
+<!-- MODAL TAMBAH SITE -->
+<div class="modal fade" id="modalTambahSite" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="formTambahSite">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Site Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>Project Phase</label>
+                        <select name="project_id" class="form-select" required>
+                            <option value="">Pilih Project</option>
+                            @foreach($projects as $p)
+                                <option value="{{ $p->id }}">{{ $p->mitra }} ({{ $p->phase ?? '-' }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label>Site ID</label>
+                        <input type="text" name="site_id" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Site Name</label>
+                        <input type="text" name="site_name" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Provinsi</label>
+                        <input type="text" name="provinsi" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Kabupaten</label>
+                        <input type="text" name="kabupaten" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label>Kecamatan</label>
+                        <input type="text" name="kecamatan" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-function filterTable() {
-    let search = document.getElementById('searchInput').value.toLowerCase().trim();
-    let phaseFilter = document.getElementById('projectPhaseFilter').value;
-    let provFilter = document.getElementById('provinsiFilter').value;
-    let kabFilter = document.getElementById('kabupatenFilter').value;
-    let kecFilter = document.getElementById('kecamatanFilter').value;
+function loadSites(){
+    let project_id = document.getElementById('projectFilter').value;
+    let prov = document.getElementById('provinsiFilter').value;
+    let kab = document.getElementById('kabFilter').value;
+    let kec = document.getElementById('kecFilter').value;
+    let search = document.getElementById('searchInput').value;
 
-    let rows = document.querySelectorAll('#siteTableBody tr');
-
-    rows.forEach(row => {
-        let tds = row.children; // semua <td> di baris ini
-        let siteId = tds[1]?.textContent.toLowerCase().trim() || '';
-        let siteName = tds[2]?.textContent.toLowerCase().trim() || '';
-        let sitePhase = tds[6]?.textContent.trim() || ''; // sesuaikan index kolom Phase
-        let siteProv = tds[3]?.textContent.trim() || '';  // Provinsi
-        let siteKab = tds[4]?.textContent.trim() || '';   // Kabupaten
-        let siteKec = tds[5]?.textContent.trim() || '';   // Kecamatan
-
-        let matchesSearch = siteId.includes(search) || siteName.includes(search);
-        let matchesPhase = phaseFilter === "" || sitePhase === phaseFilter;
-        let matchesProv = provFilter === "" || siteProv === provFilter;
-        let matchesKab = kabFilter === "" || siteKab === kabFilter;
-        let matchesKec = kecFilter === "" || siteKec === kecFilter;
-
-        row.style.display = (matchesSearch && matchesPhase && matchesProv && matchesKab && matchesKec) ? '' : 'none';
+    fetch("{{ route('sitereview.filter') }}",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "X-CSRF-TOKEN":"{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+            project_id: project_i
+            provinsi: prov,
+            kabupaten: kab,
+            kecamatan: kec,
+            search: search
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        let tbody = document.getElementById('siteTableBody');
+        tbody.innerHTML = '';
+        if(data.length===0){
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">Tidak ada site</td></tr>`;
+            return;
+        }
+        data.forEach((s,i)=>{
+            tbody.innerHTML += `<tr>
+                <td class="text-center">${i+1}</td>
+                <td>${s.site_id}</td>
+                <td>${s.site_name}</td>
+                <td>${s.provinsi ?? '-'}</td>
+                <td>${s.kabupaten ?? '-'}</td>
+                <td>${s.kecamatan ?? '-'}</td>
+                <td>${s.project?.batch ?? '-'}</td>
+                <td>${s.project?.mitra ?? '-'}</td>
+                <td class="text-center">${s.progress ?? 0}%</td>
+            </tr>`;
+        });
     });
 }
 
-// trigger filter saat mengetik di search
-document.getElementById('searchInput').addEventListener('keyup', filterTable);
+// trigger load
+document.getElementById('projectFilter').addEventListener('change', loadSites);
+document.getElementById('provinsiFilter').addEventListener('keyup', loadSites);
+document.getElementById('kabFilter').addEventListener('keyup', loadSites);
+document.getElementById('kecFilter').addEventListener('keyup', loadSites);
+document.getElementById('searchInput').addEventListener('keyup', loadSites);
 
-// trigger filter saat select berubah
-['projectPhaseFilter','provinsiFilter','kabupatenFilter','kecamatanFilter'].forEach(id => {
-    document.getElementById(id).addEventListener('change', filterTable);
+// AJAX TAMBAH SITE
+document.getElementById('formTambahSite').addEventListener('submit', function(e){
+    e.preventDefault();
+    let form = e.target;
+    let data = Object.fromEntries(new FormData(form).entries());
+
+    fetch("{{ route('sitereview.storeSite') }}",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Accept":"application/json",
+            "X-CSRF-TOKEN":"{{ csrf_token() }}"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res=>res.json())
+    .then(res=>{
+        if(res.success){
+            alert('Site berhasil ditambahkan!');
+            form.reset();
+            loadSites();
+            let modalEl = document.getElementById('modalTambahSite');
+            let modal = bootstrap.Modal.getInstance(modalEl);
+            if(!modal) modal = new bootstrap.Modal(modalEl);
+            modal.hide();
+        }else{
+            alert('Gagal menambahkan site!');
+        }
+    })
+    .catch(err=>{
+        console.error(err);
+        alert('Terjadi error! Cek console.');
+    });
 });
 </script>
-
-
 @endsection

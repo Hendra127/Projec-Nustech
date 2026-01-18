@@ -1,272 +1,263 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
 <style>
-body {
-    background: linear-gradient(to bottom right, rgb(209,215,231), rgb(134,173,229));
+.project-row {
+    transition: background .2s ease;
 }
-table th, table td {
-    font-size: 12px;
-    white-space: nowrap;
+.project-row:hover {
+    background: #f8f9fa;
+}
+
+.site-wrapper {
+    animation: fadeIn .3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.badge-phase {
+    font-size: .75rem;
+    padding: .4em .6em;
+}
+
+.filter-card {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px dashed #ddd;
 }
 </style>
+<style>
+    .btn-custom {
+        font-size: .75rem;
+        padding: .3rem 1rem;
+        border-radius: 12px;
+    }
+    .btn-inactive {
+        background: transparent;
+        border: 2px solid #c026d3;
+    }
+    .btn-active {
+        background: #22c55e;
+        border: 2px solid #22c55e;
+    }
+</style>
 
-<div class="container-fluid">
+<div class="container-fluid py-4">
 
-    {{-- BUTTON TAMBAH CARD --}}
-    @if(in_array($role, ['admin','superadmin']))
-    <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahCard">
-        <i class="fa fa-plus"></i> Tambah Card
+    <!-- NAV -->
+    <div class="mb-4 d-flex gap-3">
+
+        <a href="{{ url('newproject') }}"
+        class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
+            New Project
+        </a>
+
+        <a href="{{ url('sitereview') }}"
+        class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
+            Project Review
+        </a>
+
+        <a href="{{ url('laporaninstalasi') }}"
+        class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
+            Laporan Instalasi
+        </a>
+
+    </div>
+{{-- HEADER --}}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-0">📁 Project Phase</h4>
+        <small class="text-muted">Manajemen project & site per wilayah</small>
+    </div>
+
+    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        ➕ Tambah Project Phase
     </button>
-    @endif
-
-    {{-- LOOP CARD --}}
-    @foreach($cards as $card)
-    <div class="card mb-4 shadow">
-
-        {{-- HEADER CARD --}}
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <strong>{{ $card->title }}</strong>
-
-            <div>
-                <button class="btn btn-light btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalTambahData"
-                    onclick="setCard({{ $card->id }})">
-                    <i class="fa fa-plus"></i>
-                </button>
-
-                @if(in_array($role, ['admin','superadmin']))
-                <button class="btn btn-danger btn-sm" onclick="hapusCard({{ $card->id }})">
-                    <i class="fa fa-trash"></i>
-                </button>
-                @endif
-            </div>
-        </div>
-
-        {{-- TABLE --}}
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-striped table-sm">
-                <thead class="table-dark text-center">
-                    <tr class="text-center">
-                        <th>No</th>
-                        <th>Site ID</th>
-                        <th>Site Name</th>
-                        <th>Tipe</th>
-                        <th>Batch</th>
-                        <th>Provinsi</th>
-                        <th>Kab</th>
-                        <th>Kecamatan</th>
-                        <th>Gateway</th>
-                        <th>Beam</th>
-                        <th>Hub</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($card->newprojects as $i => $p)
-                    <tr class="text-center">
-                        <td>{{ $i+1 }}</td>
-                        <td>{{ $p->site_id }}</td>
-                        <td>{{ $p->sitename }}</td>
-                        <td>{{ $p->tipe }}</td>
-                        <td>{{ $p->batch }}</td>
-                        <td>{{ $p->provinsi }}</td>
-                        <td>{{ $p->kab }}</td>
-                        <td>{{ $p->kecamatan }}</td>
-                        <td>{{ $p->gateway_area }}</td>
-                        <td>{{ $p->beam }}</td>
-                        <td>{{ $p->hub }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-warning btn-sm" onclick="editData({{ $p->id }})">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button class="btn btn-info btn-sm" onclick="detail({{ $p->id }})">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="hapusData({{ $p->id }})">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="12" class="text-center text-muted">Belum ada data</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-    @endforeach
 </div>
 
-{{-- ================= MODAL TAMBAH CARD ================= --}}
-<div class="modal fade" id="modalTambahCard">
-    <div class="modal-dialog">
-        <form method="POST" action="{{ route('cards.store') }}">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5>Tambah Card</h5>
-                </div>
-                <div class="modal-body">
-                    <input name="title" class="form-control" placeholder="Nama Card" required>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </form>
+{{-- ALERT --}}
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+@endif
+
+{{-- PROJECT TABLE --}}
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover align-middle mb-0">
+<thead class="table-light">
+<tr>
+    <th width="50">#</th>
+    <th>No Kontrak</th>
+    <th>Mitra</th>
+    <th>Batch</th>
+    <th>Phase</th>
+    <th class="text-center">Jumlah Site</th>
+</tr>
+</thead>
+<tbody>
+
+@forelse($projects as $p)
+<tr class="project-row" onclick="toggleSite({{ $p->id }})" style="cursor:pointer">
+    <td>{{ $loop->iteration }}</td>
+    <td class="fw-semibold">{{ $p->no_kontrak }}</td>
+    <td>{{ $p->mitra }}</td>
+    <td>{{ $p->batch }}</td>
+    <td>
+        <span class="badge bg-info badge-phase">{{ $p->phase }}</span>
+    </td>
+    <td class="text-center">
+        <span class="badge bg-success">
+            {{ $p->sites->count() }} Site
+        </span>
+    </td>
+</tr>
+
+<tr>
+<td colspan="6" class="p-0">
+<div id="site-{{ $p->id }}" class="site-wrapper" style="display:none">
+
+{{-- FILTER --}}
+<div class="filter-card m-3">
+<div class="row g-2">
+    <div class="col-md-4">
+        <select class="form-select form-select-sm filter" data-type="provinsi">
+            <option value="">🌍 Provinsi</option>
+            @foreach($p->sites->pluck('provinsi')->unique() as $v)
+                <option value="{{ $v }}">{{ $v }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select form-select-sm filter" data-type="kabupaten">
+            <option value="">🏙 Kabupaten</option>
+            @foreach($p->sites->pluck('kabupaten')->unique() as $v)
+                <option value="{{ $v }}">{{ $v }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select form-select-sm filter" data-type="kecamatan">
+            <option value="">📍 Kecamatan</option>
+            @foreach($p->sites->pluck('kecamatan')->unique() as $v)
+                <option value="{{ $v }}">{{ $v }}</option>
+            @endforeach
+        </select>
     </div>
 </div>
-
-{{-- ================= MODAL TAMBAH DATA ================= --}}
-<div class="modal fade" id="modalTambahData">
-    <div class="modal-dialog modal-xl">
-        <form method="POST" action="{{ route('newproject.store') }}">
-            @csrf
-            <input type="hidden" name="card_id" id="card_id">
-
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5>Tambah New Project</h5>
-                </div>
-
-                <div class="modal-body row g-2">
-                    @foreach([
-                        'site_id','sitename','tipe','batch','latitude','longitude',
-                        'provinsi','kab','kecamatan','kelurahan','alamat_lokasi',
-                        'nama_pic','nomor_pic','sumber_listrik','gateway_area',
-                        'beam','hub','kodefikasi','sn_antena','sn_modem','sn_router',
-                        'sn_ap1','sn_ap2','sn_tranciever','sn_stabilizer','sn_rak',
-                        'ip_modem','ip_router','ip_ap1','ip_ap2','expected_sqf'
-                    ] as $field)
-                    <div class="col-md-4">
-                        <label class="fw-bold">{{ str_replace('_',' ',$field) }}</label>
-                        <input name="{{ $field }}" class="form-control">
-                    </div>
-                    @endforeach
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn btn-primary">Simpan</button>
-                </div>
-            </div>
-        </form>
-    </div>
 </div>
 
-{{-- ================= MODAL EDIT DATA ================= --}}
-<div class="modal fade" id="modalEditData">
-    <div class="modal-dialog modal-xl">
-        <form method="POST" id="formEdit">
-            @csrf
-            @method('PUT')
+{{-- SITE TABLE --}}
+<div class="px-3 pb-3">
+<table class="table table-sm table-striped table-bordered mb-0">
+<thead class="table-secondary">
+<tr>
+    <th width="40">#</th>
+    <th>Provinsi</th>
+    <th>Kabupaten</th>
+    <th>Kecamatan</th>
+    <th>Site</th>
+</tr>
+</thead>
+<tbody>
+@foreach($p->sites as $s)
+<tr class="site-row"
+    data-provinsi="{{ $s->provinsi }}"
+    data-kabupaten="{{ $s->kabupaten }}"
+    data-kecamatan="{{ $s->kecamatan }}">
+    <td>{{ $loop->iteration }}</td>
+    <td>{{ $s->provinsi }}</td>
+    <td>{{ $s->kabupaten }}</td>
+    <td>{{ $s->kecamatan }}</td>
+    <td class="fw-semibold">{{ $s->site_name }}</td>
+</tr>
+@endforeach
+</tbody>
+</table>
+</div>
 
-            <div class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5>Edit New Project</h5>
-                </div>
+</div>
+</td>
+</tr>
+@empty
+<tr>
+<td colspan="6" class="text-center text-muted py-4">
+    Belum ada project
+</td>
+</tr>
+@endforelse
 
-                <div class="modal-body row g-2" id="editBody"></div>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button class="btn btn-warning">Update</button>
-                </div>
-            </div>
-        </form>
+{{-- MODAL TAMBAH --}}
+<div class="modal fade" id="modalTambah" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<form method="POST" action="{{ route('newproject.store') }}">
+@csrf
+<div class="modal-content">
+<div class="modal-header">
+    <h5 class="modal-title">➕ Tambah Project Phase</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+    <div class="mb-2">
+        <label class="form-label">No Kontrak</label>
+        <input type="text" name="no_kontrak" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Mitra</label>
+        <input type="text" name="mitra" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Batch</label>
+        <input type="text" name="batch" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Phase</label>
+        <input type="text" name="phase" class="form-control" required>
     </div>
 </div>
 
-{{-- ================= MODAL DETAIL ================= --}}
-<div class="modal fade" id="modalDetail">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5>Detail New Project</h5>
-            </div>
-            <div class="modal-body row g-2" id="detailBody"></div>
-        </div>
-    </div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm">Simpan</button>
+</div>
+</div>
+</form>
+</div>
 </div>
 
-@endsection
-
-@section('scripts')
 <script>
-function setCard(id){
-    document.getElementById('card_id').value = id;
+function toggleSite(id){
+    const el = document.getElementById('site-'+id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-function hapusData(id){
-    if(confirm('Hapus data ini?')){
-        fetch(`/newproject/delete/${id}`,{
-            method:'DELETE',
-            headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}
-        }).then(()=>location.reload());
-    }
-}
+document.querySelectorAll('.filter').forEach(f => {
+    f.addEventListener('change', function(){
+        const parent = this.closest('.site-wrapper');
+        const prov = parent.querySelector('[data-type="provinsi"]').value;
+        const kab  = parent.querySelector('[data-type="kabupaten"]').value;
+        const kec  = parent.querySelector('[data-type="kecamatan"]').value;
 
-function hapusCard(id){
-    if(confirm('Hapus CARD ini beserta isinya?')){
-        fetch(`/cards/delete/${id}`,{
-            method:'DELETE',
-            headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}
-        }).then(()=>location.reload());
-    }
-}
-
-function detail(id){
-    fetch(`/newproject/${id}`)
-    .then(res=>res.json())
-    .then(res=>{
-        let html='';
-        Object.entries(res.data).forEach(([k,v])=>{
-            html+=`
-            <div class="col-md-4">
-                <label class="fw-bold">${k.replaceAll('_',' ')}</label>
-                <input class="form-control" value="${v ?? ''}" disabled>
-            </div>`;
+        parent.querySelectorAll('.site-row').forEach(row=>{
+            let show = true;
+            if(prov && row.dataset.provinsi !== prov) show=false;
+            if(kab && row.dataset.kabupaten !== kab) show=false;
+            if(kec && row.dataset.kecamatan !== kec) show=false;
+            row.style.display = show ? '' : 'none';
         });
-        document.getElementById('detailBody').innerHTML = html;
-        new bootstrap.Modal(document.getElementById('modalDetail')).show();
     });
-}
-
-function editData(id){
-    fetch(`/newproject/${id}`)
-    .then(res=>res.json())
-    .then(res=>{
-        let html='';
-        Object.entries(res.data).forEach(([k,v])=>{
-            if(['id','card_id'].includes(k)) return;
-            html+=`
-            <div class="col-md-4">
-                <label class="fw-bold">${k.replaceAll('_',' ')}</label>
-                <input name="${k}" class="form-control" value="${v ?? ''}">
-            </div>`;
-        });
-        document.getElementById('editBody').innerHTML = html;
-        document.getElementById('formEdit').action = `/newproject/update/${id}`;
-        new bootstrap.Modal(document.getElementById('modalEditData')).show();
-    });
-}
-function hapusCard(id){
-    if(confirm('Hapus CARD ini beserta isinya?')){
-        fetch(`/cards/delete/${id}`,{
-            method:'DELETE',
-            headers:{
-                'X-CSRF-TOKEN':'{{ csrf_token() }}'
-            }
-        }).then(res=>res.json())
-          .then(()=>location.reload());
-    }
-}
+});
 </script>
 @endsection

@@ -207,57 +207,113 @@
         text-align: left;
     }
 </style>
+<style>
+    .stat-card {
+    width: 190px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+    border: none;
+}
 
-<div class="d-flex justify-content-center align-items-center gap-3 my-4 flex-wrap">
-    
-    <div class="card shadow-sm text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3" style="font-family: 'Quicksand', sans-serif;">
-            <h6 class="mb-1" style="font-weight: 900;">TICKET TODAY</h6>
-            <h4 class="fw-bold">{{ $tiketToday ?? 0 }}</h4>
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+.stat-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: 800;
+    margin-top: 5px;
+}
+
+/* warna aksen */
+.stat-blue   { color: #0d6efd; }
+.stat-green  { color: #2ecc71; }
+.stat-orange { color: #ff8c00; }
+.stat-red    { color: #e74c3c; }
+.stat-purple { color: #6f42c1; }
+.kpi-wrapper {
+    position: relative;
+    z-index: 10;               /* supaya di atas header */
+    margin-top: -50px;         /* TARIK KE ATAS (atur sesuai selera) */
+    padding-bottom: 20px;
+}
+.header {
+    padding-bottom: 100px; /* kasih ruang buat card overlap */
+}
+.stat-card {
+    position: relative;
+    z-index: 30;
+}
+.stat-card {
+    backdrop-filter: blur(6px);
+}
+
+</style>
+<div class="kpi-wrapper">
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <!-- SEMUA stat-card di sini -->
+
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">Ticket Today</div>
+                <div class="stat-value stat-green">{{ $tiketToday ?? 0 }}</div>
+            </div>
         </div>
-    </div>
 
-    <div class="card shadow-sm text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3">
-            <h6 class="mb-1" style="font-family: 'Quicksand', sans-serif; font-weight: 900;">ALL OPEN TICKET</h6>
-            <h4 class="fw-bold">{{ $tiketOpen }}</h4>
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">All Open Ticket</div>
+                <div class="stat-value stat-red">{{ $tiketOpen }}</div>
+            </div>
         </div>
-    </div>
 
-    <div class="card text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3" style="font-family: 'Quicksand', sans-serif;">
-            <h6 class="mb-1" style="font-weight: 900;">PM BMN DONE</h6>
-            <h4 class="fw-bold">
-                <span style="color: #81c784; font-weight: bold;">{{ ($kategoriDone['BMN'] ?? 0) }}</span>
-                <span style="color: #FF6C0C; font-size: 14px;">/ 237</span>
-            </h4>
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">PM BMN Done</div>
+                <div class="stat-value">
+                    <span class="stat-green">{{ $kategoriDone['BMN'] ?? 0 }}</span>
+                    <span style="font-size:14px;color:#adb5bd;"> / 237</span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="card text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3" style="font-family: 'Quicksand', sans-serif;">
-            <h6 class="mb-1" style="font-weight: 900;">PM SL DONE</h6>
-            <h4 class="fw-bold">
-                <span style="color: #81c784; font-weight: bold;">{{ ($kategoriDone['SL'] ?? 0) }}</span>
-                <span style="color: #FF6C0C; font-size: 14px;">/ 121</span>
-            </h4>
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">PM SL Done</div>
+                <div class="stat-value">
+                    <span class="stat-green">{{ $kategoriDone['SL'] ?? 0 }}</span>
+                    <span style="font-size:14px;color:#adb5bd;"> / 121</span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="card text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3" style="font-family: 'Quicksand', sans-serif;">
-            <h6 class="mb-1" style="font-weight: 900;">TOTAL PM DONE</h6>
-            <h4 class="fw-bold">{{ $totalDone }}</h4>
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">Total PM Done</div>
+                <div class="stat-value stat-green">{{ $totalDone }}</div>
+            </div>
         </div>
-    </div>
 
-    <div class="card shadow-sm text-center flex-shrink-0" style="width: 180px; border-radius: 12px; background-color: transparent; border: 2px solid #000000; color: black;">
-        <div class="card-body p-3" style="font-family: 'Quicksand', sans-serif;">
-            <h6 class="mb-1" style="font-weight: 900;">PM PENDING</h6>
-            <h4 class="fw-bold">{{ $pmPending ?? 0 }}</h4>
+        <div class="card stat-card text-center">
+            <div class="card-body">
+                <div class="stat-title">PM Pending</div>
+                <div class="stat-value stat-red">{{ $pmPending ?? 0 }}</div>
+            </div>
         </div>
     </div>
 </div>
+
 
 <div class="row">
     <!-- PROBLEM OPEN TIKET -->
