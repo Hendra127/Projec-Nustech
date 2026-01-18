@@ -6,7 +6,45 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <!-- Sisa kode lama -->
-<div class="container-fluid mt-4">
+<style>
+    .btn-custom {
+        font-size: .75rem;
+        padding: .3rem 1rem;
+        border-radius: 12px;
+    }
+    .btn-inactive {
+        background: transparent;
+        border: 2px solid #c026d3;
+    }
+    .btn-active {
+        background: #22c55e;
+        border: 2px solid #22c55e;
+    }
+</style>
+<div class="container-fluid py-4">
+
+    <!-- NAV -->
+    <div class="mb-4 d-flex gap-3">
+
+        <a href="{{ url('newproject') }}"
+        class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
+            New Project
+        </a>
+
+        <a href="{{ url('sitereview') }}"
+        class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
+            Project Review
+        </a>
+
+        <a href="{{ url('laporaninstalasi') }}"
+        class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
+            Laporan Instalasi
+        </a>
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Timeline
+        </a>
+    </div>
     <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
         <div class="dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
@@ -31,6 +69,18 @@
             </ul>
         </div>
     </div>
+</div>
+<div class="mb-4">
+    <label class="fw-bold">Pilih Site</label>
+    <select id="projectSiteSelect" class="form-select">
+        <option value="">-- Pilih Site --</option>
+        @foreach($projectSites as $site)
+            <option value="{{ $site->id }}"
+                {{ request('project_site_id') == $site->id ? 'selected' : '' }}>
+                {{ $site->site_id }} - {{ $site->site_name }}
+            </option>
+        @endforeach
+    </select>
 </div>
 @php
 $role = Auth::user()->role;
@@ -103,104 +153,150 @@ $kategoris = [
 
 <div class="container mt-4">
 
-{{-- ================= TAB ================= --}}
-<ul class="nav nav-tabs mb-3">
-@foreach($kategoris as $kategoriKey => $items)
-<li class="nav-item">
-    <button class="nav-link @if($loop->first) active @endif"
-        data-bs-toggle="tab"
-        data-bs-target="#tab-{{ $loop->index }}">
-        {{ $kategoriKey }}
-    </button>
-</li>
-@endforeach
-</ul>
+    {{-- ================= TAB ================= --}}
+    <ul class="nav nav-tabs mb-3">
+        @foreach($kategoris as $kategoriKey => $items)
+            <li class="nav-item">
+                <button class="nav-link @if($loop->first) active @endif"
+                    data-bs-toggle="tab"
+                    data-bs-target="#tab-{{ $loop->index }}">
+                    {{ $kategoriKey }}
+                </button>
+            </li>
+        @endforeach
+    </ul>
 
-<div class="tab-content">
+    <div class="tab-content">
 
-@foreach($kategoris as $kategoriKey => $items)
-<div class="tab-pane fade @if($loop->first) show active @endif" id="tab-{{ $loop->index }}">
+        @foreach($kategoris as $kategoriKey => $items)
+            <div class="tab-pane fade @if($loop->first) show active @endif"
+                id="tab-{{ $loop->index }}">
 
-<form class="uploadForm border rounded p-3 mb-4" enctype="multipart/form-data">
-@csrf
+                <form class="uploadForm border rounded p-3 mb-4"
+                      enctype="multipart/form-data">
 
-@foreach($items as $itemKey => $label)
-@php
-$doc = $laporan->where('nama_foto', $itemKey)->sortByDesc('created_at')->first();
-@endphp
+                    @csrf
+                    <input type="hidden"
+                           name="project_site_id"
+                           class="projectSiteInput">
 
-<div class="mb-4 border-bottom pb-3">
+                    {{-- ================= ITEM PER KATEGORI ================= --}}
+                    @foreach($items as $itemKey => $label)
 
-<label class="fw-bold">{{ $label }}</label>
+                        @php
+                            $doc = $laporan
+                                ->where('project_site_id', request('project_site_id'))
+                                ->where('nama_foto', $itemKey)
+                                ->sortByDesc('created_at')
+                                ->first();
+                        @endphp
 
-{{-- ================= PREVIEW SESUDAH UPLOAD ================= --}}
-@if($doc)
-<div class="mb-2">
-    <img src="{{ asset('storage/'.$doc->path) }}"
-        class="img-thumbnail previewZoom"
-        style="width:120px;height:120px;object-fit:cover;cursor:pointer"
-        data-src="{{ asset('storage/'.$doc->path) }}">
+                        <div class="mb-4 border-bottom pb-3">
 
-    <span class="badge
-        @if($doc->status=='approved') bg-success
-        @elseif($doc->status=='rejected') bg-danger
-        @else bg-warning text-dark @endif">
-        {{ strtoupper($doc->status) }}
-    </span>
+                            <label class="fw-bold">{{ $label }}</label>
+
+                            {{-- ===== PREVIEW SESUDAH UPLOAD ===== --}}
+                            @if($doc)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/'.$doc->path) }}"
+                                        class="img-thumbnail previewZoom"
+                                        style="width:120px;height:120px;object-fit:cover;cursor:pointer"
+                                        data-src="{{ asset('storage/'.$doc->path) }}">
+
+                                    <span class="badge
+                                        @if($doc->status=='approved') bg-success
+                                        @elseif($doc->status=='rejected') bg-danger
+                                        @else bg-warning text-dark @endif">
+                                        {{ strtoupper($doc->status) }}
+                                    </span>
+                                </div>
+
+                                @if($doc->status=='rejected')
+                                    <p class="text-danger small">
+                                        ❌ Ditolak: {{ $doc->reject_reason }}
+                                    </p>
+                                @elseif($doc->status=='pending')
+                                    <p class="text-warning small">
+                                        ⏳ Menunggu persetujuan admin
+                                    </p>
+                                @endif
+                            @endif
+
+                            {{-- ===== USER UPLOAD ===== --}}
+                            @if($role === 'user' && (!$doc || $doc->status === 'rejected'))
+
+                                <textarea class="form-control mb-2"
+                                    name="items[{{ $itemKey }}][keterangan]"
+                                    placeholder="Keterangan">{{ $doc->keterangan ?? '' }}</textarea>
+
+                                <input type="file"
+                                    class="form-control mb-2 previewInput"
+                                    name="items[{{ $itemKey }}][foto]"
+                                    accept="image/*">
+
+                                <img class="img-thumbnail d-none previewTemp"
+                                    style="width:120px;height:120px;object-fit:cover;cursor:pointer">
+                            @endif
+
+                            {{-- ===== ADMIN ACTION ===== --}}
+                            @if($doc && in_array($role, ['admin','superadmin']) && $doc->status === 'pending')
+                                <div class="mt-2">
+                                    <button type="button"
+                                        class="btn btn-success btn-sm approveBtn"
+                                        data-id="{{ $doc->id }}">
+                                        Approve
+                                    </button>
+
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm rejectBtn"
+                                        data-id="{{ $doc->id }}">
+                                        Reject
+                                    </button>
+                                </div>
+                            @endif
+
+                        </div>
+                    @endforeach
+
+                    {{-- ===== SUBMIT ===== --}}
+                    @if($role === 'user')
+                        <button type="submit" class="btn btn-primary w-100">
+                            Upload {{ $kategoriKey }}
+                        </button>
+                    @endif
+
+                </form>
+            </div>
+        @endforeach
+
+    </div>
 </div>
 
-@if($doc->status=='rejected')
-<p class="text-danger small">❌ Ditolak: {{ $doc->reject_reason }}</p>
-@elseif($doc->status=='pending')
-<p class="text-warning small">⏳ Menunggu persetujuan admin</p>
-@endif
-@endif
 
-{{-- ================= USER UPLOAD ================= --}}
-@if($role==='user' && (!$doc || $doc->status==='rejected'))
+{{-- ================= PILIH SITE ================= --}}
+<script>
+$('#projectSiteSelect').on('change', function () {
+    let siteId = $(this).val();
 
-<textarea class="form-control mb-2"
-    name="items[{{ $itemKey }}][keterangan]"
-    placeholder="Keterangan">{{ $doc->keterangan ?? '' }}</textarea>
+    if (!siteId) return;
 
-<input type="file"
-    class="form-control mb-2 previewInput"
-    name="items[{{ $itemKey }}][foto]"
-    accept="image/*">
+    // reload page supaya foto sesuai site
+    window.location.href =
+        "{{ url('laporaninstalasi') }}?project_site_id=" + siteId;
+});
 
-{{-- PREVIEW SEBELUM UPLOAD --}}
-<img class="img-thumbnail d-none previewTemp"
-    style="width:120px;height:120px;object-fit:cover;cursor:pointer">
+// inject site_id ke semua form
+$('.uploadForm').on('submit', function () {
+    let siteId = $('#projectSiteSelect').val();
 
-@endif
+    if (!siteId) {
+        Swal.fire('Pilih Site dulu');
+        return false;
+    }
 
-{{-- ================= ADMIN ACTION ================= --}}
-@if($doc && in_array($role,['admin','superadmin']) && $doc->status==='pending')
-<div class="mt-2">
-    <button type="button"
-        class="btn btn-success btn-sm approveBtn"
-        data-id="{{ $doc->id }}">Approve</button>
-
-    <button type="button"
-        class="btn btn-danger btn-sm rejectBtn"
-        data-id="{{ $doc->id }}">Reject</button>
-</div>
-@endif
-
-</div>
-@endforeach
-
-@if($role==='user')
-<button type="submit" class="btn btn-primary w-100">
-    Upload {{ $kategoriKey }}
-</button>
-@endif
-
-</form>
-</div>
-@endforeach
-</div>
-</div>
+    $(this).find('.projectSiteInput').val(siteId);
+});
+</script>
 
 {{-- ================= MODAL ZOOM FOTO ================= --}}
 <div class="modal fade" id="zoomModal" tabindex="-1">

@@ -65,7 +65,10 @@
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Timeline
+        </a>
     </div>
 {{-- HEADER --}}
 <div class="d-flex justify-content-between align-items-center mb-4">

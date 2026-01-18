@@ -1,8 +1,46 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container mt-4">
+<style>
+    .btn-custom {
+        font-size: .75rem;
+        padding: .3rem 1rem;
+        border-radius: 12px;
+    }
+    .btn-inactive {
+        background: transparent;
+        border: 2px solid #c026d3;
+    }
+    .btn-active {
+        background: #22c55e;
+        border: 2px solid #22c55e;
+    }
+</style>
 
+<div class="container-fluid py-4">
+
+    <!-- NAV -->
+    <div class="mb-4 d-flex gap-3">
+
+        <a href="{{ url('newproject') }}"
+        class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
+            New Project
+        </a>
+
+        <a href="{{ url('sitereview') }}"
+        class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
+            Project Review
+        </a>
+
+        <a href="{{ url('laporaninstalasi') }}"
+        class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
+            Laporan Instalasi
+        </a>
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Timeline
+        </a>
+    </div>
     <!-- Ringkasan -->
     <div class="row mb-4 text-center">
         <div class="col-md-3">

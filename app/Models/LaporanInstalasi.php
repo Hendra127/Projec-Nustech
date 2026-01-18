@@ -12,6 +12,7 @@ class LaporanInstalasi extends Model
     protected $table = 'laporan_instalasi';
 
     protected $fillable = [
+        'project_site_id',
         'nama_foto',
         'keterangan',
         'status',

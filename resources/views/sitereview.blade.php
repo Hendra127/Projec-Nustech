@@ -29,14 +29,17 @@
 
         <a href="{{ url('sitereview') }}"
         class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
-            Site Review
+            Project Review
         </a>
 
         <a href="{{ url('laporaninstalasi') }}"
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Timeline
+        </a>
     </div>
     <h4>📊 Site Review</h4>
 
@@ -171,7 +174,7 @@ function loadSites(){
             "X-CSRF-TOKEN":"{{ csrf_token() }}"
         },
         body: JSON.stringify({
-            project_id: project_i
+            project_id: project_id,
             provinsi: prov,
             kabupaten: kab,
             kecamatan: kec,

@@ -7,25 +7,26 @@ use App\Models\LaporanInstalasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use App\Models\ProjectSite;
 class LaporanInstalasiController extends Controller
 {
     // ================= HALAMAN =================
     public function index()
     {
+        $projectSites = ProjectSite::orderBy('site_name')->get();
         $laporan = LaporanInstalasi::latest()->get();
-        return view('laporaninstalasi', compact('laporan'));
+        return view('laporaninstalasi', compact('projectSites', 'laporan'));
     }
 
     // ================= STORE (UPLOAD FOTO) =================
     public function store(Request $request)
     {
-        if (!$request->has('items')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tidak ada data foto'
-            ], 422);
-        }
+        $request->validate([
+            'project_site_id' => 'required|exists:project_sites,id',
+            'items' => 'required|array',
+        ]);
+
+        $projectSiteId = $request->project_site_id;
 
         foreach ($request->items as $itemKey => $itemData) {
 
@@ -34,22 +35,33 @@ class LaporanInstalasiController extends Controller
             $file = $itemData['foto'];
             if (!$file->isValid()) continue;
 
-            // nama file
+            // 🔹 nama file unik
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('laporan_instalasi', $filename, 'public');
 
-            // hapus file lama (jika ada)
-            $old = LaporanInstalasi::where('nama_foto', $itemKey)
-                    ->latest()
-                    ->first();
+            // 🔹 folder PER SITE
+            $path = $file->storeAs(
+                "laporan_instalasi/site_{$projectSiteId}",
+                $filename,
+                'public'
+            );
 
+            // 🔹 cari data lama (PER SITE)
+            $old = LaporanInstalasi::where('project_site_id', $projectSiteId)
+                ->where('nama_foto', $itemKey)
+                ->latest()
+                ->first();
+
+            // 🔹 hapus file lama
             if ($old && $old->path && Storage::disk('public')->exists($old->path)) {
                 Storage::disk('public')->delete($old->path);
             }
 
-            // simpan / update DB
+            // 🔹 simpan / update DB (PER SITE)
             LaporanInstalasi::updateOrCreate(
-                ['nama_foto' => $itemKey],
+                [
+                    'project_site_id' => $projectSiteId,
+                    'nama_foto'       => $itemKey,
+                ],
                 [
                     'keterangan'    => $itemData['keterangan'] ?? null,
                     'path'          => $path,
@@ -59,7 +71,10 @@ class LaporanInstalasiController extends Controller
             );
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan instalasi berhasil disimpan'
+        ]);
     }
 
     // ================= APPROVE =================
