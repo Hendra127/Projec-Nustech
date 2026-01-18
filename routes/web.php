@@ -31,6 +31,7 @@ use App\Http\Controllers\JadwalPiketController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BMSDashboardController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\ProjectTimelineController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -250,3 +251,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
     });   
 });
+// Route Project Timeline
+
+
+Route::get('/timeline', [ProjectTimelineController::class, 'index']);
+Route::get('/timeline/create', [ProjectTimelineController::class, 'create'])->name('timeline.create');
+Route::post('/timeline/store', [ProjectTimelineController::class, 'store'])->name('timeline.store');

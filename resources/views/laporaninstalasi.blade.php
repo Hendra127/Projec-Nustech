@@ -5,7 +5,33 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
+<!-- Sisa kode lama -->
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                <i class="fa fa-user-circle fa-2x text-primary"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" href="{{ url('user-profile') }}">
+                        <i class="fa fa-user me-2"></i> User Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('logout') }}">
+                        <i class="fa fa-sign-out me-2"></i> Logout
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url('users') }}">
+                        <i class="fa fa-sign-out me-2"></i> Users Managemen
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 @php
 $role = Auth::user()->role;
 
