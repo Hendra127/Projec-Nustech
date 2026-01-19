@@ -214,6 +214,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan-instalasi/reject',[LaporanInstalasiController::class, 'reject'])->name('laporaninstalasi.reject');
     Route::get('/laporan-instalasi/download-word', [LaporanInstalasiController::class, 'downloadWord'])->name('laporan.downloadWord');
 
+    // Route Project Timeline
+    Route::get('/timeline', [ProjectTimelineController::class, 'index'])->name('timeline.index');
+    Route::post('/timeline/store', [ProjectTimelineController::class, 'store'])->name('timeline.store');
+
     // Route Jadwal Piket
     Route::get('/jadwal-piket', [JadwalPiketController::class, 'index'])->name('jadwal.piket');
 
@@ -251,9 +255,4 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/laporanPM/{id}', [LaporanPMController::class, 'update'])->name('laporanPM.update');
     });   
 });
-// Route Project Timeline
 
-
-Route::get('/timeline', [ProjectTimelineController::class, 'index']);
-Route::get('/timeline/create', [ProjectTimelineController::class, 'create'])->name('timeline.create');
-Route::post('/timeline/store', [ProjectTimelineController::class, 'store'])->name('timeline.store');

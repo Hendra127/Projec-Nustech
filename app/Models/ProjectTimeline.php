@@ -7,17 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectTimeline extends Model
 {
-    use HasFactory;
-
     protected $table = 'project_timeline';
 
     protected $fillable = [
-        'nama_lokasi',
+        'project_site_id',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'durasi_hari',
         'status',
-        'tanggal',
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
     ];
+
+    public function site()
+    {
+        return $this->belongsTo(ProjectSite::class, 'project_site_id');
+    }
 }
+

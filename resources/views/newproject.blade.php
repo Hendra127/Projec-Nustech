@@ -95,7 +95,7 @@
 <table class="table table-hover align-middle mb-0">
 <thead class="table-light">
 <tr>
-    <th width="50">#</th>
+    <th width="50">No</th>
     <th>No Kontrak</th>
     <th>Mitra</th>
     <th>Batch</th>
@@ -107,7 +107,7 @@
 
 @forelse($projects as $p)
 <tr class="project-row" onclick="toggleSite({{ $p->id }})" style="cursor:pointer">
-    <td>{{ $loop->iteration }}</td>
+    <td class="text-center">{{ $loop->iteration }}</td>
     <td class="fw-semibold">{{ $p->no_kontrak }}</td>
     <td>{{ $p->mitra }}</td>
     <td>{{ $p->batch }}</td>
@@ -160,7 +160,7 @@
 <table class="table table-sm table-striped table-bordered mb-0">
 <thead class="table-secondary">
 <tr>
-    <th width="40">#</th>
+    <th width="40">No</th>
     <th>Provinsi</th>
     <th>Kabupaten</th>
     <th>Kecamatan</th>
