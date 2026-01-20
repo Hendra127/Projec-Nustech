@@ -36,14 +36,16 @@
             Project Review
         </a>
 
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Actual Plane
+        </a>
+
         <a href="{{ url('laporaninstalasi') }}"
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-        <a href="{{ url('timeline') }}"
-        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
-            Timeline
-        </a>
+        <
     </div>
     <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
         <div class="dropdown">

@@ -9,25 +9,54 @@ use Carbon\Carbon;
 
 class ProjectTimelineController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $sites = ProjectSite::orderBy('site_name')->get();
-        $timeline = ProjectTimeline::with('site')->orderBy('tanggal_mulai')->get();
+        $filter = $request->get('filter', 'all'); // all / done / pending
 
-        $totalSite = $timeline->count();
-        $doneSite = $timeline->where('status', 'done')->count();
-        $progressSite = $timeline->where('status', 'progress')->count();
-        $sisaSite = $totalSite - $doneSite;
-        $progress = $totalSite > 0 ? round(($doneSite / $totalSite) * 100) : 0;
+        // =========================
+        // Ambil timeline
+        // =========================
+        $timeline = ProjectTimeline::with(['site.project'])
+            ->orderBy('tanggal_mulai')
+            ->get();
+
+        // =========================
+        // Hitung ringkasan dari semua data (tidak terpengaruh filter)
+        // =========================
+        $totalSiteAll = $timeline->count();
+        $doneSiteAll = $timeline->where('status', 'done')->count();
+        $progressSiteAll = $timeline->where('status', 'progress')->count();
+        $sisaSiteAll = $totalSiteAll - $doneSiteAll;
+        $progressAll = $totalSiteAll > 0 ? round(($doneSiteAll / $totalSiteAll) * 100) : 0;
+
+        // =========================
+        // Filter timeline
+        // =========================
+        if ($filter == 'done') {
+            $timeline = $timeline->where('status', 'done');
+        } elseif ($filter == 'pending') {
+            $timeline = $timeline->whereIn('status', ['pending', 'progress']);
+        }
+
+        // =========================
+        // Grouping by week (berdasarkan tanggal mulai)
+        // =========================
+        $groupByWeek = $timeline->groupBy(function ($item) {
+            return Carbon::parse($item->tanggal_mulai)->format('W-Y');
+        });
+
+        $sites = ProjectSite::with('project')->orderBy('site_name')->get();
 
         return view('timeline', compact(
             'sites',
             'timeline',
-            'totalSite',
-            'doneSite',
-            'progressSite',
-            'sisaSite',
-            'progress'
+            'totalSiteAll',
+            'doneSiteAll',
+            'progressSiteAll',
+            'sisaSiteAll',
+            'progressAll',
+            'filter',
+            'groupByWeek'
         ));
     }
 
@@ -40,10 +69,16 @@ class ProjectTimelineController extends Controller
             'status' => 'required|in:pending,progress,done',
         ]);
 
+        $mulai = Carbon::parse($request->tanggal_mulai);
+        $selesai = Carbon::parse($request->tanggal_selesai);
+
+        $durasi = $mulai->diffInDays($selesai) + 1;
+
         ProjectTimeline::create([
             'project_site_id' => $request->project_site_id,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
+            'tanggal_mulai' => $mulai,
+            'tanggal_selesai' => $selesai,
+            'durasi_hari' => $durasi,
             'status' => $request->status,
         ]);
 

@@ -32,6 +32,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BMSDashboardController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ProjectTimelineController;
+use App\Http\Controllers\ProjectTimelineGroupController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -217,6 +218,11 @@ Route::middleware(['auth'])->group(function () {
     // Route Project Timeline
     Route::get('/timeline', [ProjectTimelineController::class, 'index'])->name('timeline.index');
     Route::post('/timeline/store', [ProjectTimelineController::class, 'store'])->name('timeline.store');
+
+    // Route Grouped Project Timeline
+    Route::get('/timeline-group', [ProjectTimelineGroupController::class, 'index'])->name('timeline-group.index');
+    Route::post('/timeline-group', [ProjectTimelineGroupController::class, 'store'])->name('timeline-group.store');
+    Route::get('/timeline-group/sites/{mitra}', [ProjectTimelineGroupController::class, 'getSitesByMitra']);
 
     // Route Jadwal Piket
     Route::get('/jadwal-piket', [JadwalPiketController::class, 'index'])->name('jadwal.piket');

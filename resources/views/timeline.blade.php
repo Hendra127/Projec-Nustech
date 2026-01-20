@@ -31,15 +31,16 @@
             Project Review
         </a>
 
+        <a href="{{ url('timeline') }}"
+           class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Actual Plane
+        </a>
+
         <a href="{{ url('laporaninstalasi') }}"
            class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
 
-        <a href="{{ url('timeline') }}"
-           class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
-            Timeline
-        </a>
     </div>
 
     <!-- Ringkasan -->
@@ -47,7 +48,7 @@
         <div class="col-md-3">
             <div class="card" style="width:17rem;">
                 <div class="card-body">
-                    <h4>{{ $totalSite }}</h4>
+                    <h4>{{ $totalSiteAll }}</h4>
                     <small>Total Site</small>
                 </div>
             </div>
@@ -56,7 +57,7 @@
         <div class="col-md-3">
             <div class="card" style="width:17rem;">
                 <div class="card-body">
-                    <h4>{{ $sisaSite }}</h4>
+                    <h4>{{ $sisaSiteAll }}</h4>
                     <small>Sisa Lokasi</small>
                 </div>
             </div>
@@ -65,7 +66,7 @@
         <div class="col-md-3">
             <div class="card bg-warning text-dark" style="width:17rem;">
                 <div class="card-body">
-                    <h4>{{ $progressSite }}</h4>
+                    <h4>{{ $progressSiteAll }}</h4>
                     <small>Progress</small>
                 </div>
             </div>
@@ -74,7 +75,7 @@
         <div class="col-md-3">
             <div class="card bg-success text-white" style="width:17rem;">
                 <div class="card-body">
-                    <h4>{{ $doneSite }}</h4>
+                    <h4>{{ $doneSiteAll }}</h4>
                     <small>Selesai</small>
                 </div>
             </div>
@@ -87,8 +88,8 @@
             Progress
             <div class="progress" style="height: 20px;">
                 <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                     style="width: {{ $progress }}%;">
-                    {{ $progress }}%
+                     style="width: {{ $progressAll }}%;">
+                    {{ $progressAll }}%
                 </div>
             </div>
         </div>
@@ -97,7 +98,7 @@
     <!-- Form Tambah Site Manual -->
     <div class="card mb-3 shadow-sm">
         <div class="card-header fw-semibold py-2">
-            Tambah Site Manual
+            Tambah Timeline
         </div>
 
         <div class="card-body py-3">
@@ -111,26 +112,35 @@
                 @csrf
 
                 <div class="row g-2 align-items-center">
+
+                    <!-- Label + Select Site -->
                     <div class="col-md-3">
+                        <label class="form-label fw-semibold">Nama Site</label>
                         <select name="project_site_id" class="form-select form-select-sm" required>
                             <option value="">-- Pilih Site --</option>
                             @foreach($sites as $site)
                                 <option value="{{ $site->id }}">
-                                    {{ $site->site_name }} - {{ $site->project_id }}
+                                    {{ $site->site_id }} - {{ $site->site_name }} - {{ $site->project->mitra }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
+                    <!-- Label + Tanggal Mulai -->
                     <div class="col-md-2">
+                        <label class="form-label fw-semibold">Tanggal Mulai</label>
                         <input type="date" name="tanggal_mulai" class="form-control form-control-sm" required>
                     </div>
 
+                    <!-- Label + Tanggal Selesai -->
                     <div class="col-md-2">
+                        <label class="form-label fw-semibold">Estimasi Tanggal Selesai</label>
                         <input type="date" name="tanggal_selesai" class="form-control form-control-sm" required>
                     </div>
 
+                    <!-- Label + Status -->
                     <div class="col-md-2">
+                        <label class="form-label fw-semibold">Status</label>
                         <select name="status" class="form-select form-select-sm" required>
                             <option value="pending">Pending</option>
                             <option value="progress">Progress</option>
@@ -138,16 +148,62 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3 d-flex align-items-stretch">
+                    <!-- Button -->
+                    <div class="col-md-3 d-flex align-items-end mt-5">
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             Tambah
                         </button>
                     </div>
+
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Filter -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form action="{{ route('timeline.index') }}" method="GET">
+                <div class="input-group">
+                    <select name="filter" class="form-select">
+                        <option value="all" {{ $filter == 'all' ? 'selected' : '' }}>Semua</option>
+                        <option value="done" {{ $filter == 'done' ? 'selected' : '' }}>Selesai</option>
+                        <option value="pending" {{ $filter == 'pending' ? 'selected' : '' }}>Belum Selesai</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grouping by week -->
+    @foreach($groupByWeek as $week => $items)
+        <div class="card mb-3">
+            <div class="card-header">
+                Minggu: {{ $week }} (Total: {{ $items->count() }} site)
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Site ID</th>
+                            <th>Nama Site</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($items as $item)
+                            <tr>
+                                <td>{{ $item->site->site_id }}</td>
+                                <td>{{ $item->site->site_name }}</td>
+                                <td>{{ $item->status }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endforeach
 
     <!-- Timeline -->
     <div class="card shadow-sm">
@@ -159,12 +215,13 @@
             <table class="table table-bordered mb-0 align-middle text-center">
                 <thead class="table-dark">
                     <tr>
+                        <th class="py-3">No</th>
                         <th class="py-3">Site ID</th>
-                        <th class="py-3">Project ID</th>
-                        <th class="py-3">Tanggal Mulai</th>
-                        <th class="py-3">Tanggal Selesai</th>
-                        <th class="py-3">Countdown</th>
                         <th class="py-3">Nama Lokasi</th>
+                        <th class="py-3">Mitra (Project)</th>
+                        <th class="py-3">Tanggal Mulai</th>
+                        <th class="py-3">Tanggal Estimasi Selesai</th>
+                        <th class="py-3">Sisa Waktu</th>
                         <th class="py-3">Status</th>
                     </tr>
                 </thead>
@@ -172,19 +229,20 @@
                 <tbody>
                     @foreach($timeline as $item)
                     <tr>
-                        <td class="py-2">{{ $item->site_id->project_id }}</td>
-                        <td class="py-2">{{ $item->site->project_id }}</td>
+                        <td class="py-2">{{ $loop->iteration }}</td>
+                        <td class="py-2">{{ $item->site ? $item->site->site_id : 'Site kosong' }}</td>
+                        <td class="py-2">{{ $item->site->site_name }}</td>
+                        <td class="py-2">{{ $item->site->project->mitra }}</td>
                         <td class="py-2">{{ $item->tanggal_mulai->format('d-m-Y') }}</td>
                         <td class="py-2">{{ $item->tanggal_selesai->format('d-m-Y') }}</td>
 
                         <td class="py-2">
                             <span class="countdown"
-                                  data-end="{{ $item->tanggal_selesai->format('Y-m-d H:i:s') }}">
+                                  data-end="{{ $item->tanggal_selesai->format('Y-m-d') }} 23:59:59">
                                 Loading...
                             </span>
                         </td>
 
-                        <td class="py-2">{{ $item->site->site_name }}</td>
                         <td class="py-2">
                             @if($item->status == 'done')
                                 <span class="badge bg-success">Selesai</span>
@@ -232,7 +290,6 @@
         });
     }
 
-    // update setiap 1 detik
     setInterval(updateCountdown, 1000);
     updateCountdown();
 </script>
