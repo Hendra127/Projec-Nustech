@@ -36,6 +36,11 @@
             Project Review
         </a>
 
+        <a href="{{ url('timeplan') }}"
+        class="btn-custom {{ request()->is('timeplan*') ? 'btn-active' : 'btn-inactive' }}">
+            Time Plane
+        </a>
+
         <a href="{{ url('timeline') }}"
         class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
             Actual Plane
@@ -45,7 +50,7 @@
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-        <
+        
     </div>
     <div class="d-flex justify-content-end align-items-center mb-3" style="position: absolute; top: 10px; right: 30px; z-index: 10;">
         <div class="dropdown">

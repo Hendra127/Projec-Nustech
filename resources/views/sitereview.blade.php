@@ -16,7 +16,6 @@
         border: 2px solid #22c55e;
     }
 </style>
-
 <div class="container-fluid py-4">
 
     <!-- NAV -->
@@ -32,14 +31,21 @@
             Project Review
         </a>
 
+        <a href="{{ url('timeplan') }}"
+        class="btn-custom {{ request()->is('timeplan*') ? 'btn-active' : 'btn-inactive' }}">
+            Time Plane
+        </a>
+
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Actual Plane
+        </a>
+
         <a href="{{ url('laporaninstalasi') }}"
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-        <a href="{{ url('timeline') }}"
-        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
-            Timeline
-        </a>
+        
     </div>
     <h4>📊 Site Review</h4>
 
@@ -48,9 +54,12 @@
         <div class="col-md-3">
             <label class="fw-bold">PROJECT PHASE</label>
             <select id="projectFilter" class="form-select">
-                <option value="">Pilih Project Phase</option>
+                <option value="">Pilih Project</option>
                 @foreach($projects as $p)
-                    <option value="{{ $p->id }}">{{ $p->mitra }} ({{ $p->phase ?? '-' }})</option>
+                    <option value="{{ $p->id }}"
+                        {{ ($selectedProjectId == $p->id) ? 'selected' : '' }}>
+                        {{ $p->mitra }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -256,6 +265,14 @@ document.getElementById('formTambahSite').addEventListener('submit', function(e)
         console.error(err);
         alert('Terjadi error! Cek console.');
     });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let selected = "{{ $selectedProjectId ?? '' }}";
+    if(selected){
+        loadSites();
+    }
 });
 </script>
 @endsection

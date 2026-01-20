@@ -26,5 +26,9 @@ class ProjectSite extends Model
             ->withPivot('status')
             ->withTimestamps();
     }
+    public function timeplan()
+    {
+        return $this->hasOne(Timeplan::class);
+    }
 
 }

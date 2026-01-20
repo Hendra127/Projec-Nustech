@@ -9,10 +9,12 @@ use App\Models\LaporanInstalasi;
 
 class SiteReviewController extends Controller
 {
-    public function index()
+    public function index(Project $project)
     {
         $projects = Project::orderBy('mitra')->get();
-        return view('sitereview', compact('projects'));
+        $selectedProjectId = $project->id;
+
+        return view('sitereview', compact('projects', 'selectedProjectId'));
     }
 
     // ================= AJAX LOAD SITE + PROGRESS =================

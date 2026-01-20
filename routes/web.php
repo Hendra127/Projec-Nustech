@@ -33,6 +33,7 @@ use App\Http\Controllers\BMSDashboardController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ProjectTimelineController;
 use App\Http\Controllers\ProjectTimelineGroupController;
+use App\Http\Controllers\TimeplanController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -206,6 +207,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/sitereview', [SiteReviewController::class, 'index'])->name('sitereview.index');
     Route::post('/sitereview/filter', [SiteReviewController::class, 'filter'])->name('sitereview.filter');
     Route::post('/sitereview/store-site', [SiteReviewController::class, 'storeSite'])->name('sitereview.storeSite');
+    Route::post('/timeline/teknisi', [TimeplanController::class, 'updateTeknisi'])->name('timeline.updateTeknisi');
+    Route::get('/sitereview/{project}', [SiteReviewController::class, 'index'])
+    ->name('sitereview.show');
+    Route::post('/timeplan/note', [TimeplanController::class, 'saveNote'])
+    ->name('timeplan.note');
 
     //Route Laporan Instalasi
     Route::get('/laporaninstalasi', [LaporanInstalasiController::class, 'index'])->name('laporaninstalasi');
@@ -218,6 +224,13 @@ Route::middleware(['auth'])->group(function () {
     // Route Project Timeline
     Route::get('/timeline', [ProjectTimelineController::class, 'index'])->name('timeline.index');
     Route::post('/timeline/store', [ProjectTimelineController::class, 'store'])->name('timeline.store');
+    Route::put('timeline/{timeline}', [ProjectTimelineController::class, 'update'])->name('timeline.update');
+    Route::delete('timeline/{timeline}', [ProjectTimelineController::class, 'destroy'])->name('timeline.destroy');
+
+    // routes Timeplan
+    Route::get('/timeplan', [TimeplanController::class, 'index'])->name('timeplan.index');
+    Route::post('/timeplan', [TimeplanController::class, 'store'])->name('timeplan.store');
+    Route::get('timeplan/scurve', [TimeplanController::class, 'sCurve'])->name('timeplan.scurve');
 
     // Route Grouped Project Timeline
     Route::get('/timeline-group', [ProjectTimelineGroupController::class, 'index'])->name('timeline-group.index');

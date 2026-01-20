@@ -21,26 +21,31 @@
 
     <!-- NAV -->
     <div class="mb-4 d-flex gap-3">
+
         <a href="{{ url('newproject') }}"
-           class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
+        class="btn-custom {{ request()->is('newproject*') ? 'btn-active' : 'btn-inactive' }}">
             New Project
         </a>
 
         <a href="{{ url('sitereview') }}"
-           class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
+        class="btn-custom {{ request()->is('sitereview*') ? 'btn-active' : 'btn-inactive' }}">
             Project Review
         </a>
 
+        <a href="{{ url('timeplan') }}"
+        class="btn-custom {{ request()->is('timeplan*') ? 'btn-active' : 'btn-inactive' }}">
+            Time Plane
+        </a>
+
         <a href="{{ url('timeline') }}"
-           class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
             Actual Plane
         </a>
 
         <a href="{{ url('laporaninstalasi') }}"
-           class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
+        class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-
     </div>
 
     <!-- Ringkasan -->
@@ -223,6 +228,7 @@
                         <th class="py-3">Tanggal Estimasi Selesai</th>
                         <th class="py-3">Sisa Waktu</th>
                         <th class="py-3">Status</th>
+                        <th class="py-3">Aksi</th>
                     </tr>
                 </thead>
 
@@ -231,18 +237,20 @@
                     <tr>
                         <td class="py-2">{{ $loop->iteration }}</td>
                         <td class="py-2">{{ $item->site ? $item->site->site_id : 'Site kosong' }}</td>
-                        <td class="py-2">{{ $item->site->site_name }}</td>
-                        <td class="py-2">{{ $item->site->project->mitra }}</td>
-                        <td class="py-2">{{ $item->tanggal_mulai->format('d-m-Y') }}</td>
-                        <td class="py-2">{{ $item->tanggal_selesai->format('d-m-Y') }}</td>
-
+                        <td class="py-2">{{ $item->site ? $item->site->site_name : '-' }}</td>
+                        <td class="py-2">{{ $item->site && $item->site->project ? $item->site->project->mitra : '-' }}</td>
                         <td class="py-2">
-                            <span class="countdown"
-                                  data-end="{{ $item->tanggal_selesai->format('Y-m-d') }} 23:59:59">
-                                Loading...
+                            {{ $item->tanggal_mulai ? $item->tanggal_mulai->format('d-m-Y') : '-' }}
+                        </td>
+                        <td class="py-2">
+                            {{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d-m-Y') : '-' }}
+                        </td>
+                        <td class="py-2">
+                            <span class="countdown" 
+                                data-end="{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('Y-m-d').' 23:59:59' : '' }}">
+                                {{ $item->tanggal_selesai ? '' : 'Belum ditentukan' }}
                             </span>
                         </td>
-
                         <td class="py-2">
                             @if($item->status == 'done')
                                 <span class="badge bg-success">Selesai</span>
@@ -252,14 +260,85 @@
                                 <span class="badge bg-secondary">Pending</span>
                             @endif
                         </td>
+
+                        <!-- Kolom aksi -->
+                        <td class="py-2">
+                            <!-- Tombol Edit -->
+                            <button class="btn btn-sm btn-warning mb-1" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editModal{{ $item->id }}">
+                                Edit
+                            </button>
+
+                            <!-- Tombol Hapus -->
+                            <form action="{{ route('timeline.destroy', $item->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin ingin menghapus timeline ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                            </form>
+
+                            <!-- Modal Edit -->
+                            <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $item->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="{{ route('timeline.update', $item->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel{{ $item->id }}">Edit Timeline</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nama Site</label>
+                                                    <select name="project_site_id" class="form-select" required>
+                                                        <option value="">-- Pilih Site --</option>
+                                                        @foreach($sites as $site)
+                                                            <option value="{{ $site->id }}" {{ $item->project_site_id == $site->id ? 'selected' : '' }}>
+                                                                {{ $site->site_id }} - {{ $site->site_name }} - {{ $site->project->mitra }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Tanggal Mulai</label>
+                                                    <input type="date" name="tanggal_mulai" class="form-control" value="{{ $item->tanggal_mulai ? $item->tanggal_mulai->format('Y-m-d') : '' }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Tanggal Selesai</label>
+                                                    <input type="date" name="tanggal_selesai" class="form-control" value="{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('Y-m-d') : '' }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Status</label>
+                                                    <select name="status" class="form-select" required>
+                                                        <option value="pending" {{ $item->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                        <option value="progress" {{ $item->status == 'progress' ? 'selected' : '' }}>Progress</option>
+                                                        <option value="done" {{ $item->status == 'done' ? 'selected' : '' }}>Selesai</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Modal Edit -->
+
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
-
             </table>
         </div>
     </div>
-
 </div>
 
 <script>

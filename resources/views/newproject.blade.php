@@ -61,14 +61,22 @@
             Project Review
         </a>
 
+        <a href="{{ url('timeplan') }}"
+        class="btn-custom {{ request()->is('timeplan*') ? 'btn-active' : 'btn-inactive' }}">
+            Time Plane
+        </a>
+
+        <a href="{{ url('timeline') }}"
+        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
+            Actual Plane
+        </a>
+
         <a href="{{ url('laporaninstalasi') }}"
         class="btn-custom {{ request()->is('laporaninstalasi*') ? 'btn-active' : 'btn-inactive' }}">
             Laporan Instalasi
         </a>
-        <a href="{{ url('timeline') }}"
-        class="btn-custom {{ request()->is('timeline*') ? 'btn-active' : 'btn-inactive' }}">
-            Timeline
-        </a>
+
+        
     </div>
 {{-- HEADER --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -108,8 +116,19 @@
 @forelse($projects as $p)
 <tr class="project-row" onclick="toggleSite({{ $p->id }})" style="cursor:pointer">
     <td class="text-center">{{ $loop->iteration }}</td>
-    <td class="fw-semibold">{{ $p->no_kontrak }}</td>
-    <td>{{ $p->mitra }}</td>
+    <td class="fw-semibold">
+        <a href="{{ route('sitereview.show', $p->id) }}"
+           class="text-primary text-decoration-none">
+            {{ $p->no_kontrak }}
+        </a>
+    </td>
+
+    <td>
+        <a href="{{ route('sitereview.show', $p->id) }}"
+           class="text-decoration-none">
+            {{ $p->mitra }}
+        </a>
+    </td>
     <td>{{ $p->batch }}</td>
     <td>
         <span class="badge bg-info badge-phase">{{ $p->phase }}</span>

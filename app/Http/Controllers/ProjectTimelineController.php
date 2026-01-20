@@ -85,4 +85,30 @@ class ProjectTimelineController extends Controller
         return redirect()->route('timeline.index')
             ->with('success', 'Timeline berhasil ditambahkan');
     }
+
+public function update(Request $request, ProjectTimeline $timeline)
+{
+    $request->validate([
+        'project_site_id' => 'required|exists:project_sites,id',
+        'tanggal_mulai' => 'required|date',
+        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+        'status' => 'required|in:pending,progress,done',
+    ]);
+
+    $timeline->update([
+        'project_site_id' => $request->project_site_id,
+        'tanggal_mulai' => $request->tanggal_mulai,
+        'tanggal_selesai' => $request->tanggal_selesai,
+        'status' => $request->status,
+    ]);
+
+    return redirect()->route('timeline.index')->with('success', 'Timeline berhasil diperbarui');
+}
+
+public function destroy(ProjectTimeline $timeline)
+{
+    $timeline->delete();
+    return redirect()->route('timeline.index')->with('success', 'Timeline berhasil dihapus');
+}
+
 }
